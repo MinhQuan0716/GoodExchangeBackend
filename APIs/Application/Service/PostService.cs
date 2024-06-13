@@ -78,7 +78,7 @@ namespace Application.Service
 
         public async Task<List<PostModel>> GetPostSortByCreationDay()
         {
-            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
             return _mapper.Map<List<PostModel>>(posts);
         }
 

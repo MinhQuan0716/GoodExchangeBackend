@@ -28,8 +28,6 @@ namespace MobileAPI.Controllers
                 return BadRequest(payemntUrl);
                 
             }
-<<<<<<< HEAD
-            /*RecurringJob.AddOrUpdate<>(() => ())*/;
             return Ok(payemntUrl);
         }
         /*[Authorize]
@@ -53,6 +51,23 @@ namespace MobileAPI.Controllers
                 return BadRequest("WebSocket connection required");
             }
         }
+       
+        /*[Authorize]
+        [HttpGet]
+        public IActionResult GetPaymentStatus()
+        {
+            *//*int paymentStatus = _paymentService.ReturnTransactionStatus();
+            if (paymentStatus > 0)
+            {
+                return Ok(paymentStatus);
+            }
+<<<<<<< HEAD
+            return BadRequest(paymentStatus);
+        }
+=======
+            return BadRequest();*//*
+            
+        }*/
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddUserBalance()
@@ -75,22 +90,5 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
-        /*[Authorize]
-        [HttpGet]
-        public IActionResult GetPaymentStatus()
-        {
-            *//*int paymentStatus = _paymentService.ReturnTransactionStatus();
-            if (paymentStatus > 0)
-            {
-                return Ok(paymentStatus);
-            }
-<<<<<<< HEAD
-            return BadRequest(paymentStatus);
-        }
-=======
-            return BadRequest();*//*
-            
-        }*/
->>>>>>> 58996cc92f48c278166888b8343b14e14eba33ab
     }
 }
