@@ -76,9 +76,10 @@ namespace Application.Service
             return _mapper.Map<List<PostModel>>(posts);
         }
 
-        public Task<List<CreatePostModel>> GetPostWithProduct()
+        public async Task<List<PostModel>> GetPostSortByCreationDay()
         {
-            throw new NotImplementedException();
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
+            return _mapper.Map<List<PostModel>>(posts);
         }
 
         public async Task<bool> UpdatePost(UpdatePostModel Post)

@@ -3,20 +3,24 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileAPI.Handles;
+using System.Net.WebSockets;
 
 namespace MobileAPI.Controllers
 {
     public class PaymentController : BaseController
     {
+        private readonly PaymentStatusWebSocketHandler _webSocketHandler;
         private readonly IPaymentService _paymentService;
       
         public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
+            _webSocketHandler = new PaymentStatusWebSocketHandler(paymentService);
         }
         [Authorize]
         [HttpGet]
-        public IActionResult GetPaymentUrl()
+        public async Task<IActionResult> GetPaymentUrl()
         {
             var payemntUrl = _paymentService.GetPayemntUrl();
             if (payemntUrl == null || payemntUrl.Equals(""))
@@ -24,6 +28,7 @@ namespace MobileAPI.Controllers
                 return BadRequest(payemntUrl);
                 
             }
+<<<<<<< HEAD
             /*RecurringJob.AddOrUpdate<>(() => ())*/;
             return Ok(payemntUrl);
         }
@@ -33,11 +38,21 @@ namespace MobileAPI.Controllers
         {
             var paymentStatus = _paymentService.ReturnTransactionStatus();
             if (paymentStatus > 0)
+=======
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+>>>>>>> 58996cc92f48c278166888b8343b14e14eba33ab
             {
-                return Ok(paymentStatus);
+                await HttpContext.Response.WriteAsync($"{{ \"link\": \"{payemntUrl}\" }}");
+                HttpContext.Response.ContentType = "application/json";
+                WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                await _webSocketHandler.HandleAsync(HttpContext, webSocket);
+                return new EmptyResult();
             }
-            return BadRequest(paymentStatus);
-        }*/
+            else
+            {
+                return BadRequest("WebSocket connection required");
+            }
+        }
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddUserBalance()
@@ -60,16 +75,22 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize]
+        /*[Authorize]
         [HttpGet]
         public IActionResult GetPaymentStatus()
         {
-            int paymentStatus = _paymentService.ReturnTransactionStatus();
+            *//*int paymentStatus = _paymentService.ReturnTransactionStatus();
             if (paymentStatus > 0)
             {
                 return Ok(paymentStatus);
             }
+<<<<<<< HEAD
             return BadRequest(paymentStatus);
         }
+=======
+            return BadRequest();*//*
+            
+        }*/
+>>>>>>> 58996cc92f48c278166888b8343b14e14eba33ab
     }
 }

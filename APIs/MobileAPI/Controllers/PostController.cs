@@ -20,6 +20,12 @@ namespace MobileAPI.Controllers
             var posts = await _postService.GetAllPost();
             return Ok(posts);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllPostSortByCreationDay()
+        {
+            var posts = await _postService.GetPostSortByCreationDay();
+            return Ok(posts);
+        }
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromForm] CreatePostModel post)
         {

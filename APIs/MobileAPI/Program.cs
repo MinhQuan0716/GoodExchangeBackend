@@ -1,5 +1,7 @@
 using Application.Common;
+using Application.InterfaceService;
 using Application.SchemaFilter;
+using Application.Service;
 using Application.ZaloPay.Config;
 using Hangfire;
 using Infrastructure;
@@ -58,6 +60,8 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
 builder.Services.AddHangfireServer();
+
+builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(7777));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -88,5 +92,8 @@ app.UseSession();
 app.MapHangfireDashboard("/dashboard");
 
 app.MapControllers();
+
+var socketServer = app.Services.GetRequiredService<ISocketServerService>();
+socketServer.Start();
 
 app.Run();
