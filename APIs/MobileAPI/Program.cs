@@ -1,5 +1,7 @@
 using Application.Common;
+using Application.InterfaceService;
 using Application.SchemaFilter;
+using Application.Service;
 using Application.ZaloPay.Config;
 using Infrastructure;
 using Infrastructure.Mappers;
@@ -52,6 +54,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
+builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(7777));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,5 +86,8 @@ app.UseSession();
 //app.UseRateLimiter();
 
 app.MapControllers();
+
+var socketServer = app.Services.GetRequiredService<ISocketServerService>();
+socketServer.Start();
 
 app.Run();

@@ -13,6 +13,7 @@ namespace Application.ViewModel.PostModel
         public string PostContent { get; set; }
         public Guid ProductId { get; set; }
         public ProductModel Product { get; set; }
+        public DateTime? CreationDate { get; set; }
     }
 
     public class ProductModel

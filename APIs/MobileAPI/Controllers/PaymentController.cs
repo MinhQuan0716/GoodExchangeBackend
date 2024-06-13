@@ -2,38 +2,42 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileAPI.Handles;
+using System.Net.WebSockets;
 
 namespace MobileAPI.Controllers
 {
     public class PaymentController : BaseController
     {
+        private readonly PaymentStatusWebSocketHandler _webSocketHandler;
         private readonly IPaymentService _paymentService;
         public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
+            _webSocketHandler = new PaymentStatusWebSocketHandler(paymentService);
         }
         [Authorize]
         [HttpGet]
-        public IActionResult GetPaymentUrl()
+        public async Task<IActionResult> GetPaymentUrl()
         {
             var payemntUrl = _paymentService.GetPayemntUrl();
             if (payemntUrl == null || payemntUrl.Equals(""))
             {
                 return BadRequest(payemntUrl);
             }
-            return Ok(payemntUrl);
-        }
-        /*[Authorize]
-        [HttpGet]
-        public IActionResult GetPaymentStatus()
-        {
-            var paymentStatus = _paymentService.ReturnTransactionStatus();
-            if (paymentStatus > 0)
+            if (HttpContext.WebSockets.IsWebSocketRequest)
             {
-                return Ok(paymentStatus);
+                await HttpContext.Response.WriteAsync($"{{ \"link\": \"{payemntUrl}\" }}");
+                HttpContext.Response.ContentType = "application/json";
+                WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                await _webSocketHandler.HandleAsync(HttpContext, webSocket);
+                return new EmptyResult();
             }
-            return BadRequest(paymentStatus);
-        }*/
+            else
+            {
+                return BadRequest("WebSocket connection required");
+            }
+        }
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddUserBalance()
@@ -56,16 +60,17 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize]
+        /*[Authorize]
         [HttpGet]
         public IActionResult GetPaymentStatus()
         {
-            int paymentStatus = _paymentService.ReturnTransactionStatus();
+            *//*int paymentStatus = _paymentService.ReturnTransactionStatus();
             if (paymentStatus > 0)
             {
                 return Ok();
             }
-            return BadRequest();
-        }
+            return BadRequest();*//*
+            
+        }*/
     }
 }
