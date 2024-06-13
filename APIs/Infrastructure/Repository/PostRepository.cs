@@ -26,5 +26,18 @@ namespace Infrastructure.Repository
 
             return posts;
         }
+
+        public async Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync()
+        {
+            var posts = await GetAllAsync(
+                p => p.Product,
+                p => p.Product.Category,
+                p => p.Product.ConditionType
+            );
+            var sortedPosts = posts.OrderBy(p => p.CreationDate).ToList();
+
+            return sortedPosts;
+
+        }
     }
 }
