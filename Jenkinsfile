@@ -6,8 +6,7 @@ pipeline{
       stages {
         stage('Checkout'){
           steps{
-            git branch: 'main', credentialsId: 'ac83972b-6e89-455b-8b18-bf5eb62afcb6', url: 'https://github.com/Goods-Exchange/BackendAPIProject.git'
-          }
+            git branch: 'main', credentialsId: 'e8212876-bdbb-4735-9f7a-668ee9df4a10', url: 'https://github.com/Goods-Exchange/BackendAPIProject.git'
         }
          stage('Restore solution'){
                   steps {
