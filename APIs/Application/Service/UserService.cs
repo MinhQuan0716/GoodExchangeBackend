@@ -94,7 +94,9 @@ namespace Application.Service
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
             var key = user.Id.ToString() + "_" + apiOrigin;
+            var accessTokenKey = user.Id.ToString() + "_" + "accesstoken";
             var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
+            var accessTokeData = _cacheService.SetData<string>(accessTokenKey, accessToken, _currentTime.GetCurrentTime().AddDays(2));
             var findUserWallet=await _unitOfWork.WalletRepository.FindWalletByUserId(user.Id);
             var checkVerifyUser=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
             if (findUserWallet == null)

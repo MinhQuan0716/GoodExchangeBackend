@@ -72,7 +72,7 @@ namespace Application.Service
                 count++;
             }
             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser, DateTime.UtcNow.GetTimeStamp()
-                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString()+count.ToString(), "zalopayapp", "ZaloPay demo");
+                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString()+"0"+count.ToString(), "zalopayapp", "ZaloPay demo");
             zaloPayRequest.MakeSignature(zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
             if (createZaloPayLinkResult)
@@ -93,13 +93,20 @@ namespace Application.Service
             {
                 throw new Exception("Chưa nạp tiền vào ví");
             }
+            int count = 0;
             string userId = _claimsService.GetCurrentUserId.ToString();
             userId = userId.Replace("-", "");
-            string refundid= DateTime.UtcNow.ToString("yyMMdd")+"_"+ zaloPayConfig.AppId +"_"+ userId;
-            string zpKey= _claimsService.GetCurrentUserId.ToString() + "_" + "ZpTransId";
+            string zpKey = _claimsService.GetCurrentUserId.ToString() + "_" + "ZpTransId";
             string key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
-            long zpTransId=_cacheService.GetData<long>(zpKey);
+            long zpTransId = _cacheService.GetData<long>(zpKey);
             string apptransid = _cacheService.GetData<string>(key);
+            if (apptransid != null)
+            {
+                count++;
+            }
+            string refundid= DateTime.UtcNow.ToString("yyMMdd")+"_"+ zaloPayConfig.AppId +"_"+ userId+"0"+count.ToString();
+            
+
             long amount = _cacheService.GetData<long>(apptransid);
             var zaloPayRefundRequest = new CreateZaloPayRefundRequest(refundid, zaloPayConfig.AppId, zpTransId,amount, DateTime.UtcNow.GetTimeStamp(), "Refund");
             zaloPayRefundRequest.MakeSignature(zaloPayConfig.Key1);

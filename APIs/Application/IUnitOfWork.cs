@@ -18,5 +18,6 @@ namespace Application
         public IExchangeConditionRepository ExchangeConditionRepository { get;}
         public ICategoryRepository CategoryRepository { get; }
         public Task<int> SaveChangeAsync();
+
     }
 }
