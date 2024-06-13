@@ -76,6 +76,8 @@ app.UseAuthorization();
 
 app.UseSession();
 
+app.UseWebSockets();
+
 app.MapControllers();
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace MobileAPI.Controllers
     public class PaymentController : BaseController
     {
         private readonly IPaymentService _paymentService;
+      
         public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
@@ -20,7 +22,9 @@ namespace MobileAPI.Controllers
             if (payemntUrl == null || payemntUrl.Equals(""))
             {
                 return BadRequest(payemntUrl);
+                
             }
+            /*RecurringJob.AddOrUpdate<>(() => ())*/;
             return Ok(payemntUrl);
         }
         /*[Authorize]
@@ -63,9 +67,9 @@ namespace MobileAPI.Controllers
             int paymentStatus = _paymentService.ReturnTransactionStatus();
             if (paymentStatus > 0)
             {
-                return Ok();
+                return Ok(paymentStatus);
             }
-            return BadRequest();
+            return BadRequest(paymentStatus);
         }
     }
 }

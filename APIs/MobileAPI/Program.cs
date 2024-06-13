@@ -1,6 +1,7 @@
 using Application.Common;
 using Application.SchemaFilter;
 using Application.ZaloPay.Config;
+using Hangfire;
 using Infrastructure;
 using Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,10 @@ builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
+builder.Services.AddHangfire(configuration => configuration
+                     .UseSimpleAssemblyNameTypeSerializer()
+                     .UseRecommendedSerializerSettings()
+                     .UseInMemoryStorage());
 builder.Services.AddSwaggerGen(opt =>
 {
 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -52,6 +57,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
+builder.Services.AddHangfireServer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,13 +80,12 @@ if (app.Environment.IsProduction())
 
     });
 }
-
-
 app.UseAuthorization();
 
 app.UseSession();
 
 //app.UseRateLimiter();
+app.MapHangfireDashboard("/dashboard");
 
 app.MapControllers();
 

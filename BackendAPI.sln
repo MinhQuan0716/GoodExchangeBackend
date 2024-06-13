@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend.Infratructure.Test"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FF282BF2-56D8-4953-A530-CA9DB1F759E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocketServer", "APIs\SocketServer\SocketServer.csproj", "{AA5F94EC-6365-4F34-81A7-6C22CE985060}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{FF282BF2-56D8-4953-A530-CA9DB1F759E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF282BF2-56D8-4953-A530-CA9DB1F759E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF282BF2-56D8-4953-A530-CA9DB1F759E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5F94EC-6365-4F34-81A7-6C22CE985060}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5F94EC-6365-4F34-81A7-6C22CE985060}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5F94EC-6365-4F34-81A7-6C22CE985060}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5F94EC-6365-4F34-81A7-6C22CE985060}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{AD76FE82-549A-4ED6-BEBB-6963D73599CD} = {7881BC1A-9A34-40EB-86D4-CDCC2363F789}
 		{B43AA0FE-B872-4609-B224-E988BB83D8FD} = {7881BC1A-9A34-40EB-86D4-CDCC2363F789}
 		{04804467-9B51-43DA-AE84-4D826D4E6064} = {7881BC1A-9A34-40EB-86D4-CDCC2363F789}
+		{AA5F94EC-6365-4F34-81A7-6C22CE985060} = {305D094C-A50D-49C6-B3FE-CD5FF00532DF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23C04E71-C17F-4F4C-9C49-00CE9C40D854}
