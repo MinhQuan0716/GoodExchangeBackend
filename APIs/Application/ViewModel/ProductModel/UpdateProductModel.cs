@@ -10,8 +10,10 @@ namespace Application.ViewModel.ProductModel
     public class UpdateProductModel
     {
         public Guid ProductId { get; set; }
-        public IFormFile ProductImage { get; set; }
+        public IFormFile? ProductImage { get; set; }
         public string ProductName { get; set; }
         public long ProductPrice { get; set; }
+        public int CategoryId { get; set; }
+        public int ConditionId { get; set; }
     }
 }

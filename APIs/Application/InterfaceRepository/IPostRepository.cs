@@ -10,5 +10,6 @@ namespace Application.InterfaceRepository
     public interface IPostRepository:IGenericRepository<Post>
     {
         Task<List<Post>> GetAllPostsWithDetailsAsync();
+        Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync();
     }
 }

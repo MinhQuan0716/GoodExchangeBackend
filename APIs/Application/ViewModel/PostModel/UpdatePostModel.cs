@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.ViewModel.ProductModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace Application.ViewModel.PostModel
         public Guid PostId { get; set; }
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
+        public UpdateProductModel productModel { get; set; }
     }
 }

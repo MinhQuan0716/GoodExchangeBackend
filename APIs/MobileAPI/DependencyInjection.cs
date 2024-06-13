@@ -28,6 +28,8 @@ namespace MobileAPI
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUploadFile, UploadFile>();
+            services.AddScoped<IExchangeConditionService, ExchangeConditionService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...

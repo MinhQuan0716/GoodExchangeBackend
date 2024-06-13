@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface IExchangeConditionRepository 
+    public interface ICategoryRepository
     {
-        Task<List<ExchangeCondition>> GetAllExchangeConditionAsync();
+        Task<List<Category>> GetAllCategoryAsync();
     }
 }

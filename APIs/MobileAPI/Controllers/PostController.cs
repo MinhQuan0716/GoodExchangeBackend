@@ -37,7 +37,7 @@ namespace MobileAPI.Controllers
             return BadRequest();
         }
         [HttpPut]
-        public async Task<IActionResult> UpdatePost(UpdatePostModel post)
+        public async Task<IActionResult> UpdatePost([FromForm] UpdatePostModel post)
         {
             bool isUpdated = await _postService.UpdatePost(post);
             if (isUpdated)

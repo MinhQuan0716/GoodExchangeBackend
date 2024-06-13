@@ -82,10 +82,24 @@ namespace Application.Service
             return _mapper.Map<List<PostModel>>(posts);
         }
 
-        public async Task<bool> UpdatePost(UpdatePostModel Post)
+        public async Task<bool> UpdatePost(UpdatePostModel postModel)
         {
-            var updatePost = _mapper.Map<Post>(Post);
-            _unitOfWork.PostRepository.Update(updatePost);
+            var newProduct = _mapper.Map<Product>(postModel.productModel);
+            if (postModel.productModel.ProductImage != null)
+            {
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+                newProduct.ProductImageUrl = imageUrl;
+            } else
+            {
+                var oldProduct = await _unitOfWork.ProductRepository.GetByIdAsync(postModel.productModel.ProductId);
+                newProduct.ProductImageUrl = oldProduct.ProductImageUrl;
+            }
+            //_unitOfWork.ProductRepository.Update(newProduct);
+            var oldPost = await _unitOfWork.PostRepository.GetByIdAsync(postModel.PostId);
+            oldPost.PostTitle = postModel.PostTitle;
+            oldPost.PostContent = postModel.PostContent;
+            oldPost.Product = newProduct;
+            _unitOfWork.PostRepository.Update(oldPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }

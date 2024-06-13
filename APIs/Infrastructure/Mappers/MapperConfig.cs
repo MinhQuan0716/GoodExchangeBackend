@@ -23,6 +23,7 @@ namespace Infrastructure.Mappers
             PostMap();
             ProductMap();
             UpdatePostMap();
+            UpdateProductMap();
         }
         internal void CreateUserMap()
         {
@@ -35,8 +36,15 @@ namespace Infrastructure.Mappers
         {
             CreateMap<CreateProductModel,Product>()
                 .ForMember(src=>src.CategoryId,opt=>opt.MapFrom(x=>x.CategoryId))
-                .ForMember(src=>src.ConditionId,opt=>opt.MapFrom(x=>x.ProductTypeId))
+                .ForMember(src=>src.ConditionId,opt=>opt.MapFrom(x=>x.ConditionId))
                 .ReverseMap();   
+        }
+        internal void UpdateProductMap()
+        {
+            CreateMap<UpdateProductModel, Product>()
+                .ForMember(src => src.CategoryId, opt => opt.MapFrom(x => x.CategoryId))
+                .ForMember(src => src.ConditionId, opt => opt.MapFrom(x => x.ConditionId))
+                .ReverseMap();
         }
         internal void CreatePostMap()
         {
@@ -48,7 +56,6 @@ namespace Infrastructure.Mappers
         {
             CreateMap<PostModel, Post>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ReverseMap()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product));

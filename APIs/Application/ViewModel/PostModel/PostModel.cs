@@ -11,7 +11,6 @@ namespace Application.ViewModel.PostModel
         public Guid PostId { get; set; }
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
-        public Guid ProductId { get; set; }
         public ProductModel Product { get; set; }
         public DateTime? CreationDate { get; set; }
     }

@@ -13,7 +13,7 @@ namespace Application.ViewModel.ProductModel
         public string ProductName { get; set; }
         public long ProductPrice { get; set; }
         public int CategoryId { get; set; }
-        public int ProductTypeId { get; set; }
+        public int ConditionId { get; set; }
        
     }
     public class CreatePostViewModel
