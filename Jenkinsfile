@@ -8,6 +8,7 @@ pipeline{
           steps{
             git branch: 'main', credentialsId: 'e8212876-bdbb-4735-9f7a-668ee9df4a10', url: 'https://github.com/Goods-Exchange/BackendAPIProject.git'
         }
+        }
          stage('Restore solution'){
                   steps {
                         withDotNet(sdk:'7.0'){
