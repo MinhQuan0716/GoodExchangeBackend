@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.CategoryModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Application.Service
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<Category>> GetAllCategory()
+        public async Task<List<CategoryViewModel>> GetAllCategory()
         {
             var category = await _unitOfWork.CategoryRepository.GetAllCategoryAsync();
             return category;

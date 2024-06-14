@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceRepository;
+using Application.ViewModel.CategoryModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,9 +17,13 @@ namespace Infrastructure.Repository
         {
             _dbContext = appDbContext;
         }
-        public async Task<List<Category>> GetAllCategoryAsync()
+        public async Task<List<CategoryViewModel>> GetAllCategoryAsync()
         {
-            var categories = await _dbContext.Categories.ToListAsync();
+            var categories = await _dbContext.Categories.Select(x=>new CategoryViewModel
+            {
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
+            }).ToListAsync();
             return categories;
         }
     }
