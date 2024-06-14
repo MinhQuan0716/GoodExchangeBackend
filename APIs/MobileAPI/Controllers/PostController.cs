@@ -26,6 +26,12 @@ namespace MobileAPI.Controllers
             var posts = await _postService.GetPostSortByCreationDay();
             return Ok(posts);
         }
+        [HttpGet]
+        public async Task<IActionResult> SortPostByCategory(int categoryId) 
+        {
+            var post=await _postService.SortPostByCategory(categoryId);
+            return Ok(post);
+        }
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromForm] CreatePostModel post)
         {
@@ -56,5 +62,6 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+
     }
 }

@@ -82,6 +82,12 @@ namespace Application.Service
             return _mapper.Map<List<PostModel>>(posts);
         }
 
+        public async Task<List<PostModel>> SortPostByCategory(int categoryId)
+        {
+            var sortPost=await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
+            return _mapper.Map<List<PostModel>>(sortPost);
+        }
+
         public async Task<bool> UpdatePost(UpdatePostModel postModel)
         {
             var newProduct = _mapper.Map<Product>(postModel.productModel);
