@@ -11,6 +11,7 @@ namespace Domain.Entities
         public string ProductName { get; set; }
         public string ProductImageUrl { get; set; }
         public long ProductPrice { get; set; }
+        public string? RequestedProduct { get; set; }
         public int? ConditionId { get; set; }
         public ExchangeCondition ConditionType { get; set; }
         public Post Post { get; set; }
