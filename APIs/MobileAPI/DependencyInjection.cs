@@ -19,6 +19,7 @@ namespace MobileAPI
         public static IServiceCollection AddMobileAPIService(this IServiceCollection services,string secretKey,string cacheConnectionString) 
         {
             services.AddHttpContextAccessor();
+          //  services.AddSingleton<HttpClient>();
             services.AddScoped<IClaimService, ClaimService>();
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IUserService, UserService>();
@@ -30,6 +31,7 @@ namespace MobileAPI
             services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<IExchangeConditionService, ExchangeConditionService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ISocketServerService, SocketServerService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
