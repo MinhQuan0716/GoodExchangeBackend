@@ -13,5 +13,6 @@ namespace Domain.Entities
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<WishList> WishLists { get; set; }
     }
 }

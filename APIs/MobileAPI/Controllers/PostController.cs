@@ -98,6 +98,16 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
-
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddFavoritePost(Guid postId)
+        {
+            bool isAdded=await _postService.AddPostToWishList(postId);
+            if (isAdded)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }

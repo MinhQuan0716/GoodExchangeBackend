@@ -32,6 +32,23 @@ namespace Application.Service
             _currentTime = currentTime;
             _claimService = claimService;
         }
+
+        public async Task<bool> AddPostToWishList(Guid postId)
+        {
+            var listPost = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
+            if (listPost.Where(x=>x.Id==postId).Any()) 
+            {
+                throw new Exception("You cannot add your own post to favorite list");
+            }
+            var favoritePost = new WishList
+            {
+                UserId=_claimService.GetCurrentUserId,
+                PostId = postId 
+            };
+            await _unitOfWork.WishListRepository.AddAsync(favoritePost);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
         public async Task<bool> BanPost(Guid postId)
         {
            var post= await _unitOfWork.PostRepository.GetByIdAsync(postId);

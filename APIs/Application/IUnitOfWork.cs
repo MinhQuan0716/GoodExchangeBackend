@@ -17,6 +17,7 @@ namespace Application
         public IVerifyUsersRepository VerifyUsersRepository { get;}
         public IExchangeConditionRepository ExchangeConditionRepository { get;}
         public ICategoryRepository CategoryRepository { get; }
+        public IWishListRepository WishListRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }
