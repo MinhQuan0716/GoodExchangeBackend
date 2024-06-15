@@ -45,7 +45,7 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
             if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice==null)
@@ -104,7 +104,7 @@ namespace Application.Service
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             if (postModel.productModel.ProductImage != null)
             {
-                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage,"Product");
                 newProduct.ProductImageUrl = imageUrl;
             } else
             {

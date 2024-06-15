@@ -17,11 +17,16 @@ namespace Infrastructure.EntityConfiguration
             builder.HasData(new ExchangeCondition
             {
                 ConditionId=1,
-                ConditionType="For exchanging"
+                ConditionType="For selling"
             },
             new ExchangeCondition
             {
                 ConditionId = 2,
+                ConditionType="For exchanging"
+            },
+            new ExchangeCondition
+            {
+                ConditionId=3,
                 ConditionType="For donation"
             }
             );

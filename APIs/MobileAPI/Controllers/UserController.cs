@@ -144,6 +144,17 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)
+        {
+            bool uploadImage=await _userService.UploadImageForVerifyUser(userImage);
+            if (uploadImage)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
 
     }
 }

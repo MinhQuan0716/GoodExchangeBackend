@@ -14,6 +14,10 @@ namespace MobileAPI.Controllers
         {
             _socketServerSerice = socketServerSerice;
         }
+        /// <summary>
+        /// Api for checking payment status using Websocket
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public async Task GetPaymentStatus()

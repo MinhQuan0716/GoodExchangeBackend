@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,9 @@ namespace Application.Service
         private readonly ISendMailHelper _sendMailHelper;
         private readonly IClaimService _claimService;
         private readonly ICacheService _cacheService;
+        private readonly IUploadFile _uploadFile;
         public UserService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService)
+            , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService,IUploadFile uploadFile)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -39,6 +41,7 @@ namespace Application.Service
             _sendMailHelper = sendMailHelper;
             _claimService = claimService;
             _cacheService = cacheService;
+            _uploadFile= uploadFile;    
         }
 
         public bool CheckVerifyCode(string key)
@@ -339,6 +342,19 @@ namespace Application.Service
             }
             loginUser.PasswordHash=  updatePasswordModel.NewPassword.Hash();
             _unitOfWork.UserRepository.Update(loginUser);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> UploadImageForVerifyUser(IFormFile userImage)
+        {
+            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
+            if (verifyUser != null)
+            {
+                string imageUrl =await _uploadFile.UploadFileToFireBase(userImage, "User");
+                verifyUser.UserImage=imageUrl;
+                verifyUser.IsStudentAccount = true;
+                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
+            }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }
