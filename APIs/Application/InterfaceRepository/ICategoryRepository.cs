@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.CategoryModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Application.InterfaceRepository
 {
     public interface ICategoryRepository
     {
-        Task<List<Category>> GetAllCategoryAsync();
+        Task<List<CategoryViewModel>> GetAllCategoryAsync();
     }
 }

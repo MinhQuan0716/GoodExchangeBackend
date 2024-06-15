@@ -48,6 +48,10 @@ namespace Application.Service
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
+            if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice==null)
+            {
+                newProduct.ProductPrice = 0;
+            }
             await _unitOfWork.ProductRepository.AddAsync(newProduct);
             await _unitOfWork.SaveChangeAsync();
             var createPost = new Post
@@ -87,6 +91,12 @@ namespace Application.Service
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
             return _mapper.Map<List<PostModel>>(posts);
+        }
+
+        public async Task<List<PostModel>> SortPostByCategory(int categoryId)
+        {
+            var sortPost=await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
+            return _mapper.Map<List<PostModel>>(sortPost);
         }
 
         public async Task<bool> UpdatePost(UpdatePostModel postModel)

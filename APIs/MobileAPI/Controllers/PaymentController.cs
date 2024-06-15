@@ -28,46 +28,12 @@ namespace MobileAPI.Controllers
                 return BadRequest(payemntUrl);
                 
             }
-            return Ok(payemntUrl);
-        }
-        /*[Authorize]
-        [HttpGet]
-        public IActionResult GetPaymentStatus()
-        {
-            var paymentStatus = _paymentService.ReturnTransactionStatus();
-            if (paymentStatus > 0)
-=======
-            if (HttpContext.WebSockets.IsWebSocketRequest)
->>>>>>> 58996cc92f48c278166888b8343b14e14eba33ab
-            {
                 await HttpContext.Response.WriteAsync($"{{ \"link\": \"{payemntUrl}\" }}");
                 HttpContext.Response.ContentType = "application/json";
                 WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 await _webSocketHandler.HandleAsync(HttpContext, webSocket);
-                return new EmptyResult();
-            }
-            else
-            {
-                return BadRequest("WebSocket connection required");
-            }
+            return Ok(payemntUrl);
         }
-       
-        /*[Authorize]
-        [HttpGet]
-        public IActionResult GetPaymentStatus()
-        {
-            *//*int paymentStatus = _paymentService.ReturnTransactionStatus();
-            if (paymentStatus > 0)
-            {
-                return Ok(paymentStatus);
-            }
-<<<<<<< HEAD
-            return BadRequest(paymentStatus);
-        }
-=======
-            return BadRequest();*//*
-            
-        }*/
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddUserBalance()

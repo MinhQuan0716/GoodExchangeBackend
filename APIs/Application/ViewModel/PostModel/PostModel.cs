@@ -25,5 +25,6 @@ namespace Application.ViewModel.PostModel
         public string ConditionName { get; set; }
         public int? CategoryId { get; set; }
         public string CategoryName { get; set; }
+        public string? RequestedProduct { get; set; }
     }
 }

@@ -52,5 +52,15 @@ namespace Infrastructure.Repository
             return sortedPosts;
 
         }
+
+        public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)
+        {
+            var listPost = await GetAllAsync(
+                p => p.Product,
+                p => p.Product.Category,
+                p => p.Product.ConditionType);
+            var sortedListPost= listPost.Where(p=>p.Product.Category.CategoryId == categoryId).ToList();
+            return sortedListPost;
+        }
     }
 }

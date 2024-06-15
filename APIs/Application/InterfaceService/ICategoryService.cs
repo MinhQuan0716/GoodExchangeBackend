@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.CategoryModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Application.InterfaceService
 {
     public interface ICategoryService
     {
-        Task<List<Category>> GetAllCategory();
+        Task<List<CategoryViewModel>> GetAllCategory();
     }
 }
 

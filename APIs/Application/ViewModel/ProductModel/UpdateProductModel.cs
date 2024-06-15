@@ -15,5 +15,6 @@ namespace Application.ViewModel.ProductModel
         public long ProductPrice { get; set; }
         public int CategoryId { get; set; }
         public int ConditionId { get; set; }
+        public string? RequestedProduct { get; set; }
     }
 }

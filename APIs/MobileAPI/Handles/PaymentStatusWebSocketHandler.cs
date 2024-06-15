@@ -27,12 +27,14 @@ namespace MobileAPI.Handles
 
                 // Wait for a second before checking the status again
                 await Task.Delay(1000);
-
+                if (paymentStatus > 0)
+                {
+                    break;
+                }
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
 
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
-
 }
