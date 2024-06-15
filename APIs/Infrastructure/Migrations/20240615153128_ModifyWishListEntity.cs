@@ -10,9 +10,9 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
                 name: "FK_WishLists_Products_ProductId",
-                table: "WishLists");*/
+                table: "WishLists");
 
             migrationBuilder.RenameColumn(
                 name: "ProductId",
