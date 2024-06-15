@@ -26,12 +26,7 @@ namespace MobileAPI.Controllers
             if (payemntUrl == null || payemntUrl.Equals(""))
             {
                 return BadRequest(payemntUrl);
-                
             }
-                await HttpContext.Response.WriteAsync($"{{ \"link\": \"{payemntUrl}\" }}");
-                HttpContext.Response.ContentType = "application/json";
-                WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                await _webSocketHandler.HandleAsync(HttpContext, webSocket);
             return Ok(payemntUrl);
         }
         [Authorize]

@@ -25,10 +25,10 @@ builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
-builder.Services.AddHangfire(configuration => configuration
+/*builder.Services.AddHangfire(configuration => configuration
                      .UseSimpleAssemblyNameTypeSerializer()
                      .UseRecommendedSerializerSettings()
-                     .UseInMemoryStorage());
+                     .UseInMemoryStorage());*/
 builder.Services.AddSwaggerGen(opt =>
 {
 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -59,9 +59,10 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfireServer();
 
-builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(7777));
+/*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
+builder.Services.AddHostedService<SocketServerBackgroundService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -87,13 +88,14 @@ if (app.Environment.IsProduction())
 app.UseAuthorization();
 
 app.UseSession();
+app.UseWebSockets();
 
 //app.UseRateLimiter();
-app.MapHangfireDashboard("/dashboard");
+//app.MapHangfireDashboard("/dashboard");
 
 app.MapControllers();
 
-var socketServer = app.Services.GetRequiredService<ISocketServerService>();
-socketServer.Start();
+/*var socketServer = app.Services.GetRequiredService<ISocketServerService>();
+socketServer.Start();*/
 
 app.Run();
