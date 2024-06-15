@@ -3,6 +3,7 @@ using Application.Service;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MobileAPI.Controllers
@@ -26,6 +27,14 @@ namespace MobileAPI.Controllers
             var posts = await _postService.GetPostSortByCreationDay();
             return Ok(posts);
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllPostByCreatedById()
+        {
+            var posts = await _postService.GetPostByCreatedById();
+            return Ok(posts);
+        }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromForm] CreatePostModel post)
         {
@@ -36,6 +45,7 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdatePost([FromForm] UpdatePostModel post)
         {
@@ -46,6 +56,7 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> RemovePost(Guid postId)
         {

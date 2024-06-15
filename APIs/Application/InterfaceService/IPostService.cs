@@ -16,5 +16,6 @@ namespace Application.InterfaceService
         Task<bool> DeletePost(Guid PostId);
         Task<List<PostModel>> GetAllPost();
         Task<List<PostModel>> GetPostSortByCreationDay();
+        Task<List<PostModel>> GetPostByCreatedById();
     }
 }
