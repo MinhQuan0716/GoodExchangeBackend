@@ -80,6 +80,13 @@ namespace Application.Service
             return _mapper.Map<List<PostModel>>(posts);
         }
 
+        public async Task<List<PostModel>> GetPostByCreatedById()
+        {
+            var id = _claimService.GetCurrentUserId;
+            var posts = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(id);
+            return _mapper.Map<List<PostModel>>(posts);
+        }
+
         public async Task<List<PostModel>> GetPostSortByCreationDay()
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
