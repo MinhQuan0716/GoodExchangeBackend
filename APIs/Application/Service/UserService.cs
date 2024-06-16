@@ -115,6 +115,7 @@ namespace Application.Service
             }
             return new Token
             {
+                userId=user.Id,
                 userName=user.UserName,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
@@ -221,6 +222,7 @@ namespace Application.Service
                 var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
                 return new Token
                 {
+                    userId=loginUser.Id,
                     userName=loginUser.UserName,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
