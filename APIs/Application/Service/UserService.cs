@@ -88,12 +88,6 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
-
-            /*string? loginData = _cacheService.GetData<string>(findKey);
-             if (loginData!=null)
-             {
-                 throw new Exception("You already login");
-             }*/
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
             var key = user.Id.ToString() + "_" + apiOrigin;
@@ -102,19 +96,22 @@ namespace Application.Service
             var accessTokeData = _cacheService.SetData<string>(accessTokenKey, accessToken, _currentTime.GetCurrentTime().AddDays(2));
             var findUserWallet=await _unitOfWork.WalletRepository.FindWalletByUserId(user.Id);
             var checkVerifyUser=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
-            if (findUserWallet == null)
+            if (user.RoleId == 3)
             {
-                var walletId = await CreateWallet(user.Id);
-                user.WalletId = walletId;
-                _unitOfWork.UserRepository.Update(user);
-                await _unitOfWork.SaveChangeAsync();
-            }
-            if(checkVerifyUser == null)
-            {
-                var verfiyUserId=await CreateVerifyUser(user.Id);
-                user.VerifyUserId = verfiyUserId;
-                _unitOfWork.UserRepository.Update(user);
-                await _unitOfWork.SaveChangeAsync();
+                if (findUserWallet == null)
+                {
+                    var walletId = await CreateWallet(user.Id);
+                    user.WalletId = walletId;
+                    _unitOfWork.UserRepository.Update(user);
+                    await _unitOfWork.SaveChangeAsync();
+                }
+                if (checkVerifyUser == null)
+                {
+                    var verfiyUserId = await CreateVerifyUser(user.Id);
+                    user.VerifyUserId = verfiyUserId;
+                    _unitOfWork.UserRepository.Update(user);
+                    await _unitOfWork.SaveChangeAsync();
+                }
             }
             return new Token
             {

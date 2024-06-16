@@ -18,6 +18,7 @@ namespace Application
         public IExchangeConditionRepository ExchangeConditionRepository { get;}
         public ICategoryRepository CategoryRepository { get; }
         public IWishListRepository WishListRepository { get; }
+        public ISubcriptionRepository SubcriptionRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }
