@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MobileAPI.Controllers
 {
     
-    public class ProductController : BaseController
+  /*  public class ProductController : BaseController
     {
         private readonly IProductService _productService;
         public ProductController(IProductService productService)
@@ -54,5 +54,5 @@ namespace MobileAPI.Controllers
             return BadRequest();
         }
        
-    }
+    }*/
 }
