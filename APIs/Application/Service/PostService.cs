@@ -91,10 +91,12 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<PostModel>> GetAllPost()
+        public async Task<Pagination<PostModel>> GetAllPost(int pageIndex,int pageSize)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
-            return _mapper.Map<List<PostModel>>(posts);
+           var  listPostModel =_mapper.Map<List<PostModel>>(posts);
+            Pagination<PostModel> pagination = PaginationUtil<PostModel>.ToPagination(listPostModel, pageIndex, pageSize);
+            return pagination;
         }
 
         public async Task<List<PostModel>> GetPostByCreatedById()
@@ -102,6 +104,12 @@ namespace Application.Service
             var id = _claimService.GetCurrentUserId;
             var posts = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(id);
             return _mapper.Map<List<PostModel>>(posts);
+        }
+
+        public async Task<PostDetailViewModel> GetPostDetailAsync(Guid postId)
+        {
+            var postDetail = await _unitOfWork.PostRepository.GetPostDetail(postId);
+            return postDetail;
         }
 
         public async Task<List<PostModel>> GetPostSortByCreationDay()

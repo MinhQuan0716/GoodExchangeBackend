@@ -27,9 +27,9 @@ namespace WebAPI.Controllers
         }
         [Authorize(Roles ="Admin,Moderator")]
         [HttpGet]
-        public async Task<IActionResult> GetAllPost()
+        public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
-            List<PostModel> post= await _postService.GetAllPost();
+            var post= await _postService.GetAllPost(pageIndex,pageSize);
             return Ok(post);
         }
     }

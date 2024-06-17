@@ -1,4 +1,5 @@
-﻿using Application.InterfaceRepository;
+﻿using Application.Common;
+using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.ViewModel.PostModel;
 using Domain.Entities;
@@ -36,7 +37,11 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-
+            /*var post = _appDbContext.Posts.Include(p => p.Product)
+                                           .Include(p=>p.Product.Category)
+                                           .Include(p=>p.Product.ConditionType)
+                                           .AsQueryable();
+            var paginationPost=await ToPagination(post,x=>x.IsDelete==false,pageSize,pageIndex);*/
             return posts;
         }
 
@@ -53,13 +58,31 @@ namespace Infrastructure.Repository
 
         }
 
+        public async Task<PostDetailViewModel> GetPostDetail(Guid postId)
+        {
+            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId).Select(x => new PostDetailViewModel
+            {
+                ProductName=x.Product.ProductName,
+                ProductDescription=x.Product.ProductDescription,
+                ProductImageUrl=x.Product.ProductImageUrl,
+                ProductPrice=x.Product.ProductPrice,
+                PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
+                {
+                    CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
+                    Fulname = postAuthor.FirstName+""+postAuthor.LastName,
+                    Rating=4.5
+                }).Single()
+            }).SingleOrDefaultAsync();
+            return postDetail;
+        }
+
         public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)
         {
             var listPost = await GetAllAsync(
                 p => p.Product,
                 p => p.Product.Category,
                 p => p.Product.ConditionType);
-            var sortedListPost= listPost.Where(p=>p.Product.Category.CategoryId == categoryId).ToList();
+            var sortedListPost = listPost.Where(p => p.Product.Category.CategoryId == categoryId).ToList();
             return sortedListPost;
         }
     }

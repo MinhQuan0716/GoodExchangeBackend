@@ -1,4 +1,6 @@
-﻿using Domain.Entities;
+﻿using Application.Common;
+using Application.ViewModel.PostModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace Application.InterfaceRepository
         Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync();
         Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id);
         Task<List<Post>> SortPostByProductCategoryAsync(int categoryId);
+        Task<PostDetailViewModel> GetPostDetail(Guid postId);
        
     }
 }

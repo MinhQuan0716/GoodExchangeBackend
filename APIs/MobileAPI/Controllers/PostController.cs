@@ -16,9 +16,9 @@ namespace MobileAPI.Controllers
             _postService = postService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllPost()
+        public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
-            var posts = await _postService.GetAllPost();
+            var posts = await _postService.GetAllPost(pageIndex,pageSize);
             return Ok(posts);
         }
         /// <summary>
@@ -108,6 +108,16 @@ namespace MobileAPI.Controllers
                 return Ok();
             }
             return BadRequest();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPostDetail(Guid postId)
+        {
+            var postDetail=await _postService.GetPostDetailAsync(postId);
+            if (postDetail == null)
+            {
+                return NotFound();
+            }
+            return Ok(postDetail);
         }
     }
 }

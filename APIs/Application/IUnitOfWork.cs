@@ -19,6 +19,7 @@ namespace Application
         public ICategoryRepository CategoryRepository { get; }
         public IWishListRepository WishListRepository { get; }
         public ISubcriptionRepository SubcriptionRepository { get; }
+        public IRatingRepository RatingRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }
