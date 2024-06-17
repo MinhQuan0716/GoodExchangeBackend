@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240615114552_ModifyProductEntityAddDataToCategoryEntityAndAddDataToExchangeConditionEntity")]
+    partial class ModifyProductEntityAddDataToCategoryEntityAndAddDataToExchangeConditionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -475,7 +478,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("WalletTransactionId")
+                    b.Property<Guid>("WalletTransactionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -765,7 +768,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PostId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
@@ -773,7 +776,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -886,7 +889,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.WalletTransaction", "WalletTransaction")
                         .WithMany("Subcriptions")
-                        .HasForeignKey("WalletTransactionId");
+                        .HasForeignKey("WalletTransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("WalletTransaction");
                 });
@@ -956,9 +961,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.WishList", b =>
                 {
-                    b.HasOne("Domain.Entities.Post", "Post")
-                        .WithMany("WishLists")
-                        .HasForeignKey("PostId")
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -968,7 +973,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Post");
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
@@ -986,8 +991,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("WishLists");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>

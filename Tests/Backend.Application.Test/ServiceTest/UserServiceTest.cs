@@ -24,7 +24,7 @@ namespace Backend.Application.Test.ServiceTest
         private readonly IUserService _userService;
         public UserServiceTest()
         {
-            _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object) ;
+            _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object,_uploadFileMock.Object) ;
         }
         [Fact]
         public async Task Register_ShouldReturnTrue()

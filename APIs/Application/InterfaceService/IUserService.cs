@@ -1,6 +1,7 @@
 ﻿using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,6 @@ namespace Application.InterfaceService
         Task<bool> PromoteUserToModerator(Guid userId);
         Task<CurrentUserModel> GetCurrentLoginUser();
         Task<bool> UpdatePasswordAsync(UpdatePasswordModel updatePasswordModel);
+        Task<bool> UploadImageForVerifyUser(IFormFile userImage);
     }
 }

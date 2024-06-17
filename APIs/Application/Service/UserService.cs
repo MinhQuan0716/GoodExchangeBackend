@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,9 @@ namespace Application.Service
         private readonly ISendMailHelper _sendMailHelper;
         private readonly IClaimService _claimService;
         private readonly ICacheService _cacheService;
+        private readonly IUploadFile _uploadFile;
         public UserService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService)
+            , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService,IUploadFile uploadFile)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -39,6 +41,7 @@ namespace Application.Service
             _sendMailHelper = sendMailHelper;
             _claimService = claimService;
             _cacheService = cacheService;
+            _uploadFile= uploadFile;    
         }
 
         public bool CheckVerifyCode(string key)
@@ -85,12 +88,6 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
-
-            /*string? loginData = _cacheService.GetData<string>(findKey);
-             if (loginData!=null)
-             {
-                 throw new Exception("You already login");
-             }*/
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
             var key = user.Id.ToString() + "_" + apiOrigin;
@@ -99,22 +96,26 @@ namespace Application.Service
             var accessTokeData = _cacheService.SetData<string>(accessTokenKey, accessToken, _currentTime.GetCurrentTime().AddDays(2));
             var findUserWallet=await _unitOfWork.WalletRepository.FindWalletByUserId(user.Id);
             var checkVerifyUser=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
-            if (findUserWallet == null)
+            if (user.RoleId == 3)
             {
-                var walletId = await CreateWallet(user.Id);
-                user.WalletId = walletId;
-                _unitOfWork.UserRepository.Update(user);
-                await _unitOfWork.SaveChangeAsync();
-            }
-            if(checkVerifyUser == null)
-            {
-                var verfiyUserId=await CreateVerifyUser(user.Id);
-                user.VerifyUserId = verfiyUserId;
-                _unitOfWork.UserRepository.Update(user);
-                await _unitOfWork.SaveChangeAsync();
+                if (findUserWallet == null)
+                {
+                    var walletId = await CreateWallet(user.Id);
+                    user.WalletId = walletId;
+                    _unitOfWork.UserRepository.Update(user);
+                    await _unitOfWork.SaveChangeAsync();
+                }
+                if (checkVerifyUser == null)
+                {
+                    var verfiyUserId = await CreateVerifyUser(user.Id);
+                    user.VerifyUserId = verfiyUserId;
+                    _unitOfWork.UserRepository.Update(user);
+                    await _unitOfWork.SaveChangeAsync();
+                }
             }
             return new Token
             {
+                userId=user.Id,
                 userName=user.UserName,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
@@ -221,6 +222,7 @@ namespace Application.Service
                 var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
                 return new Token
                 {
+                    userId=loginUser.Id,
                     userName=loginUser.UserName,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
@@ -339,6 +341,19 @@ namespace Application.Service
             }
             loginUser.PasswordHash=  updatePasswordModel.NewPassword.Hash();
             _unitOfWork.UserRepository.Update(loginUser);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> UploadImageForVerifyUser(IFormFile userImage)
+        {
+            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
+            if (verifyUser != null)
+            {
+                string imageUrl =await _uploadFile.UploadFileToFireBase(userImage, "User");
+                verifyUser.UserImage=imageUrl;
+                verifyUser.IsStudentAccount = true;
+                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
+            }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }

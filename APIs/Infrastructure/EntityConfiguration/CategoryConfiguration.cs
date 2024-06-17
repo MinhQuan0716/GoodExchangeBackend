@@ -22,21 +22,35 @@ namespace Infrastructure.EntityConfiguration
                 },
                 new Category
                 {
-                    CategoryId= 2,
-                    CategoryName="Electronics"
-                },
-                new Category 
-                {
-                    CategoryId= 3,
-                    CategoryName= "Office Supplies"
+                    CategoryId = 2,
+                    CategoryName = "Electronics"
                 },
                 new Category
                 {
-                    CategoryId=4,
-                    CategoryName= "Sporting Goods"
-                }
+                    CategoryId = 3,
+                    CategoryName = "Office Supplies"
+                },
+                new Category
+                {
+                    CategoryId = 4,
+                    CategoryName = "Sporting Goods"
+                },
+                 new Category
+                 {
+                     CategoryId = 5,
+                     CategoryName = "Home and Kitchen"
+                 },
+                 new Category
+                 {
+                     CategoryId = 6,
+                     CategoryName = "Toys and Games"
+                  },
+                  new Category
+                  {
+                      CategoryId = 7,
+                      CategoryName = "Books"
+                  }
                 );
-
         }
     }
 }

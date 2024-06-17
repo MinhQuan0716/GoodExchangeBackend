@@ -8,8 +8,8 @@ namespace Domain.Entities
 {
     public class WishList:BaseEntity
     {
-        public Guid ProductId { get; set; }
-        public Product Product { get; set; }
+        public Guid PostId { get; set; }
+        public Post Post { get; set; }
         public Guid UserId { get; set; }
         public User User { get; set; }
     }

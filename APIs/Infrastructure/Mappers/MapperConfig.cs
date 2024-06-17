@@ -1,5 +1,6 @@
 ﻿using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
+using Application.ViewModel.SubcriptionModel;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using AutoMapper;
@@ -24,6 +25,7 @@ namespace Infrastructure.Mappers
             ProductMap();
             UpdatePostMap();
             UpdateProductMap();
+            SubcriptionMap();
         }
         internal void CreateUserMap()
         {
@@ -75,6 +77,11 @@ namespace Infrastructure.Mappers
         {
             CreateMap<UpdatePostModel, Post>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
+                .ReverseMap();
+        }
+        internal void SubcriptionMap()
+        {
+            CreateMap<CreateSubcriptionModel, Subcription>()
                 .ReverseMap();
         }
     }

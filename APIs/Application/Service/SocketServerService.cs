@@ -80,7 +80,7 @@ namespace Application.Service
 
                     // Wait for a second before checking the status again
                     await Task.Delay(1000);
-                    if (paymentStatus > 0)
+                    if (paymentStatus ==1)
                     {
                         break;
                     }

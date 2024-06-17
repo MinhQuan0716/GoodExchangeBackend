@@ -18,5 +18,6 @@ namespace Application.InterfaceService
         Task<List<PostModel>> GetPostSortByCreationDay();
         Task<List<PostModel>> GetPostByCreatedById();
         Task<List<PostModel>> SortPostByCategory(int categoryId);
+        Task<bool> AddPostToWishList(Guid postId);
     }
 }

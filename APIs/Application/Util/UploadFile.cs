@@ -10,7 +10,7 @@ namespace Application.Util
 {
     public class UploadFile : IUploadFile
     {
-       public async Task<string> UploadFileToFireBase(IFormFile file)
+       public async Task<string> UploadFileToFireBase(IFormFile file,string folderName)
         {
             string fileName = file.FileName;
             if (file.Length == 0)
@@ -18,7 +18,8 @@ namespace Application.Util
                 throw new Exception("File is empty");
             }
             var storage = new FirebaseStorage("firestorage-4ee45.appspot.com")
-                              .Child(fileName);
+                               .Child(folderName)
+                               .Child(fileName);
             await storage.PutAsync(file.OpenReadStream());
             var dowloadUrl = await storage.GetDownloadUrlAsync();
             return dowloadUrl;
@@ -26,6 +27,6 @@ namespace Application.Util
     }
     public interface IUploadFile
     {
-        Task<string> UploadFileToFireBase(IFormFile file);
+        Task<string> UploadFileToFireBase(IFormFile file,string folderName);
     }
 }

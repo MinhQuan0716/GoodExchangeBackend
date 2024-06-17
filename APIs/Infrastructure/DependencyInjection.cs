@@ -26,6 +26,8 @@ namespace Infrastructure
             services.AddScoped<IVerifyUsersRepository, VerifyUsersRepository>();
             services.AddScoped<IExchangeConditionRepository, ExchangeConditionRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IWishListRepository, WishListRepository>();  
+            services.AddScoped<ISubcriptionRepository,SubcriptionRepository>();
             return services;    
         }
     }

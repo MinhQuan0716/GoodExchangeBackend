@@ -19,10 +19,12 @@ namespace Infrastructure
         private readonly IWalletRepository _walletRepository;
         private readonly IVerifyUsersRepository _verifyUsersRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IWishListRepository _wishListRepository;
+        private readonly ISubcriptionRepository _subcriptionRepository;
         public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
             IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository, 
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -32,6 +34,8 @@ namespace Infrastructure
             _verifyUsersRepository = verifyUsersRepository;
             _exchangeConditionRepository = exchangeConditionRepository;
             _categoryRepository = categoryRepository;
+            _wishListRepository = wishListRepository;
+            _subcriptionRepository = subcriptionRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -47,6 +51,10 @@ namespace Infrastructure
         public IExchangeConditionRepository ExchangeConditionRepository => _exchangeConditionRepository;
 
         public ICategoryRepository CategoryRepository => _categoryRepository;
+
+        public IWishListRepository WishListRepository => _wishListRepository;
+
+        public ISubcriptionRepository SubcriptionRepository => _subcriptionRepository;
 
         public Task<int> SaveChangeAsync()
         {

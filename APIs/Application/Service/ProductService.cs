@@ -33,7 +33,7 @@ namespace Application.Service
 
         public async Task<bool> CreateProduct(CreatePostModel postModel)
         {
-            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage,"Product");
             var newProduct=_mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
             await _unitOfWork.ProductRepository.AddAsync(newProduct);
