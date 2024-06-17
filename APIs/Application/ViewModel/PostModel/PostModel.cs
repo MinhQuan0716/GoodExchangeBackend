@@ -12,7 +12,7 @@ namespace Application.ViewModel.PostModel
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
         public ProductModel Product { get; set; }
-        public DateTime? CreationDate { get; set; }
+        public DateOnly CreationDate { get; set; }
     }
 
     public class ProductModel

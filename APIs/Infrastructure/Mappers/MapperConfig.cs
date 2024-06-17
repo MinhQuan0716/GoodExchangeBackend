@@ -60,7 +60,9 @@ namespace Infrastructure.Mappers
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ReverseMap()
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product));
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product))
+                .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(x => new DateOnly(x.CreationDate.GetValueOrDefault().Year, x.CreationDate.GetValueOrDefault().Month, x.CreationDate.GetValueOrDefault().Day)))
+            ;
         }
 
         internal void ProductMap()
