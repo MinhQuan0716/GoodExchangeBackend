@@ -24,6 +24,7 @@ namespace Application.SchemaFilter
                     ["Fullname"] = new OpenApiString("string"),
                     ["Birthday"] = new OpenApiString(DateTime.UtcNow.ToString("yyyy-MM-dd")),
                     ["Phonenumber"] = new OpenApiString("0933125677"),
+                    ["Homeaddress"]=new OpenApiString("string")
                 };
             }
         }

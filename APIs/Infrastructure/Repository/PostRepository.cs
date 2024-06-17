@@ -69,8 +69,13 @@ namespace Infrastructure.Repository
                 PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
                 {
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
-                    Fulname = postAuthor.FirstName+""+postAuthor.LastName,
-                    Rating=4.5
+                    FulName = postAuthor.FirstName+""+postAuthor.LastName,
+                    Email=postAuthor.Email,
+                    PhoneNumber=postAuthor.PhoneNumber,
+                    HomeAddress=postAuthor.HomeAddress,
+                    Rating = (float)(postAuthor.RatedUsers.Count() > 0
+                    ? (double)postAuthor.RatedUsers.Sum(r => r.RatingPoint) / (postAuthor.RatedUsers.Count())
+                    : 0)
                 }).Single()
             }).SingleOrDefaultAsync();
             return postDetail;

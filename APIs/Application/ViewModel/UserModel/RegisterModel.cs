@@ -17,5 +17,6 @@ namespace Application.ViewModel.UserViewModel
         public string Birthday { get; set; }
         [RegularExpression("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$", ErrorMessage = "Please enter valid phone number.")]
         public string Phonenumber { get; set; }
+        public string Homeaddress { get; set; }
     }
 }

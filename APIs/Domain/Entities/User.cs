@@ -15,6 +15,7 @@ namespace Domain.Entities
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime? BirthDay { get; set; }
+        public string? HomeAddress { get; set; }
         public bool? IsBuisnessAccount { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }

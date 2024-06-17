@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,11 @@ namespace Application.ViewModel.PostModel
 {
     public class PostAuthor
     {
-        public string Fulname { get; set; }
+        public string FulName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string HomeAddress { get; set; }
         public DateOnly? CreatedDate { get; set; }
-        public double Rating { get; set; }
+        public float Rating { get; set; }
     }
 }
