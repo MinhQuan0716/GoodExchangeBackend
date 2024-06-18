@@ -26,6 +26,7 @@ namespace Infrastructure.Repository
                 .Include(p => p.Product)
                 .Include(p => p.Product.Category)
                 .Include(p => p.Product.ConditionType)
+                .Where(x => x.IsDelete == false)
                 .ToListAsync();
             return posts;
         }

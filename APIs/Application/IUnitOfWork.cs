@@ -20,6 +20,7 @@ namespace Application
         public IWishListRepository WishListRepository { get; }
         public ISubcriptionRepository SubcriptionRepository { get; }
         public IRatingRepository RatingRepository { get; }
+        public IMessageRepository MessageRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }

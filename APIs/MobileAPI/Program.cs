@@ -9,6 +9,7 @@ using Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MobileAPI;
+using MobileAPI.Hubs;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
@@ -63,6 +64,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
 
 /*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
 builder.Services.AddHostedService<SocketServerBackgroundService>();
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -94,6 +96,7 @@ app.UseWebSockets();
 //app.MapHangfireDashboard("/dashboard");
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
 
 /*var socketServer = app.Services.GetRequiredService<ISocketServerService>();
 socketServer.Start();*/
