@@ -14,6 +14,7 @@ namespace Application.ViewModel.ProductModel
         public string ProductDescription { get; set; }
         public string ProductStatus { get; set; }
         public long ProductPrice { get; set; }
+        public int ProductQuantity { get; set; }
         public int CategoryId { get; set; }
         public int ConditionId { get; set; }
         public string? RequestedProduct { get; set; }

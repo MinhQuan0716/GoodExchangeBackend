@@ -66,6 +66,7 @@ namespace Infrastructure.Repository
                 ProductDescription=x.Product.ProductDescription,
                 ProductImageUrl=x.Product.ProductImageUrl,
                 ProductPrice=x.Product.ProductPrice,
+                ProductQuantity=x.Product.ProductQuantity.Value,
                 PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
                 {
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,

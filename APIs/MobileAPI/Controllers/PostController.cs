@@ -33,7 +33,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllPostByCreatedById()
+        public async Task<IActionResult> GetAllPostByCurrentUserId()
         {
             var posts = await _postService.GetPostByCreatedById();
             return Ok(posts);
