@@ -72,6 +72,7 @@ namespace Infrastructure.Repository
                 CategoryName=x.Product.Category.CategoryName,
                 ConditionTypeId=x.Product.ConditionId.Value,
                 ConditionTypeName=x.Product.ConditionType.ConditionType,
+                RequestedProduct=x.Product.RequestedProduct,
                 PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
                 {
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
