@@ -39,6 +39,7 @@ namespace Infrastructure.Repository
 #pragma warning disable CS8603 // Possible null reference return.
             return await _dbContext.Users.Where(x => x.Id == userId).Select(x => new CurrentUserModel
             {
+                Userid=x.Id,
                 Username=x.UserName,
                 Email=x.Email,  
                 Birthday=x.BirthDay.HasValue?DateOnly.FromDateTime(x.BirthDay.Value):null,

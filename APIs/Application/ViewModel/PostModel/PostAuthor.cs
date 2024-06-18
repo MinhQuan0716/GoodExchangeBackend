@@ -13,6 +13,7 @@ namespace Application.ViewModel.PostModel
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string HomeAddress { get; set; }
+        public string AuthorImage { get; set; }
         public DateOnly? CreatedDate { get; set; }
         public float Rating { get; set; }
     }
