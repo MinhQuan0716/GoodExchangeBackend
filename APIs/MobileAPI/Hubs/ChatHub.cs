@@ -112,7 +112,7 @@ namespace MobileAPI.Hubs
             }
             return base.OnConnectedAsync();
         }
-
+        // disconnect
         public override Task OnDisconnectedAsync(System.Exception exception)
         {
             var userId = _claimService.GetCurrentUserId.ToString();
