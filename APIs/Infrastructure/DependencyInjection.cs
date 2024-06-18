@@ -29,6 +29,7 @@ namespace Infrastructure
             services.AddScoped<IWishListRepository, WishListRepository>();  
             services.AddScoped<ISubcriptionRepository,SubcriptionRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
             return services;    
         }
     }

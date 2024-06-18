@@ -22,10 +22,12 @@ namespace Infrastructure
         private readonly IWishListRepository _wishListRepository;
         private readonly ISubcriptionRepository _subcriptionRepository;
         private readonly IRatingRepository _ratingRepository;
+        private readonly IMessageRepository _messageRepository;
         public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
             IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository, 
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
-            ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,IRatingRepository ratingRepository)
+            ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,
+            IRatingRepository ratingRepository, IMessageRepository messageRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -38,6 +40,7 @@ namespace Infrastructure
             _wishListRepository = wishListRepository;
             _subcriptionRepository = subcriptionRepository;
             _ratingRepository = ratingRepository;
+            _messageRepository = messageRepository; 
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -59,6 +62,8 @@ namespace Infrastructure
         public ISubcriptionRepository SubcriptionRepository => _subcriptionRepository;
 
         public IRatingRepository RatingRepository => _ratingRepository;
+
+        public IMessageRepository MessageRepository => _messageRepository;
 
         public Task<int> SaveChangeAsync()
         {
