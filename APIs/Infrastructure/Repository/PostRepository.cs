@@ -26,6 +26,7 @@ namespace Infrastructure.Repository
                 .Include(p => p.Product)
                 .Include(p => p.Product.Category)
                 .Include(p => p.Product.ConditionType)
+                .Where(x => x.IsDelete == false)
                 .ToListAsync();
             return posts;
         }
@@ -60,7 +61,7 @@ namespace Infrastructure.Repository
 
         public async Task<PostDetailViewModel> GetPostDetail(Guid postId)
         {
-            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId).Select(x => new PostDetailViewModel
+            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId).Where(x => x.IsDelete == false).Select(x => new PostDetailViewModel
             {
                 ProductName=x.Product.ProductName,
                 ProductDescription=x.Product.ProductDescription,
