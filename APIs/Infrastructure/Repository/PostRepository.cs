@@ -60,12 +60,12 @@ namespace Infrastructure.Repository
 
         public async Task<PostDetailViewModel> GetPostDetail(Guid postId)
         {
-            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId).Select(x => new PostDetailViewModel
+            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId&&x.IsDelete==false).Select(x => new PostDetailViewModel
             {
                 ProductName=x.Product.ProductName,
                 ProductDescription=x.Product.ProductDescription,
                 ProductImageUrl=x.Product.ProductImageUrl,
-                ProductPrice=x.Product.ProductPrice,
+                ProductPrice=x.Product.ProductPrice,    
                 ProductQuantity=x.Product.ProductQuantity.Value,
                 PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
                 {
