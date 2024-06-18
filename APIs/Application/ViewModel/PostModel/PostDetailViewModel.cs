@@ -14,6 +14,10 @@ namespace Application.ViewModel.PostModel
         public string ProductDescription { get; set; }
         public long ProductPrice { get; set; }
         public int? ProductQuantity { get; set; }
+        public int ConditionTypeId {  get; set; }
+        public string ConditionTypeName { get; set; }
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public PostAuthor PostAuthor { get; set; }
     }
 }
