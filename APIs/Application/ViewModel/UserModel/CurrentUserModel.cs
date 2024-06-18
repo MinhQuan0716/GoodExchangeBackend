@@ -8,6 +8,7 @@ namespace Application.ViewModel.UserModel
 {
     public class CurrentUserModel
     {
+        public Guid Userid {  get; set; }
         public string? Username { get; set; }
         public string? Fullname { get; set; }
         public string? Email { get; set; }

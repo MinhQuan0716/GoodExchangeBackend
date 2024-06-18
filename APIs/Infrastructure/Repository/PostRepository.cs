@@ -76,7 +76,8 @@ namespace Infrastructure.Repository
                     HomeAddress=postAuthor.HomeAddress,
                     Rating = (float)(postAuthor.RatedUsers.Count() > 0
                     ? (double)postAuthor.RatedUsers.Sum(r => r.RatingPoint) / (postAuthor.RatedUsers.Count())
-                    : 0)
+                    : 0),
+                    AuthorImage=postAuthor.VerifyUser.UserImage
                 }).Single()
             }).SingleOrDefaultAsync();
             return postDetail;
