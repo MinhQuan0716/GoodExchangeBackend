@@ -21,5 +21,7 @@ namespace Application.InterfaceService
         Task<List<PostModel>> SortPostByCategory(int categoryId);
         Task<bool> AddPostToWishList(Guid postId);
         Task<PostDetailViewModel> GetPostDetailAsync(Guid postId);  
+        Task<bool> RemovePostFromFavorite(Guid postId);
+        Task<List<WishList>> SeeAllFavoritePost();
     }
 }

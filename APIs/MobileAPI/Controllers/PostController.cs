@@ -119,5 +119,23 @@ namespace MobileAPI.Controllers
             }
             return Ok(postDetail);
         }
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> RemovePostFromFavoriteList(Guid postId)
+        {
+            bool isRemoved=await _postService.RemovePostFromFavorite(postId);
+            if (isRemoved)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllPostInFavoriteList()
+        {
+            var favoritePostList = await _postService.SeeAllFavoritePost();
+            return Ok(favoritePostList);    
+        }
     }
 }

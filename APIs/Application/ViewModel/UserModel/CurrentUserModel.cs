@@ -13,6 +13,7 @@ namespace Application.ViewModel.UserModel
         public string? Fullname { get; set; }
         public string? Email { get; set; }
         public string?Phonenumber { get; set; } 
+        public double Rating { get; set; }
         public DateOnly?Birthday { get; set; }
         
     }

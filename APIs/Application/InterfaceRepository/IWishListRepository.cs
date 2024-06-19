@@ -9,5 +9,7 @@ namespace Application.InterfaceRepository
 {
     public interface IWishListRepository:IGenericRepository<WishList>
     {
+        Task<List<WishList>> FindWishListByPostId(Guid postId);
+        Task<List<WishList>> FindWishListByUserId(Guid userId);
     }
 }

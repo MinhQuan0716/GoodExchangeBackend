@@ -44,7 +44,9 @@ namespace Infrastructure.Repository
                 Email=x.Email,  
                 Birthday=x.BirthDay.HasValue?DateOnly.FromDateTime(x.BirthDay.Value):null,
                 Fullname = x.FirstName + " " + x.LastName,
-                Phonenumber=x.PhoneNumber
+                Phonenumber=x.PhoneNumber,
+                Rating=x.RatedUsers.Count()>0?
+                x.RatedUsers.Sum(rate=>rate.RatingPoint)/x.RatedUsers.Count():0
             }).SingleOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
         }

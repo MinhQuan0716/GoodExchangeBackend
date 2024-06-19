@@ -36,9 +36,14 @@ namespace Application.Service
         public async Task<bool> AddPostToWishList(Guid postId)
         {
             var listPost = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
+            var wishlist= await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
             if (listPost.Where(x=>x.Id==postId).Any()) 
             {
                 throw new Exception("You cannot add your own post to favorite list");
+            }
+            if (wishlist.Where(x=>x.UserId==_claimService.GetCurrentUserId).Any())
+            {
+                throw new Exception("The post already in favorite list");
             }
             var favoritePost = new WishList
             {
@@ -116,6 +121,23 @@ namespace Application.Service
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
             return _mapper.Map<List<PostModel>>(posts);
+        }
+
+        public async Task<bool> RemovePostFromFavorite(Guid postId)
+        {
+            var foundList=await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
+           var wishList=foundList.Where(x=>x.PostId== postId&&x.UserId==_claimService.GetCurrentUserId).Single();
+            if (wishList != null)
+            {
+                _unitOfWork.WishListRepository.SoftRemove(wishList);
+            }
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<List<WishList>> SeeAllFavoritePost()
+        {
+            var listFavoritePost = await _unitOfWork.WishListRepository.FindWishListByUserId(_claimService.GetCurrentUserId);
+            return listFavoritePost;
         }
 
         public async Task<List<PostModel>> SortPostByCategory(int categoryId)
