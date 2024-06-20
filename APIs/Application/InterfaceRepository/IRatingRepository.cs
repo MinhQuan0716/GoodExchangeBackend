@@ -9,5 +9,6 @@ namespace Application.InterfaceRepository
 {
     public interface IRatingRepository:IGenericRepository<Rating>
     {
+        Task<List<Rating>> GetAllRatingByRaterId(Guid raterId);
     }
 }

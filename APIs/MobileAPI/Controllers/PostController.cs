@@ -137,5 +137,15 @@ namespace MobileAPI.Controllers
             var favoritePostList = await _postService.SeeAllFavoritePost();
             return Ok(favoritePostList);    
         }
+        [HttpGet]
+        public async Task<IActionResult>GetPostDetailInListPostCreatedByUser(Guid postId)
+        {
+            var postDetail = await _postService.GetPostDetailAsync(postId);
+            if (postDetail == null)
+            {
+                return NotFound();
+            }
+            return Ok(postDetail);
+        }
     }
 }

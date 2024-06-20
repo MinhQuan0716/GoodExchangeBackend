@@ -16,6 +16,5 @@ namespace Application.InterfaceRepository
         Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id);
         Task<List<Post>> SortPostByProductCategoryAsync(int categoryId);
         Task<PostDetailViewModel> GetPostDetail(Guid postId);
-       
     }
 }

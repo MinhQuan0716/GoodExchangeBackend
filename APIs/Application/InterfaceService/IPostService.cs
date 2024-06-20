@@ -23,5 +23,6 @@ namespace Application.InterfaceService
         Task<PostDetailViewModel> GetPostDetailAsync(Guid postId);  
         Task<bool> RemovePostFromFavorite(Guid postId);
         Task<List<WishList>> SeeAllFavoritePost();
+        Task<PostDetailViewModel>GetPostDetailInUserCreatePostList(Guid postId);
     }
 }

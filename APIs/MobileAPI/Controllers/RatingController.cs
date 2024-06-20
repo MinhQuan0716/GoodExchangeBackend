@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.RatingModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,9 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RateUser(Guid userId,double ratePoint)
+        public async Task<IActionResult> RateUser(CreateRatingModel createRatingModel)
         {
-            var isRated = await _ratingService.RateUserAsync(userId,ratePoint);
+            var isRated = await _ratingService.RateUserAsync(createRatingModel);
             if(isRated == false)
             {
                 return BadRequest();

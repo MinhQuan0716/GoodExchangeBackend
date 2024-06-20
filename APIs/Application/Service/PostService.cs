@@ -117,6 +117,12 @@ namespace Application.Service
             return postDetail;
         }
 
+        public async Task<PostDetailViewModel> GetPostDetailInUserCreatePostList(Guid postId)
+        {
+            var postDetail = await _unitOfWork.PostRepository.GetPostDetail(postId);
+            return postDetail;
+        }
+
         public async Task<List<PostModel>> GetPostSortByCreationDay()
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();

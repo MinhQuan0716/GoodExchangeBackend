@@ -1,5 +1,6 @@
 ﻿using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
+using Application.ViewModel.RatingModel;
 using Application.ViewModel.SubcriptionModel;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
@@ -26,6 +27,7 @@ namespace Infrastructure.Mappers
             UpdatePostMap();
             UpdateProductMap();
             SubcriptionMap();
+            RatingMap();
         }
         internal void CreateUserMap()
         {
@@ -83,6 +85,12 @@ namespace Infrastructure.Mappers
         internal void SubcriptionMap()
         {
             CreateMap<CreateSubcriptionModel, Subcription>()
+                .ReverseMap();
+        }
+        internal void RatingMap()
+        {
+            CreateMap<CreateRatingModel, Rating>()
+                .ForMember(src=>src.RatedUserId,dest=>dest.MapFrom(rmodel=>rmodel.UserId))
                 .ReverseMap();
         }
     }

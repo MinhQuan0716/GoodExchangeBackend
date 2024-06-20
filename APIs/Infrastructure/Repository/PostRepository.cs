@@ -89,6 +89,7 @@ namespace Infrastructure.Repository
             return postDetail;
         }
 
+
         public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)
         {
             var listPost = await GetAllAsync(
