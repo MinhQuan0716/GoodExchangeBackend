@@ -21,10 +21,11 @@ namespace Infrastructure.Repository
 
         public async Task<List<Message>> GetMessagesBy2UserId(Guid user1, Guid user2)
         {
-            var messages = await _appDbContext.Messages.Where(m => (m.SenderId == user1 && m.ReceiverId == user2) ||
+           /* var messages = await _appDbContext.Messages.Where(m => (m.SenderId == user1 && m.ReceiverId == user2) ||
                                                                     (m.SenderId == user2 && m.ReceiverId == user1)).
                                                                     Where(x => x.IsDelete == false).ToListAsync();
-            return messages;
+            return messages;*/
+           throw new NotImplementedException();
         }
     }
 }

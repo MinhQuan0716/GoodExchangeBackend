@@ -43,8 +43,8 @@ namespace MobileAPI.Hubs
 
             var msg = new Message
             {
-                SenderId = senderUserId,
-                ReceiverId = recipientUserId,
+               /* SenderId = senderUserId,
+                ReceiverId = recipientUserId,*/
                 MessageContent = messageContent,
                 CreationDate = DateTime.UtcNow
             };

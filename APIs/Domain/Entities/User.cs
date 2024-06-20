@@ -24,8 +24,8 @@ namespace Domain.Entities
         public Guid? VerifyUserId {  get; set; }
         public VerifyUser VerifyUser { get; set; }
         public ICollection<Comment> Comments { get; set; }
-        public ICollection<Message> SenderMessages { get; set; }
-        public ICollection<Message> ReceiverMessages { get; set; }
+        public ICollection<ChatRoom> ChatRooms1 { get; set; }
+        public ICollection<ChatRoom> ChatRooms2 { get; set; }
         public ICollection<Rating> Raters {  get; set; }
         public ICollection<Rating> RatedUsers { get; set; }
     }

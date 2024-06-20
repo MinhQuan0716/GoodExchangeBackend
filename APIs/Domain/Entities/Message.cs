@@ -10,9 +10,7 @@ namespace Domain.Entities
     public class Message:BaseEntity
     {
         public string MessageContent { get; set; }
-        public Guid SenderId { get; set; }
-        public User Sender { get; set; }
-        public Guid ReceiverId { get; set; }
-        public User Receiver { get; set; }
+        public Guid ChatRoomId { get; set; }
+        public ChatRoom ChatRoom { get; set; }
     }
 }

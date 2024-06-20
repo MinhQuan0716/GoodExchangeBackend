@@ -31,8 +31,9 @@ namespace Infrastructure.Mappers
         {
             CreateMap<RegisterModel,User>().ReverseMap();
             CreateMap<UpdateUserProfileModel, User>()
-                .ForMember(src => src.BirthDay, opt => opt.MapFrom(x => x.Birthday.ToDateTime(TimeOnly.MinValue)))
-                .ReverseMap();  
+                .ForMember(src => src.BirthDay, opt => opt.MapFrom(x => x.Birthday.ToDateTime(TimeOnly.MaxValue)))
+                .ReverseMap()
+                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BirthDay.Value)));
         }
         internal void CreateProductMap()
         {

@@ -25,6 +25,7 @@ namespace Infrastructure
         public DbSet<Subcription> Subcriptions { get; set; }
         public DbSet<SubcriptionHistory> SubcriptionHistories { get; set; } 
         public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Rating> Ratings { get; set; }
