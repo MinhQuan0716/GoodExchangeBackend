@@ -13,6 +13,7 @@ namespace Application.ViewModel.PostModel
         public string ProductImageUrl { get; set; }
         public string ProductDescription { get; set; }
         public long ProductPrice { get; set; }
+        public string ProductStatus { get; set; }
         public string RequestedProduct {  get; set; }
         public int? ProductQuantity { get; set; }
         public int ConditionTypeId {  get; set; }
