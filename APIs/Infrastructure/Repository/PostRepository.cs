@@ -75,6 +75,7 @@ namespace Infrastructure.Repository
                 RequestedProduct=x.Product.RequestedProduct,
                 PostAuthor=_appDbContext.Users.Where(user=>user.Id==x.CreatedBy).Select(postAuthor=>new PostAuthor
                 {
+                    AuthorId=x.CreatedBy.Value,
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
                     FulName = postAuthor.FirstName+""+postAuthor.LastName,
                     Email=postAuthor.Email,

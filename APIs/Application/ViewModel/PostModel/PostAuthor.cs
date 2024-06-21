@@ -9,6 +9,7 @@ namespace Application.ViewModel.PostModel
 {
     public class PostAuthor
     {
+        public Guid AuthorId { get; set; }
         public string FulName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
