@@ -15,6 +15,12 @@ namespace MobileAPI.Controllers
         {
             _postService = postService;
         }
+        /// <summary>
+        /// Api get all post for main page
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
@@ -31,6 +37,10 @@ namespace MobileAPI.Controllers
             var posts = await _postService.GetPostSortByCreationDay();
             return Ok(posts);
         }
+        /// <summary>
+        /// Get all post for My Posts page
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPostByCurrentUserId()
@@ -98,6 +108,11 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        /// <summary>
+        /// Api add post to wishlist
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddFavoritePost(Guid postId)
@@ -109,6 +124,11 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        /// <summary>
+        /// Api get post detail for main page
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetPostDetail(Guid postId)
         {
@@ -119,6 +139,11 @@ namespace MobileAPI.Controllers
             }
             return Ok(postDetail);
         }
+        /// <summary>
+        /// Api remove post in wishlist
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete]
         public async Task<IActionResult> RemovePostFromFavoriteList(Guid postId)
@@ -130,6 +155,10 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        /// <summary>
+        /// Api see all post in wishlist
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPostInFavoriteList()
@@ -137,6 +166,11 @@ namespace MobileAPI.Controllers
             var favoritePostList = await _postService.SeeAllFavoritePost();
             return Ok(favoritePostList);    
         }
+        /// <summary>
+        /// Api get post detail for My Post page
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult>GetPostDetailInListPostCreatedByUser(Guid postId)
         {
