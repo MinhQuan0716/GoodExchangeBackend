@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.RatingModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceRepository
     public interface IRatingRepository:IGenericRepository<Rating>
     {
         Task<List<Rating>> GetAllRatingByRaterId(Guid raterId);
+        Task<List<RatingViewModel>> GetAllRatingByRatedUserId (Guid ratedUserId);    
     }
 }

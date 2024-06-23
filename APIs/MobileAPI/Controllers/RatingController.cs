@@ -25,5 +25,12 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetUserRatings()
+        {
+            var lisRatings = await _ratingService.SeeUserRatingList();
+            return Ok(lisRatings);
+        }
     }
 }

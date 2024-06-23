@@ -59,7 +59,7 @@ namespace Infrastructure.Mappers
         }
         internal void PostMap()
         {
-            CreateMap<PostModel, Post>()
+            CreateMap<PostViewModel, Post>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ReverseMap()

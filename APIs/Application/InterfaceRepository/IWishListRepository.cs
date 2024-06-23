@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.WishListModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Application.InterfaceRepository
     public interface IWishListRepository:IGenericRepository<WishList>
     {
         Task<List<WishList>> FindWishListByPostId(Guid postId);
-        Task<List<WishList>> FindWishListByUserId(Guid userId);
+        Task<List<WishListViewModel>> FindWishListByUserId(Guid userId);
     }
 }

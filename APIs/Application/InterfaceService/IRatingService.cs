@@ -10,5 +10,6 @@ namespace Application.InterfaceService
     public interface IRatingService
     {
         Task<bool> RateUserAsync(CreateRatingModel createRatingModel);
+        Task<List<RatingViewModel>> SeeUserRatingList();
     }
 }

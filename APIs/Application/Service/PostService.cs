@@ -3,6 +3,7 @@ using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.Util;
 using Application.ViewModel.PostModel;
+using Application.ViewModel.WishListModel;
 using AutoMapper;
 using Domain.Entities;
 using System;
@@ -96,19 +97,19 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<Pagination<PostModel>> GetAllPost(int pageIndex,int pageSize)
+        public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex,int pageSize)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
-           var  listPostModel =_mapper.Map<List<PostModel>>(posts);
-            Pagination<PostModel> pagination = PaginationUtil<PostModel>.ToPagination(listPostModel, pageIndex, pageSize);
+           var  listPostModel =_mapper.Map<List<PostViewModel>>(posts);
+            Pagination<PostViewModel> pagination = PaginationUtil<PostViewModel>.ToPagination(listPostModel, pageIndex, pageSize);
             return pagination;
         }
 
-        public async Task<List<PostModel>> GetPostByCreatedById()
+        public async Task<List<PostViewModel>> GetPostByCreatedById()
         {
             var id = _claimService.GetCurrentUserId;
             var posts = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(id);
-            return _mapper.Map<List<PostModel>>(posts);
+            return _mapper.Map<List<PostViewModel>>(posts);
         }
 
         public async Task<PostDetailViewModel> GetPostDetailAsync(Guid postId)
@@ -123,10 +124,10 @@ namespace Application.Service
             return postDetail;
         }
 
-        public async Task<List<PostModel>> GetPostSortByCreationDay()
+        public async Task<List<PostViewModel>> GetPostSortByCreationDay()
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
-            return _mapper.Map<List<PostModel>>(posts);
+            return _mapper.Map<List<PostViewModel>>(posts);
         }
 
         public async Task<bool> RemovePostFromFavorite(Guid postId)
@@ -140,16 +141,16 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<WishList>> SeeAllFavoritePost()
+        public async Task<List<WishListViewModel>> SeeAllFavoritePost()
         {
             var listFavoritePost = await _unitOfWork.WishListRepository.FindWishListByUserId(_claimService.GetCurrentUserId);
             return listFavoritePost;
         }
 
-        public async Task<List<PostModel>> SortPostByCategory(int categoryId)
+        public async Task<List<PostViewModel>> SortPostByCategory(int categoryId)
         {
             var sortPost=await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
-            return _mapper.Map<List<PostModel>>(sortPost);
+            return _mapper.Map<List<PostViewModel>>(sortPost);
         }
 
         public async Task<bool> UpdatePost(UpdatePostModel postModel)

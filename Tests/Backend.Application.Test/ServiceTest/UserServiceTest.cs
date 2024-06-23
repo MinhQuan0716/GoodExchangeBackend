@@ -258,9 +258,9 @@ namespace Backend.Application.Test.ServiceTest
             var user = _fixture.Build<User>().Create();
             // var currentUserModel = _fixture.Build<CurrentUserModel>().With(x => x.Userid, user.Id).With(x=>x.Birthday, DateOnly.FromDateTime(DateTime.UtcNow)).Create();
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(user.Id);
-            _unitOfWorkMock.Setup(unit => unit.UserRepository.AddAsync(It.IsAny<User>())).Verifiable(Times.Once);
-            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.AddAsync(user)).Verifiable(Times.Once);
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+
             //Act
             var currentLoginUser = await _userService.GetCurrentLoginUser();
             //Assert

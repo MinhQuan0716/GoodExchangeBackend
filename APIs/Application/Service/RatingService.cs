@@ -36,5 +36,15 @@ namespace Application.Service
             await _unitOfWork.RatingRepository.AddAsync(rating);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+
+        public async Task<List<RatingViewModel>> SeeUserRatingList()
+        {
+            var listUserRatingReview = await _unitOfWork.RatingRepository.GetAllRatingByRatedUserId(_claimService.GetCurrentUserId);
+            if(listUserRatingReview.Count() > 0)
+            {
+                return listUserRatingReview;
+            }
+            return null;
+        }
     }
 }

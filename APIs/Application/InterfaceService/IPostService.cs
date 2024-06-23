@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.ViewModel.PostModel;
+using Application.ViewModel.WishListModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,14 +16,14 @@ namespace Application.InterfaceService
         Task<bool> CreatePost(CreatePostModel Post);
         Task<bool> UpdatePost(UpdatePostModel Post);
         Task<bool> DeletePost(Guid PostId);
-        Task<Pagination<PostModel>> GetAllPost(int pageIndex,int pageSize);
-        Task<List<PostModel>> GetPostSortByCreationDay();
-        Task<List<PostModel>> GetPostByCreatedById();
-        Task<List<PostModel>> SortPostByCategory(int categoryId);
+        Task<Pagination<PostViewModel>> GetAllPost(int pageIndex,int pageSize);
+        Task<List<PostViewModel>> GetPostSortByCreationDay();
+        Task<List<PostViewModel>> GetPostByCreatedById();
+        Task<List<PostViewModel>> SortPostByCategory(int categoryId);
         Task<bool> AddPostToWishList(Guid postId);
         Task<PostDetailViewModel> GetPostDetailAsync(Guid postId);  
         Task<bool> RemovePostFromFavorite(Guid postId);
-        Task<List<WishList>> SeeAllFavoritePost();
+        Task<List<WishListViewModel>> SeeAllFavoritePost();
         Task<PostDetailViewModel>GetPostDetailInUserCreatePostList(Guid postId);
     }
 }
