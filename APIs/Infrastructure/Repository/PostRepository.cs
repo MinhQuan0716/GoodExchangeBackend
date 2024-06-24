@@ -20,6 +20,32 @@ namespace Infrastructure.Repository
             _appDbContext = appDbContext;
         }
 
+        public async Task<List<PostViewModel>> GetAllPostForFilter()
+        {
+            return await _appDbContext.Posts.Where(x =>x.IsDelete == false)
+                                           .Select(x => new PostViewModel
+                                           {
+                                               PostId = x.Id,
+                                               PostContent = x.PostContent,
+                                               PostTitle = x.PostTitle,
+                                               CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                               Product = new ProductModel
+                                               {
+                                                   ProductName = x.Product.ProductName,
+                                                   ProductDescription = x.Product.ProductDescription,
+                                                   ProductId = x.ProductId,
+                                                   CategoryId = x.Product.CategoryId,
+                                                   CategoryName = x.Product.Category.CategoryName,
+                                                   ConditionId = x.Product.ConditionId,
+                                                   ConditionName = x.Product.ConditionType.ConditionType,
+                                                   ProductImageUrl = x.Product.ProductImageUrl,
+                                                   ProductPrice = x.Product.ProductPrice,
+                                                   ProductStatus = x.Product.ProductStatus,
+                                                   RequestedProduct = x.Product.RequestedProduct
+                                               }
+                                           }).ToListAsync();
+        }
+
         public async Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id)
         {
             var posts = await _appDbContext.Posts.Where(p => p.CreatedBy == id)
@@ -30,6 +56,7 @@ namespace Infrastructure.Repository
                 .ToListAsync();
             return posts;
         }
+
 
         public async Task<List<Post>> GetAllPostsWithDetailsAsync()
         {
@@ -91,6 +118,31 @@ namespace Infrastructure.Repository
             return postDetail;
         }
 
+        public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
+        {
+            return await _appDbContext.Posts.Where(x=>x.Product.ProductName==productName&&x.IsDelete==false)
+                                           .Select(x=>new PostViewModel
+                                           {
+                                               PostId=x.Id,
+                                               PostContent=x.PostContent,
+                                               PostTitle=x.PostTitle,
+                                               CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                               Product=new ProductModel
+                                               {
+                                                   ProductName=productName,
+                                                   ProductDescription=x.Product.ProductDescription,
+                                                   ProductId=x.ProductId,
+                                                   CategoryId=x.Product.CategoryId,
+                                                   CategoryName=x.Product.Category.CategoryName,
+                                                   ConditionId=x.Product.ConditionId,
+                                                   ConditionName=x.Product.ConditionType.ConditionType,
+                                                   ProductImageUrl=x.Product.ProductImageUrl,
+                                                   ProductPrice=x.Product.ProductPrice,
+                                                   ProductStatus=x.Product.ProductStatus,
+                                                   RequestedProduct=x.Product.RequestedProduct
+                                               }
+                                           }).ToListAsync();
+        }
 
         public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)
         {

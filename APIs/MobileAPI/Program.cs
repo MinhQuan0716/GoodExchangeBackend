@@ -63,7 +63,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
 //builder.Services.AddHangfireServer();
 
 /*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
-builder.Services.AddHostedService<SocketServerBackgroundService>();
+/*builder.Services.AddHostedService<SocketServerBackgroundService>();*/
 builder.Services.AddSignalR();
 var app = builder.Build();
 

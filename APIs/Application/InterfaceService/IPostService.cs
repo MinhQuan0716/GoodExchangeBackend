@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.ViewModel.CriteriaModel;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.WishListModel;
 using Domain.Entities;
@@ -25,5 +26,7 @@ namespace Application.InterfaceService
         Task<bool> RemovePostFromFavorite(Guid postId);
         Task<List<WishListViewModel>> SeeAllFavoritePost();
         Task<PostDetailViewModel>GetPostDetailInUserCreatePostList(Guid postId);
+        Task<List<PostViewModel>> SearchPostByProductName(string productName);
+        Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria);
     }
 }

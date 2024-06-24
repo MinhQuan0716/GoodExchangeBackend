@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.Service;
+using Application.ViewModel.CriteriaModel;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
@@ -180,6 +181,18 @@ namespace MobileAPI.Controllers
                 return NotFound();
             }
             return Ok(postDetail);
+        }
+        [HttpGet]   
+        public async Task<IActionResult> SearchPostByProductName(string productName)
+        {
+            var listPost=await _postService.SearchPostByProductName(productName);
+            return Ok(listPost);
+        }
+        [HttpPost]
+        public async Task<IActionResult> FilterPostByProductStatusAndProductPrice(PostCriteria postCriteria)
+        {
+            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(postCriteria);
+            return Ok(filterListPost);
         }
     }
 }

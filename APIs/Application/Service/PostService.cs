@@ -1,7 +1,9 @@
 ﻿using Application.Common;
+using Application.Criteria;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.Util;
+using Application.ViewModel.CriteriaModel;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.WishListModel;
 using AutoMapper;
@@ -24,7 +26,7 @@ namespace Application.Service
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            ,  IClaimService claimService, IUploadFile uploadFile)
+            , IClaimService claimService, IUploadFile uploadFile)
         {
             _uploadFile = uploadFile;
             _unitOfWork = unitOfWork;
@@ -37,19 +39,19 @@ namespace Application.Service
         public async Task<bool> AddPostToWishList(Guid postId)
         {
             var listPost = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
-            var wishlist= await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
-            if (listPost.Where(x=>x.Id==postId).Any()) 
+            var wishlist = await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
+            if (listPost.Where(x => x.Id == postId).Any())
             {
                 throw new Exception("You cannot add your own post to favorite list");
             }
-            if (wishlist.Where(x=>x.UserId==_claimService.GetCurrentUserId).Any())
+            if (wishlist.Where(x => x.UserId == _claimService.GetCurrentUserId).Any())
             {
                 throw new Exception("The post already in favorite list");
             }
             var favoritePost = new WishList
             {
-                UserId=_claimService.GetCurrentUserId,
-                PostId = postId 
+                UserId = _claimService.GetCurrentUserId,
+                PostId = postId
             };
             await _unitOfWork.WishListRepository.AddAsync(favoritePost);
             return await _unitOfWork.SaveChangeAsync() > 0;
@@ -57,13 +59,13 @@ namespace Application.Service
 
         public async Task<bool> BanPost(Guid postId)
         {
-           var post= await _unitOfWork.PostRepository.GetByIdAsync(postId);
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(postId);
             if (post == null)
             {
                 throw new Exception("Post not found");
             }
             _unitOfWork.PostRepository.SoftRemove(post);
-            return await _unitOfWork.SaveChangeAsync()>0;
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
@@ -71,7 +73,7 @@ namespace Application.Service
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
-            if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice==null)
+            if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
             {
                 newProduct.ProductPrice = 0;
             }
@@ -97,10 +99,20 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex,int pageSize)
+        public async Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria)
+        {
+            var listPostModel = await _unitOfWork.PostRepository.GetAllPostForFilter();
+            ICriteria productStatusCriteria = new CriteriaProductStatus(postCriteria.ProductStatus);
+            ICriteria productPriceCriteria = new CriteriaProductionPrice(postCriteria.ProductPrice);
+            ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
+            var filterPostList = andCriteria.MeetCriteria(listPostModel);
+            return filterPostList;
+        }
+
+        public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
         {
             var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
-           var  listPostModel =_mapper.Map<List<PostViewModel>>(posts);
+            var listPostModel = _mapper.Map<List<PostViewModel>>(posts);
             Pagination<PostViewModel> pagination = PaginationUtil<PostViewModel>.ToPagination(listPostModel, pageIndex, pageSize);
             return pagination;
         }
@@ -132,13 +144,26 @@ namespace Application.Service
 
         public async Task<bool> RemovePostFromFavorite(Guid postId)
         {
-            var foundList=await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
-           var wishList=foundList.Where(x=>x.PostId== postId&&x.UserId==_claimService.GetCurrentUserId).Single();
-            if (wishList != null)
+            try
             {
-                _unitOfWork.WishListRepository.SoftRemove(wishList);
+                var foundList = await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
+                var wishList = foundList.Where(x => x.PostId == postId && x.UserId == _claimService.GetCurrentUserId).Single();
+                if (wishList != null)
+                {
+                    _unitOfWork.WishListRepository.SoftRemove(wishList);
+                }
+            }
+            catch
+            {
+                throw new Exception("You already remove this post");
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
+        {
+            var listSearchPost = await _unitOfWork.PostRepository.SearchPostByProductName(productName);
+            return listSearchPost;
         }
 
         public async Task<List<WishListViewModel>> SeeAllFavoritePost()
@@ -149,7 +174,7 @@ namespace Application.Service
 
         public async Task<List<PostViewModel>> SortPostByCategory(int categoryId)
         {
-            var sortPost=await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
+            var sortPost = await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
             return _mapper.Map<List<PostViewModel>>(sortPost);
         }
 
@@ -158,9 +183,10 @@ namespace Application.Service
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             if (postModel.productModel.ProductImage != null)
             {
-                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage,"Product");
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
                 newProduct.ProductImageUrl = imageUrl;
-            } else
+            }
+            else
             {
                 var oldProduct = await _unitOfWork.ProductRepository.GetByIdAsync(postModel.productModel.ProductId);
                 newProduct.ProductImageUrl = oldProduct.ProductImageUrl;

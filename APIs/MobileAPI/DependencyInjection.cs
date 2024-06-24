@@ -30,7 +30,6 @@ namespace MobileAPI
             services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<IExchangeConditionService, ExchangeConditionService>();
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<ISocketServerService, SocketServerService>();
             services.AddScoped<ISubcriptionService, SubcriptionService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IMessageService, MessageService>();
