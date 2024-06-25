@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Domain.Entities;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 namespace Application.Service
 {
     public class PaymentService : IPaymentService
@@ -18,7 +20,8 @@ namespace Application.Service
         private readonly IClaimService _claimsService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig, IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService)
+        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig
+            , IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             this.zaloPayConfig = zaloPayConfig.Value;
             _claimsService = claimsService;
@@ -63,25 +66,45 @@ namespace Application.Service
         public string GetPayemntUrl()
         {
             string paymentUrl = "";
-            long amount=50000;
-            string key=_claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
-            string keyForCount=_claimsService.GetCurrentUserId.ToString()+"_"+"Count";
-            int count = _cacheService.GetData<int>(keyForCount);
-            if(count!=null)
+            /* long amount=50000;
+             string key=_claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
+             string keyForCount=_claimsService.GetCurrentUserId.ToString()+"_"+"Count";
+             int count = _cacheService.GetData<int>(keyForCount);
+             if(count!=null)
+             {
+                 count++;
+             }
+             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser, DateTime.UtcNow.GetTimeStamp()
+                 , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString()+"0"+count.ToString(), "zalopayapp", "ZaloPay demo");
+             zaloPayRequest.MakeSignature(zaloPayConfig.Key1);
+             (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
+             if (createZaloPayLinkResult)
+             {
+                 _cacheService.SetData<string>(key, zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
+                 _cacheService.SetData<long>(zaloPayRequest.AppTransId, amount, DateTimeOffset.UtcNow.AddDays(2));
+                 _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(20));
+                 paymentUrl = createZaloPayMessage;
+             }*/
+         /*   long amount = 5000;
+            string userId=_claimsService.GetCurrentUserId.ToString();
+            userId.Replace("-", "");
+            string key = _claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
+            key.Replace("-", "");
+            string email = _unitOfWork.UserRepository.GetByIdAsync(_claimsService.GetCurrentUserId).Result.Email;
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            data.Add("email", email);
+            CreateExtraDataModel createExtraDataModel = new CreateExtraDataModel(data);
+            string base64EncodedData=createExtraDataModel.ToBase64String();
+            var momoRequest = new MomoOneTimePaymentRequest(momoConfig.PartnerCode
+                , userId, amount, key
+                , "Nap vao vi", momoConfig.ReturnUrl, momoConfig.IpnUrl, "payWithATM", "eyJ1c2VybmFtZSI6ICJtb21vIn0=");
+            momoRequest.MakeSignature(momoConfig.AccessKey, momoConfig.SecretKey);
+            (bool isCreatedMomo, string momoPaymentUrl) = momoRequest.GetLink(momoConfig.PaymentUrl);
+            if(isCreatedMomo)
             {
-                count++;
-            }
-            var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser, DateTime.UtcNow.GetTimeStamp()
-                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString()+"0"+count.ToString(), "zalopayapp", "ZaloPay demo");
-            zaloPayRequest.MakeSignature(zaloPayConfig.Key1);
-            (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
-            if (createZaloPayLinkResult)
-            {
-                _cacheService.SetData<string>(key, zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
-                _cacheService.SetData<long>(zaloPayRequest.AppTransId, amount, DateTimeOffset.UtcNow.AddDays(2));
-                _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(20));
-                paymentUrl = createZaloPayMessage;
-            }
+                paymentUrl = momoPaymentUrl;
+            }*/
+
             return paymentUrl;
         }
 

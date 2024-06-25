@@ -27,4 +27,9 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="VnPay\Lib\" />
+    <Folder Include="VnPay\Response\" />
+  </ItemGroup>
+
 </Project>

@@ -194,5 +194,16 @@ namespace MobileAPI.Controllers
             var filterListPost=await _postService.FilterPostByProductStatusAndPrice(postCriteria);
             return Ok(filterListPost);
         }
+        [Authorize]
+        [HttpGet]   
+        public async Task<IActionResult>CheckPostIfExistInWishList(Guid postId)
+        {
+            var isExisted = await _postService.CheckIfPostInWishList(postId);
+            if(!isExisted)
+            {
+                return NotFound();
+            }
+            return Ok(isExisted);
+        }
     }
 }

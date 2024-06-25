@@ -68,6 +68,17 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
+        public async Task<bool> CheckIfPostInWishList(Guid postId)
+        {
+            var listFavoritePost = await SeeAllFavoritePost();
+            bool isExsited = false;
+            if(listFavoritePost.Where(x=>x.post.PostId== postId).Any()) 
+            {
+                isExsited = true;
+            }
+            return isExsited;
+        }
+
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
