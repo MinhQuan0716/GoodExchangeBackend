@@ -42,8 +42,7 @@ namespace MobileAPI.Controllers
             var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
             if (isUpdated != null)
             {
-                string redirectUrl = "exp://127.0.0.1:8081";
-                return Redirect(redirectUrl);
+                return Ok();
             }
             return BadRequest();
         }
