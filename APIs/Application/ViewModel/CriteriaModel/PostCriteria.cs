@@ -9,6 +9,6 @@ namespace Application.ViewModel.CriteriaModel
     public class PostCriteria
     {
         public string? ProductStatus { get; set; }
-        public int? ProductPrice { get; set; }
+        public string? ExchangeCondition { get; set; }
     }
 }

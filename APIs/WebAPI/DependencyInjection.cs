@@ -16,6 +16,7 @@ namespace WebAPI
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IClaimService,ClaimService>();
+            services.AddScoped<ICurrentUserIp,CurrentUserIp>();
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPaymentService, PaymentService>();

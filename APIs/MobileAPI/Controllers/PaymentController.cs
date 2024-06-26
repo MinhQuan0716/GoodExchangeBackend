@@ -1,22 +1,20 @@
 ﻿using Application.InterfaceService;
+using Application.VnPay.Response;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobileAPI.Handles;
 using System.Net.WebSockets;
 
 namespace MobileAPI.Controllers
 {
     public class PaymentController : BaseController
     {
-        private readonly PaymentStatusWebSocketHandler _webSocketHandler;
         private readonly IPaymentService _paymentService;
-      
+
         public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
-            _webSocketHandler = new PaymentStatusWebSocketHandler(paymentService);
         }
         [Authorize]
         [HttpGet]
@@ -29,25 +27,23 @@ namespace MobileAPI.Controllers
             }
             return Ok(payemntUrl);
         }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AddUserBalance()
+        [HttpGet]
+        public async Task<IActionResult> VnPayReturn([FromQuery] VnPayResponse vnPayResponse)
         {
-            bool isAdded = await _paymentService.AddMoneyToWallet();
-            if (isAdded)
+            var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
+            if (isUpdated!=null)
             {
-                return Ok();
+                return Ok(isUpdated);
             }
-            return BadRequest();
+            return BadRequest(isUpdated);
         }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> UserRefund()
+        [HttpGet]
+        public async Task<IActionResult> VnPayRedirect([FromQuery] VnPayResponse vnPayResponse)
         {
-            bool refundResult = await _paymentService.Refund();
-            if (refundResult)
+            var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
+            if (isUpdated != null)
             {
-                return Ok(refundResult);
+                return Redirect("http://152.42.226.158:7777/swagger/index.html");
             }
             return BadRequest();
         }

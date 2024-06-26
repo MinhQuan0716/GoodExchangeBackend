@@ -114,7 +114,7 @@ namespace Application.Service
         {
             var listPostModel = await _unitOfWork.PostRepository.GetAllPostForFilter();
             ICriteria productStatusCriteria = new CriteriaProductStatus(postCriteria.ProductStatus);
-            ICriteria productPriceCriteria = new CriteriaProductionPrice(postCriteria.ProductPrice);
+            ICriteria productPriceCriteria = new CriteriaExchangeCondition(postCriteria.ExchangeCondition);
             ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
             var filterPostList = andCriteria.MeetCriteria(listPostModel);
             return filterPostList;
