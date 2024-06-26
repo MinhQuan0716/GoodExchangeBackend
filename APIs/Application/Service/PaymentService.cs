@@ -50,7 +50,7 @@ namespace Application.Service
             paymentUrl = vnpayRequest.GetLink(vnPayConfig.PaymentUrl, vnPayConfig.HashSecret);
             if (paymentUrl != null)
             {
-                _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(1));
+                _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(24));
             }
             return paymentUrl;
         }
