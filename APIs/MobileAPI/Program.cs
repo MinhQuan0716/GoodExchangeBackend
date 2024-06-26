@@ -2,6 +2,7 @@ using Application.Common;
 using Application.InterfaceService;
 using Application.SchemaFilter;
 using Application.Service;
+using Application.VnPay.Config;
 using Application.ZaloPay.Config;
 using Hangfire;
 using Infrastructure;
@@ -26,6 +27,7 @@ builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
+builder.Services.Configure<VnPayConfig>(builder.Configuration.GetSection(VnPayConfig.ConfigName));
 /*builder.Services.AddHangfire(configuration => configuration
                      .UseSimpleAssemblyNameTypeSerializer()
                      .UseRecommendedSerializerSettings()

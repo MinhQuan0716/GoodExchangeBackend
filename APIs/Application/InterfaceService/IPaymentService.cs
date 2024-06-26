@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.VnPay.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace Application.InterfaceService
         public int ReturnTransactionStatus();
         public Task<bool> AddMoneyToWallet();
         public Task<bool> Refund();
+        public Task<VnPayIpnResponse> HandleIpn();
     }
 }

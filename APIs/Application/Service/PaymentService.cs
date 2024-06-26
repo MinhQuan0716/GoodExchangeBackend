@@ -12,21 +12,28 @@ using Microsoft.Extensions.Options;
 using Domain.Entities;
 using System.Text.Json.Nodes;
 using System.Text.Json;
+using Application.VnPay.Config;
+using Application.VnPay.Request;
+using Application.VnPay.Response;
 namespace Application.Service
 {
     public class PaymentService : IPaymentService
     {
         private readonly ZaloPayConfig zaloPayConfig;
+        private readonly VnPayConfig vnPayConfig;
         private readonly IClaimService _claimsService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig
-            , IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService)
+        private readonly ICurrentUserIp _currentUserIp;
+        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig,IOptions<VnPayConfig> vnpayConfig
+            , IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService,ICurrentUserIp currentUserIp)
         {
             this.zaloPayConfig = zaloPayConfig.Value;
+            this.vnPayConfig = vnpayConfig. Value;
             _claimsService = claimsService;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
+            _currentUserIp = currentUserIp;
         }
 
         public async Task<bool> AddMoneyToWallet()
@@ -85,27 +92,38 @@ namespace Application.Service
                  _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(20));
                  paymentUrl = createZaloPayMessage;
              }*/
-         /*   long amount = 5000;
-            string userId=_claimsService.GetCurrentUserId.ToString();
-            userId.Replace("-", "");
-            string key = _claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
+            /*   long amount = 5000;
+               string userId=_claimsService.GetCurrentUserId.ToString();
+               userId.Replace("-", "");
+               string key = _claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
+               key.Replace("-", "");
+               string email = _unitOfWork.UserRepository.GetByIdAsync(_claimsService.GetCurrentUserId).Result.Email;
+               Dictionary<string, string> data = new Dictionary<string, string>();
+               data.Add("email", email);
+               CreateExtraDataModel createExtraDataModel = new CreateExtraDataModel(data);
+               string base64EncodedData=createExtraDataModel.ToBase64String();
+               var momoRequest = new MomoOneTimePaymentRequest(momoConfig.PartnerCode
+                   , userId, amount, key
+                   , "Nap vao vi", momoConfig.ReturnUrl, momoConfig.IpnUrl, "payWithATM", "eyJ1c2VybmFtZSI6ICJtb21vIn0=");
+               momoRequest.MakeSignature(momoConfig.AccessKey, momoConfig.SecretKey);
+               (bool isCreatedMomo, string momoPaymentUrl) = momoRequest.GetLink(momoConfig.PaymentUrl);
+               if(isCreatedMomo)
+               {
+                   paymentUrl = momoPaymentUrl;
+               }*/
+            decimal amount = 50000;
+            string key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
             key.Replace("-", "");
-            string email = _unitOfWork.UserRepository.GetByIdAsync(_claimsService.GetCurrentUserId).Result.Email;
-            Dictionary<string, string> data = new Dictionary<string, string>();
-            data.Add("email", email);
-            CreateExtraDataModel createExtraDataModel = new CreateExtraDataModel(data);
-            string base64EncodedData=createExtraDataModel.ToBase64String();
-            var momoRequest = new MomoOneTimePaymentRequest(momoConfig.PartnerCode
-                , userId, amount, key
-                , "Nap vao vi", momoConfig.ReturnUrl, momoConfig.IpnUrl, "payWithATM", "eyJ1c2VybmFtZSI6ICJtb21vIn0=");
-            momoRequest.MakeSignature(momoConfig.AccessKey, momoConfig.SecretKey);
-            (bool isCreatedMomo, string momoPaymentUrl) = momoRequest.GetLink(momoConfig.PaymentUrl);
-            if(isCreatedMomo)
-            {
-                paymentUrl = momoPaymentUrl;
-            }*/
-
+            var vnpayRequest = new VnPayRequest(vnPayConfig.Version,
+                vnPayConfig.TmnCode, DateTime.UtcNow,
+                _currentUserIp.UserIp, amount, "VND", "other", "Nap tien vao vi", vnPayConfig.ReturnUrl, key);
+            paymentUrl = vnpayRequest.GetLink(vnPayConfig.PaymentUrl, vnPayConfig.HashSecret);
             return paymentUrl;
+        }
+
+        public Task<VnPayIpnResponse> HandleIpn()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> Refund()

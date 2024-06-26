@@ -186,6 +186,10 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> SearchPostByProductName(string productName)
         {
             var listPost=await _postService.SearchPostByProductName(productName);
+            if (listPost.Count() == 0)
+            {
+                return NotFound();
+            }
             return Ok(listPost);
         }
         [HttpPost]

@@ -120,7 +120,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
-            return await _appDbContext.Posts.Where(x=>x.Product.ProductName==productName&&x.IsDelete==false)
+            return await _appDbContext.Posts.Where(x=>x.Product.ProductName.Contains(productName)&&x.IsDelete==false)
                                            .Select(x=>new PostViewModel
                                            {
                                                PostId=x.Id,
