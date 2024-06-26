@@ -42,7 +42,8 @@ namespace MobileAPI.Controllers
             var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
             if (isUpdated != null)
             {
-                return Redirect("http://152.42.226.158:7777/swagger/index.html");
+                string redirectUrl = "com.dieuanh14.goodsexchange://expo-development-client/?url=http%3A%2F%2F192.168.1.9%3A8081";
+                return Redirect(redirectUrl);
             }
             return BadRequest();
         }
