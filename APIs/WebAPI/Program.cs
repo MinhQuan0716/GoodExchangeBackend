@@ -2,7 +2,6 @@ using Application.Common;
 using WebAPI;
 using Infrastructure;
 using Infrastructure.Mappers;
-using Application.ZaloPay.Config;
 using Application.SchemaFilter;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -18,7 +17,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(configuration);
-builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

@@ -10,9 +10,6 @@ namespace Application.InterfaceService
     public interface IPaymentService
     {
         public string GetPayemntUrl();
-      //  public int ReturnTransactionStatus();
-     //   public Task<bool> AddMoneyToWallet();
-       // public Task<bool> Refund();
         public Task<VnPayIpnResponse> HandleIpn(VnPayResponse vnPayResponse);
     }
 }

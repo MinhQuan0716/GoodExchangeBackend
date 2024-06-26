@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MobileAPI.MobileService;
 using Application.Service;
-using Application.ZaloPay.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Util;
 using Application.CacheService;

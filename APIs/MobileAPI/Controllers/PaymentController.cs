@@ -4,7 +4,6 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
 
 namespace MobileAPI.Controllers
 {
