@@ -26,13 +26,18 @@ namespace Infrastructure.Repository
 
         public async Task<WalletViewModel> GetWalletByUserId(Guid userId)
         {
-            return await _appDbContext.Wallets.Where(x=>x.OwnerId==userId)
+           var userWallet= await _appDbContext.Wallets.Where(x=>x.OwnerId==userId)
                                               .Select(x=>new WalletViewModel
                                               {
                                                   Email=x.Owner.Email,
                                                   Username=x.Owner.UserName,
                                                   UserBalance=x.UserBalance
                                               }).SingleAsync();
+            if(userWallet!=null)
+            {
+                return userWallet;
+            }
+            return null;
         }
     }
 }
