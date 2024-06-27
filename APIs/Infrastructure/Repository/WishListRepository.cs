@@ -32,7 +32,7 @@ namespace Infrastructure.Repository
                     post = new PostViewModel
                     {
                         PostId = x.Post.Id,
-                        CreationDate = DateOnly.FromDateTime(x.Post.CreationDate.Value),
+                        CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                         PostContent = x.Post.PostContent,
                         PostTitle = x.Post.PostTitle,
                         Product = new ProductModel

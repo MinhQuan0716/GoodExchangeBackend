@@ -29,5 +29,6 @@ namespace Application.InterfaceService
         Task<List<PostViewModel>> SearchPostByProductName(string productName);
         Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria);
         Task<bool> CheckIfPostInWishList(Guid postId);
+        Task<List<PostViewModel>> GetAllPostWithDapper();
     }
 }

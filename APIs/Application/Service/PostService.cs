@@ -122,10 +122,16 @@ namespace Application.Service
 
         public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
         {
-            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
-            var listPostModel = _mapper.Map<List<PostViewModel>>(posts);
+            var listPostModel = await _unitOfWork.PostRepository.GetAllPostWithDapper();
             Pagination<PostViewModel> pagination = PaginationUtil<PostViewModel>.ToPagination(listPostModel, pageIndex, pageSize);
             return pagination;
+        }
+
+        public async Task<List<PostViewModel>> GetAllPostWithDapper()
+        {
+            var listPostWitDapper = await _unitOfWork.PostRepository.GetAllPostWithDapper();
+            //var listPostViewModel = _mapper.Map<List<PostViewModel>>(listPostWitDapper);
+            return listPostWitDapper;
         }
 
         public async Task<List<PostViewModel>> GetPostByCreatedById()

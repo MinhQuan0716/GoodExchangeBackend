@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MobileAPI;
 using MobileAPI.Hubs;
+using MobileAPI.Middleware;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
@@ -88,9 +89,9 @@ if (app.Environment.IsProduction())
     });
 }
 app.UseAuthorization();
-
+app.UseMiddleware<PerformanceMiddleware>();
 app.UseSession();
-app.UseWebSockets();
+/*app.UseWebSockets();*/
 
 //app.UseRateLimiter();
 //app.MapHangfireDashboard("/dashboard");
