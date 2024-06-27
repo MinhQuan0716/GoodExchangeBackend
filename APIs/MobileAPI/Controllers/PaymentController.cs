@@ -42,7 +42,7 @@ namespace MobileAPI.Controllers
             var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
             if (isUpdated != null)
             {
-                return Ok();
+                return Ok("Payment success");
             }
             return BadRequest();
         }
