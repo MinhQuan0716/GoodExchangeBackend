@@ -320,6 +320,14 @@ namespace Infrastructure.Repository
 
             return postVm.ToList();
         }
+
+        public async Task<Guid> GetProductIdFromPostId(Guid postId)
+        {
+            return await _appDbContext.Posts
+            .Where(p => p.Id == postId)
+            .Select(p => p.Product.Id)
+            .FirstOrDefaultAsync();
+        }
     }
 }
 
