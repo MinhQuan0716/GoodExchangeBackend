@@ -209,10 +209,19 @@ namespace Application.Service
                     await _unitOfWork.UserRepository.AddAsync(newAcc);
                     await _unitOfWork.SaveChangeAsync();
                     loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
-                    var VerifyUserId = await CreateVerifyUser(loginUser.Id);
-                    var WalletId = await CreateWallet(loginUser.Id);
-                    loginUser.WalletId = WalletId;
-                    loginUser.VerifyUserId = VerifyUserId;
+                    var findUserWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(loginUser.Id);
+                    var findVerifyByUserId=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(loginUser.Id);
+                    if (findUserWallet == null)
+                    {
+                        var WalletId = await CreateWallet(loginUser.Id);
+                        loginUser.WalletId = WalletId;
+                    }
+                    if(findVerifyByUserId == null)
+                    {
+                        var VerifyUserId = await CreateVerifyUser(loginUser.Id);
+
+                        loginUser.VerifyUserId = VerifyUserId;
+                    }
                     await _unitOfWork.UserRepository.UpdateUserAsync(loginUser);
                     await _unitOfWork.SaveChangeAsync();
                 }

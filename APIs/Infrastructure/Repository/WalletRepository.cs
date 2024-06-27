@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.WalletModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,6 +22,17 @@ namespace Infrastructure.Repository
         public async Task<Wallet> FindWalletByUserId(Guid userId)
         {
             return await _appDbContext.Wallets.Where(x => x.OwnerId == userId).SingleOrDefaultAsync();
+        }
+
+        public async Task<WalletViewModel> GetWalletByUserId(Guid userId)
+        {
+            return await _appDbContext.Wallets.Where(x=>x.OwnerId==userId)
+                                              .Select(x=>new WalletViewModel
+                                              {
+                                                  Email=x.Owner.Email,
+                                                  Username=x.Owner.UserName,
+                                                  UserBalance=x.UserBalance
+                                              }).SingleAsync();
         }
     }
 }

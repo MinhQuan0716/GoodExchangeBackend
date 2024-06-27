@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.WalletModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceRepository
     public  interface IWalletRepository:IGenericRepository<Wallet>
     {
         Task<Wallet> FindWalletByUserId(Guid userId);
+        Task<WalletViewModel> GetWalletByUserId (Guid userId);
     }
 }

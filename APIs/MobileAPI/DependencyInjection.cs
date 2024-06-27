@@ -22,6 +22,7 @@ namespace MobileAPI
             services.AddScoped<ICurrentUserIp, CurrentUserIp>();    
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWalletService, WalletService>();    
             services.AddScoped<IPaymentService, PaymentService>();  
             services.AddScoped<ISendMailHelper, SendMailHelper>();  
             services.AddScoped<IPostService, PostService>();
