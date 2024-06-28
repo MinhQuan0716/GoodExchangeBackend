@@ -19,5 +19,6 @@ namespace Application.InterfaceRepository
         Task<List<PostViewModel>> SearchPostByProductName (string productName);
         Task<List<PostViewModel>> GetAllPostForFilter();
         Task<List<PostViewModel>> GetAllPostWithDapper();
+        Task<Guid> GetProductIdFromPostId(Guid postId);
     }
 }

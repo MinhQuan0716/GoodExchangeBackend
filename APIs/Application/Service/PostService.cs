@@ -197,22 +197,27 @@ namespace Application.Service
 
         public async Task<bool> UpdatePost(UpdatePostModel postModel)
         {
-            var newProduct = _mapper.Map<Product>(postModel.productModel);
+            var productId = await _unitOfWork.PostRepository.GetProductIdFromPostId(postModel.PostId);
+            var existingProduct = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+
+            if (existingProduct == null)
+            {
+                // Handle the case where the product does not exist
+                throw new Exception("Product not found");
+            }
+
+            // Map the updated product details
+            _mapper.Map(postModel.productModel, existingProduct);
             if (postModel.productModel.ProductImage != null)
             {
                 var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
-                newProduct.ProductImageUrl = imageUrl;
+                existingProduct.ProductImageUrl = imageUrl;
             }
-            else
-            {
-                var oldProduct = await _unitOfWork.ProductRepository.GetByIdAsync(postModel.productModel.ProductId);
-                newProduct.ProductImageUrl = oldProduct.ProductImageUrl;
-            }
-            //_unitOfWork.ProductRepository.Update(newProduct);
+            _unitOfWork.ProductRepository.Update(existingProduct);
             var oldPost = await _unitOfWork.PostRepository.GetByIdAsync(postModel.PostId);
             oldPost.PostTitle = postModel.PostTitle;
             oldPost.PostContent = postModel.PostContent;
-            oldPost.Product = newProduct;
+            oldPost.Product = existingProduct;
             _unitOfWork.PostRepository.Update(oldPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
