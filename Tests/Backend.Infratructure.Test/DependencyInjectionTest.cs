@@ -24,7 +24,7 @@ namespace Backend.Infratructure.Test
         public DependencyInjectionTest()
         {
             var service=new ServiceCollection();
-            service.AddInfrastructureService("Testing");
+            service.AddInfrastructureService("Server=Test;uid=Tester;password=Tested;Database=TestDb;TrustServerCertificate=True;Encrypt=false;MultipleActiveResultSets=true");
             service.AddDbContext<AppDbContext>(
                option => option.UseInMemoryDatabase("test"));
             service.AddMobileAPIService("Test","TestMobile");
