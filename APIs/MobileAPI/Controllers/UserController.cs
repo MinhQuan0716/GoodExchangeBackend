@@ -65,10 +65,10 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
         {
             string verifycode = HttpContext.Session.GetString("verifycode");
-            HttpContext.Session.Clear();
             bool isResetSuccess = await _userService.ResetPassword(verifycode, resetPasswordModel);
             if (isResetSuccess)
             {
+                HttpContext.Session.Clear();
                 return Ok();
             }
             return BadRequest();

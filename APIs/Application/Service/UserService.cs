@@ -140,6 +140,10 @@ namespace Application.Service
             var user = await _unitOfWork.UserRepository.FindUserByEmail(email);
             if (user != null)
             {
+                if (resetPasswordModel.Password.CheckPassword(user.PasswordHash))
+                {
+                    throw new Exception("Password must not be the same as old password");
+                }
                 user.PasswordHash = resetPasswordModel.Password.Hash();
                 _unitOfWork.UserRepository.Update(user);
                 _cacheService.RemoveData(code);

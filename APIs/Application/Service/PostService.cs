@@ -112,7 +112,7 @@ namespace Application.Service
 
         public async Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria)
         {
-            var listPostModel = await _unitOfWork.PostRepository.GetAllPostForFilter();
+            var listPostModel = await _unitOfWork.PostRepository.GetAllPostWithDapper();
             ICriteria productStatusCriteria = new CriteriaProductStatus(postCriteria.ProductStatus);
             ICriteria productPriceCriteria = new CriteriaExchangeCondition(postCriteria.ExchangeCondition);
             ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
