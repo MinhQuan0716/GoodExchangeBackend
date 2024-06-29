@@ -83,7 +83,7 @@ namespace MobileAPI.Controllers
         /// <param name="post"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut]
+        [HttpPatch]
         public async Task<IActionResult> UpdatePost([FromForm] UpdatePostModel post)
         {
             bool isUpdated = await _postService.UpdatePost(post);

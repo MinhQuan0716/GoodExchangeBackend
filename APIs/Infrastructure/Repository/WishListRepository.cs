@@ -42,9 +42,7 @@ namespace Infrastructure.Repository
                             CategoryName=x.Post.Product.Category.CategoryName,
                             ConditionId=x.Post.Product.ConditionId,
                             ConditionName= x.Post.Product.ConditionType.ConditionType,
-                            ProductDescription=x.Post.Product.ProductDescription,
                             ProductImageUrl=x.Post.Product.ProductImageUrl,
-                            ProductName=x.Post.Product.ProductName, 
                             ProductPrice=x.Post.Product.ProductPrice,
                             RequestedProduct=x.Post.Product.RequestedProduct
                         }

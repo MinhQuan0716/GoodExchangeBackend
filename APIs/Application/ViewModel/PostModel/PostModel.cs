@@ -19,9 +19,7 @@ namespace Application.ViewModel.PostModel
     public class ProductModel
     {
         public Guid ProductId { get; set; }
-        public string ProductName { get; set; }
         public string ProductImageUrl { get; set; }
-        public string ProductDescription { get; set; }
         public string ProductStatus { get; set; }
         public long ProductPrice { get; set; }
         public int? ConditionId { get; set; }

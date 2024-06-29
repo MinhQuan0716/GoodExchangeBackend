@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.ViewModel.ProductModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -9,9 +10,10 @@ namespace Application.ViewModel.PostModel
 {
     public class PostDetailViewModel
     {
-        public string ProductName { get; set; }
+        public Guid PostId { get; set; }
+        public string PostTitle { get; set; }
+        public string PostContent { get; set; }
         public string ProductImageUrl { get; set; }
-        public string ProductDescription { get; set; }
         public long ProductPrice { get; set; }
         public string ProductStatus { get; set; }
         public string RequestedProduct {  get; set; }

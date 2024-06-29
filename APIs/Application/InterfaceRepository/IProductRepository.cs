@@ -9,5 +9,6 @@ namespace Application.InterfaceRepository
 {
     public interface IProductRepository:IGenericRepository<Product>
     {
+      //  Task<Product> FindProductByProductName(string productName);
     }
 }

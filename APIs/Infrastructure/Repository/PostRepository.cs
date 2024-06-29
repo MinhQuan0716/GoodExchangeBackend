@@ -2,6 +2,7 @@
 using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.ViewModel.PostModel;
+using Application.ViewModel.ProductModel;
 using Dapper;
 using Domain.Entities;
 using Microsoft.Data.SqlClient;
@@ -38,9 +39,7 @@ namespace Infrastructure.Repository
                                                PostTitle = x.PostTitle,
                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                Product = new ProductModel
-                                               {
-                                                   ProductName = x.Product.ProductName,
-                                                   ProductDescription= x.Product.ProductDescription,
+                                               { 
                                                    ProductId = x.ProductId,
                                                    CategoryId = x.Product.CategoryId,
                                                    CategoryName = x.Product.Category.CategoryName,
@@ -103,8 +102,10 @@ namespace Infrastructure.Repository
         {
             var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId && x.IsDelete == false).Select(x => new PostDetailViewModel
             {
-                ProductName = x.Product.ProductName,
-                ProductDescription = x.Product.ProductDescription,
+              
+                PostId=x.Id,
+                PostContent=x.PostContent,
+                PostTitle=x.PostTitle,
                 ProductImageUrl = x.Product.ProductImageUrl,
                 ProductPrice = x.Product.ProductPrice,
                 ProductQuantity = x.Product.ProductQuantity.Value,
@@ -177,36 +178,12 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
-            /*return await _appDbContext.Posts.Where(x => x.Product.ProductName.Contains(productName) && x.IsDelete == false)
-                                           .Select(x => new PostViewModel
-                                           {
-                                               PostId = x.Id,
-                                               PostContent = x.PostContent,
-                                               PostTitle = x.PostTitle,
-                                               CreationDate =DateOnly.FromDateTime( x.CreationDate.Value),
-                                               Product = new ProductModel
-                                               {
-                                                   ProductName = productName,
-                                                   ProductDescription = x.Product.ProductDescription,
-                                                   ProductId = x.ProductId,
-                                                   CategoryId = x.Product.CategoryId,
-                                                   CategoryName = x.Product.Category.CategoryName,
-                                                   ConditionId = x.Product.ConditionId,
-                                                   ConditionName = x.Product.ConditionType.ConditionType,
-                                                   ProductImageUrl = x.Product.ProductImageUrl,
-                                                   ProductPrice = x.Product.ProductPrice,
-                                                   ProductStatus = x.Product.ProductStatus,
-                                                   RequestedProduct = x.Product.RequestedProduct
-                                               }
-                                           }).ToListAsync();*/
             string sql = @"
                      SELECT p.Id,
                     p.PostTitle,
                     p.PostContent,
          p.CreationDate,
          prod.Id AS ProductId,
-         prod.ProductName,
-         prod.ProductDescription,
          prod.CategoryId,
          cat.CategoryName,
          prod.ConditionId,
@@ -219,7 +196,7 @@ namespace Infrastructure.Repository
   INNER JOIN Products prod ON p.ProductId = prod.Id
   INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
   INNER JOIN ExchangeConditions ec  ON prod.ConditionId=ec.ConditionId
-  WHERE p.IsDelete = 0 AND prod.ProductName LIKE @SearchTerm;";
+  WHERE p.IsDelete = 0 AND p.PostTitle LIKE @SearchTerm;";
             var parameters = new { SearchTerm = "%" + productName + "%" };
             var queryResult = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>
                 (
@@ -234,8 +211,6 @@ namespace Infrastructure.Repository
                     postViewModel.Product = new ProductModel
                     {
                         CategoryId = productViewModel.CategoryId,
-                        ProductName = productViewModel.ProductName,
-                        ProductDescription = productViewModel.ProductDescription,
                         ProductPrice = productViewModel.ProductPrice,
                         CategoryName = productViewModel.CategoryName,
                         ConditionId = productViewModel.ConditionId,
@@ -272,8 +247,6 @@ namespace Infrastructure.Repository
             p.PostContent,
             p.CreationDate,
             prod.Id AS ProductId,
-            prod.ProductName,
-            prod.ProductDescription,
             prod.CategoryId AS CategoryId,
             cat.CategoryName ,
             prod.ConditionId AS ConditionId,
@@ -301,8 +274,6 @@ namespace Infrastructure.Repository
                     postViewModel.Product = new ProductModel
                     {
                         ProductId = product.ProductId,
-                        ProductName = product.ProductName.IsNullOrEmpty()?"Name is null":product.ProductName,
-                        ProductDescription = product.ProductDescription.IsNullOrEmpty()?"Description is null":product.ProductDescription,
                         ProductPrice = product.ProductPrice,
                         CategoryId = product.CategoryId,
                         CategoryName = product.CategoryName,
