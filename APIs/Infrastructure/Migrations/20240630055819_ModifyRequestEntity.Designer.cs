@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240630055819_ModifyRequestEntity")]
+    partial class ModifyRequestEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -479,8 +482,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RequestStatusId")
-                        .HasColumnType("int");
+                    b.Property<bool?>("RequestStatus")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -489,45 +492,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("RequestStatusId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Requests");
-                });
-
-            modelBuilder.Entity("Domain.Entities.RequestStatus", b =>
-                {
-                    b.Property<int>("StatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
-
-                    b.Property<string>("StatusName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StatusId");
-
-                    b.ToTable("RequestStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            StatusId = 1,
-                            StatusName = "Pending"
-                        },
-                        new
-                        {
-                            StatusId = 2,
-                            StatusName = "Accept"
-                        },
-                        new
-                        {
-                            StatusId = 3,
-                            StatusName = "Reject"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -1031,12 +998,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.RequestStatus", "Status")
-                        .WithMany("Requests")
-                        .HasForeignKey("RequestStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("Requests")
                         .HasForeignKey("UserId")
@@ -1044,8 +1005,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
-
-                    b.Navigation("Status");
 
                     b.Navigation("User");
                 });
@@ -1169,11 +1128,6 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Post")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.RequestStatus", b =>
-                {
-                    b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subcription", b =>

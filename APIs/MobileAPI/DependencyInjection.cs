@@ -34,6 +34,7 @@ namespace MobileAPI
             services.AddScoped<ISubcriptionService, SubcriptionService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IRequestService, RequestService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...

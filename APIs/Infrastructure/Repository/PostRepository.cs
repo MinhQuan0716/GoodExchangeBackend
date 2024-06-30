@@ -246,7 +246,7 @@ namespace Infrastructure.Repository
             p.PostTitle,
             p.PostContent,
             p.CreationDate,
-            prod.Id AS ProductId,
+            prod.Id AS ProId,
             prod.CategoryId AS CategoryId,
             cat.CategoryName ,
             prod.ConditionId AS ConditionId,
@@ -286,7 +286,7 @@ namespace Infrastructure.Repository
 
                     return postViewModel;
                 },
-                splitOn: "ProductId"  // Split results on these keys
+                splitOn: "ProId"  // Split results on these keys
             );
 
             return postVm.ToList();
