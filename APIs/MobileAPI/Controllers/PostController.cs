@@ -26,6 +26,10 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
             var posts = await _postService.GetAllPost(pageIndex,pageSize);
+            if(posts.Items.Count() == 0)
+            {
+                return NotFound();
+            }
             return Ok(posts);
         }
         /// <summary>

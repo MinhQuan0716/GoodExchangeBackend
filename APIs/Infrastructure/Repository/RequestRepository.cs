@@ -49,8 +49,7 @@ namespace Infrastructure.Repository
         INNER JOIN 
             RequestStatuses s ON r.RequestStatusId = s.StatusId
         WHERE 
-            r.UserId = @UserId;
-    ";
+            r.UserId = @UserId;";
 
             var result = await _connection.QueryAsync<RequestViewModel, UserViewModelForRequest, PostViewModelForRequest, RequestViewModel>(
                 sql,

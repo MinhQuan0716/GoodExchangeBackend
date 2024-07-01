@@ -44,5 +44,6 @@ namespace Backend.Application.Test.ServiceTest
             //Assert
             Assert.ThrowsAsync<Exception>(async()=>await _postService.BanPost(Guid.NewGuid()));    
         }
+
     }
 }

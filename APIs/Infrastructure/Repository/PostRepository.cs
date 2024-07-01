@@ -78,10 +78,6 @@ namespace Infrastructure.Repository
                                            .Include(p=>p.Product.ConditionType)
                                            .AsQueryable();
             var paginationPost=await ToPagination(post,x=>x.IsDelete==false,pageSize,pageIndex);*/
-
-
-
-
             return posts;
         }
 
@@ -246,7 +242,7 @@ namespace Infrastructure.Repository
             p.PostTitle,
             p.PostContent,
             p.CreationDate,
-            prod.Id AS ProId,
+            prod.Id AS ProductId,
             prod.CategoryId AS CategoryId,
             cat.CategoryName ,
             prod.ConditionId AS ConditionId,
@@ -286,7 +282,7 @@ namespace Infrastructure.Repository
 
                     return postViewModel;
                 },
-                splitOn: "ProId"  // Split results on these keys
+                splitOn: "ProductId"  // Split results on these keys
             );
 
             return postVm.ToList();
