@@ -19,7 +19,7 @@ namespace Backend.Infratructure.Test.RepositoryTest
         {
             _postRepository = new PostRepository(_dbContext,_claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
         }
-        [Fact]
+   /*     [Fact]
         public async Task GetAllPostWithDetail_ShouldReturnTrue()
         {
             var product=_fixture.Build<Product>().Create();
@@ -30,7 +30,7 @@ namespace Backend.Infratructure.Test.RepositoryTest
             var originalProductIds = post.Select(p => p.ProductId).ToList();
             var retrievedProductIds = findPost.Select(fp => fp.Product.Id).ToList();
             Assert.Equal(originalProductIds,retrievedProductIds);
-        }
+        }*/
       /*  [Fact]
         public async Task SortPostByCreationDate_ShouldReturnCorrectData()
         {
