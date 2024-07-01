@@ -110,11 +110,11 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria)
+        public async Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition)
         {
             var listPostModel = await _unitOfWork.PostRepository.GetAllPostWithDapper();
-            ICriteria productStatusCriteria = new CriteriaProductStatus(postCriteria.ProductStatus);
-            ICriteria productPriceCriteria = new CriteriaExchangeCondition(postCriteria.ExchangeCondition);
+            ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
+            ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
             ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
             var filterPostList = andCriteria.MeetCriteria(listPostModel);
             return filterPostList;

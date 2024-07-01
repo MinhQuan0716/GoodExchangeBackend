@@ -196,10 +196,10 @@ namespace MobileAPI.Controllers
             }
             return Ok(listPost);
         }
-        [HttpPost]
-        public async Task<IActionResult> FilterPostByProductStatusAndProductExchangeCondition(PostCriteria postCriteria)
+        [HttpGet]
+        public async Task<IActionResult> FilterPostByProductStatusAndProductExchangeCondition(string? productStatus,string? exchangeCondition)
         {
-            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(postCriteria);
+            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(productStatus,exchangeCondition);
             if(filterListPost.Count() == 0)
             {
                 return NotFound();
