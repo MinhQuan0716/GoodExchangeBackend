@@ -34,7 +34,7 @@ namespace Backend.Domain.Test
         protected readonly Mock<IDbConnection> _connectionMock;
         public SetupTest()
         {
-            var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: "Test")
+            var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                .Options;
             _dbContext = new AppDbContext(options);
             var mapConfig = new MapperConfiguration(mc =>

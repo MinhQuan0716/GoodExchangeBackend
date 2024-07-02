@@ -110,14 +110,15 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition)
+        public async Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition, int pageIndex, int pageSize)
         {
             var listPostModel = await _unitOfWork.PostRepository.GetAllPostWithDapper();
             ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
             ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
             ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
             var filterPostList = andCriteria.MeetCriteria(listPostModel);
-            return filterPostList;
+            var paginationFilterList=PaginationUtil<PostViewModel>.ToPagination(filterPostList, pageIndex, pageSize);
+            return paginationFilterList;
         }
 
         public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
