@@ -36,7 +36,12 @@ namespace MobileAPI
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(12);
+                options.Cookie.Name = "GoodExchange";
+                options.Cookie.IsEssential = true;
+            });
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
             options.Password = "MinhQuan@123";
             services.AddScoped<IDatabase>(cfg =>

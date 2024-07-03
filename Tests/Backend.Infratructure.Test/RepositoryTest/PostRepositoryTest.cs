@@ -9,18 +9,19 @@ using Microsoft.Extensions.Hosting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Backend.Infratructure.Test.RepositoryTest
 {
-    public class PostRepositoryTest:SetupTest
+    public class PostRepositoryTest : SetupTest
     {
         private readonly IPostRepository _postRepository;
         public PostRepositoryTest()
         {
-            _postRepository = new PostRepository(_dbContext,_claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
+            _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
         }
         [Fact]
         public async Task GetAllPostWithDetail_ShouldReturnTrue()
@@ -42,6 +43,7 @@ namespace Backend.Infratructure.Test.RepositoryTest
             _dbContext.SaveChanges();
             var sortedPost = await _postRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
             Assert.Equal(post.OrderBy(x => x.CreationDate), sortedPost);
+        }
         }
     }
 }
