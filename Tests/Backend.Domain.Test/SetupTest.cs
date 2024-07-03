@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,9 +31,10 @@ namespace Backend.Domain.Test
         protected readonly Mock<AppConfiguration> _appConfiguration;
         protected readonly Mock<IPostRepository> _postRepositoryMock;
         protected readonly Mock<IUploadFile> _uploadFileMock;
+        protected readonly Mock<IDbConnection> _connectionMock;
         public SetupTest()
         {
-            var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName:Guid.NewGuid().ToString())
+            var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                .Options;
             _dbContext = new AppDbContext(options);
             var mapConfig = new MapperConfiguration(mc =>
@@ -55,10 +57,22 @@ namespace Backend.Domain.Test
             _sendMailHelperMock=new Mock<ISendMailHelper>();
             _postRepositoryMock = new Mock<IPostRepository>();
             _uploadFileMock=new Mock<IUploadFile>();
+            _connectionMock=new Mock<IDbConnection>();
         }
         public void Dispose()
         {
             _dbContext.Dispose();
+        }
+        public bool IsSorted<T>(IList<T> list) where T : IComparable<T>
+        {
+            for (int i = 1; i < list.Count; i++)
+            {
+                if (list[i - 1].CompareTo(list[i]) > 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

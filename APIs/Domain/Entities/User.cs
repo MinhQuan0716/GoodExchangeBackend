@@ -28,5 +28,6 @@ namespace Domain.Entities
         public ICollection<ChatRoom> ChatRooms2 { get; set; }
         public ICollection<Rating> Raters {  get; set; }
         public ICollection<Rating> RatedUsers { get; set; }
+        public ICollection<Request> Requests { get; set; }
     }
 }

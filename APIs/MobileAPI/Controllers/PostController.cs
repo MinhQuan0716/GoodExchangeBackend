@@ -26,6 +26,10 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
             var posts = await _postService.GetAllPost(pageIndex,pageSize);
+            if(posts.Items.Count() == 0)
+            {
+                return NotFound();
+            }
             return Ok(posts);
         }
         /// <summary>
@@ -192,11 +196,11 @@ namespace MobileAPI.Controllers
             }
             return Ok(listPost);
         }
-        [HttpPost]
-        public async Task<IActionResult> FilterPostByProductStatusAndProductExchangeCondition(PostCriteria postCriteria)
+        [HttpGet]
+        public async Task<IActionResult> FilterPostByProductStatusAndProductExchangeCondition(string? productStatus,string? exchangeCondition,int pageIndex,int pageSize)
         {
-            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(postCriteria);
-            if(filterListPost.Count() == 0)
+            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(productStatus,exchangeCondition,pageIndex,pageSize);
+            if(filterListPost.Items.Count() == 0)
             {
                 return NotFound();
             }

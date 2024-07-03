@@ -27,7 +27,7 @@ namespace Application.InterfaceService
         Task<List<WishListViewModel>> SeeAllFavoritePost();
         Task<PostDetailViewModel>GetPostDetailInUserCreatePostList(Guid postId);
         Task<List<PostViewModel>> SearchPostByProductName(string productName);
-        Task<List<PostViewModel>> FilterPostByProductStatusAndPrice(PostCriteria postCriteria);
+        Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition,int pageIndex,int pageSize);
         Task<bool> CheckIfPostInWishList(Guid postId);
         Task<List<PostViewModel>> GetAllPostWithDapper();
     }

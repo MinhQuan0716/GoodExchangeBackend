@@ -29,9 +29,14 @@ namespace Infrastructure.Repository
             this._dbConnection = dbConnection;
         }
 
-        public async Task<List<PostViewModel>> GetAllPostForFilter()
+        public async Task<List<PostViewModel>> GetAllPost()
         {
-            return await _appDbContext.Posts.Where(x => x.IsDelete == false)
+            return await _appDbContext.Posts.Where(x => x.IsDelete == false).Include(x => x.Product)
+                                           .ThenInclude(p => p.Category)
+                                           .AsSplitQuery()
+                                           .Include(x => x.Product)
+                                           .ThenInclude(p => p.ConditionType)
+                                           .AsSplitQuery()
                                            .Select(x => new PostViewModel
                                            {
                                                PostId = x.Id,
@@ -39,7 +44,7 @@ namespace Infrastructure.Repository
                                                PostTitle = x.PostTitle,
                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                Product = new ProductModel
-                                               { 
+                                               {
                                                    ProductId = x.ProductId,
                                                    CategoryId = x.Product.CategoryId,
                                                    CategoryName = x.Product.Category.CategoryName,
@@ -50,7 +55,31 @@ namespace Infrastructure.Repository
                                                    ProductStatus = x.Product.ProductStatus,
                                                    RequestedProduct = x.Product.RequestedProduct
                                                }
-                                           }).ToListAsync();
+                                           }).AsNoTracking().ToListAsync();
+            /*return await (from post in _appDbContext.Posts
+                          join product in _appDbContext.Products on post.ProductId equals product.Id
+                          join category in _appDbContext.Categories on product.CategoryId equals category.CategoryId
+                          join conditionType in _appDbContext.ExchangeConditions on product.ConditionId equals conditionType.ConditionId
+                          where !post.IsDelete.Value
+                          select new PostViewModel
+                          {
+                              PostId = post.Id,
+                              PostContent = post.PostContent,
+                              PostTitle = post.PostTitle,
+                              CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
+                              Product = new ProductModel
+                              {
+                                  ProductId = product.Id,
+                                  CategoryId = product.CategoryId,
+                                  CategoryName = category.CategoryName,
+                                  ConditionId = product.ConditionId,
+                                  ConditionName = conditionType.ConditionType,
+                                  ProductImageUrl = product.ProductImageUrl,
+                                  ProductPrice = product.ProductPrice,
+                                  ProductStatus = product.ProductStatus,
+                                  RequestedProduct = product.RequestedProduct
+                              }
+                          }).AsNoTracking().ToListAsync();*/
 
         }
 
@@ -78,10 +107,6 @@ namespace Infrastructure.Repository
                                            .Include(p=>p.Product.ConditionType)
                                            .AsQueryable();
             var paginationPost=await ToPagination(post,x=>x.IsDelete==false,pageSize,pageIndex);*/
-
-
-
-
             return posts;
         }
 
@@ -100,12 +125,19 @@ namespace Infrastructure.Repository
 
         public async Task<PostDetailViewModel> GetPostDetail(Guid postId)
         {
-            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId && x.IsDelete == false).Select(x => new PostDetailViewModel
+            var postDetail = await _appDbContext.Posts.Where(x => x.Id == postId && x.IsDelete == false)
+                                                      .Include(x=>x.Product)
+                                                      .ThenInclude(x=>x.Category)
+                                                      .AsSplitQuery()
+                                                      .Include(x=>x.Product)
+                                                      .ThenInclude(x=>x.ConditionType)
+                                                      .AsSplitQuery()
+                                                      .Select(x => new PostDetailViewModel
             {
-              
-                PostId=x.Id,
-                PostContent=x.PostContent,
-                PostTitle=x.PostTitle,
+
+                PostId = x.Id,
+                PostContent = x.PostContent,
+                PostTitle = x.PostTitle,
                 ProductImageUrl = x.Product.ProductImageUrl,
                 ProductPrice = x.Product.ProductPrice,
                 ProductQuantity = x.Product.ProductQuantity.Value,
@@ -115,7 +147,7 @@ namespace Infrastructure.Repository
                 ConditionTypeName = x.Product.ConditionType.ConditionType,
                 ProductStatus = x.Product.ProductStatus,
                 RequestedProduct = x.Product.RequestedProduct,
-                PostAuthor = _appDbContext.Users.Where(user => user.Id == x.CreatedBy).Select(postAuthor => new PostAuthor
+                PostAuthor = _appDbContext.Users.Where(user => user.Id == x.CreatedBy).AsSplitQuery().Select(postAuthor => new PostAuthor
                 {
                     AuthorId = x.CreatedBy.Value,
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
@@ -130,50 +162,7 @@ namespace Infrastructure.Repository
                 }).Single()
             }).SingleOrDefaultAsync();
             return postDetail;
-            /*  string sql = @" SELECT p.Id,
-                      p.PostTitle,
-                      p.PostContent,
-           p.CreationDate,
-           prod.Id AS ProductId,
-           prod.ProductName,
-           prod.ProductDescription,
-           prod.CategoryId,
-           cat.CategoryName,
-           prod.ConditionId,
-           ec.ConditionType ,
-           prod.ProductImageUrl,
-           prod.ProductPrice,
-           prod.ProductStatus,
-           prod.RequestedProduct,
-           u.Email,
-           u.HomeAddress,
-           u.PhoneNumber,
-    FROM Posts p
-    INNER JOIN Products prod ON p.ProductId = prod.Id
-    INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
-    INNER JOIN ExchangeConditions ec  ON prod.ConditionId=ec.ConditionId
-    INNER JOIN Users u ON u.Id=p.CreatedBy
-    INNER JOIN Rating r on r.RatedUserId=u.Id
-    WHERE p.IsDelete = 0 AND p.Id LIKE @PostId;";
-              var parameters = new { PostId = "%" + postId + "%" };
-              var queryResult = await _dbConnection.QueryAsync<Post, ProductModel, PostDetailViewModel>
-                  (
-                  sql,
-                  (post, productViewModel) =>
-                  {
-                      var postDetailViewModel = new PostDetailViewModel() 
-                      {
-                          ProductDescription = productViewModel.ProductDescription,
-
-                      };
-
-
-                      return postDetailViewModel;
-                  },
-                  parameters,
-                  splitOn: "ProductId"
-                  );
-              return queryResult.Single();*/
+       
         }
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
@@ -261,7 +250,7 @@ namespace Infrastructure.Repository
         INNER JOIN ExchangeConditions ec ON prod.ConditionId = ec.ConditionId
         WHERE p.IsDelete = 0;";
 
-            var postVm = await _dbConnection.QueryAsync<Post, ProductModel,PostViewModel>(
+            var postVm = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>(
                 sql,
                 (post, product) =>
                 {
