@@ -21,6 +21,7 @@ namespace Application
         public ISubcriptionRepository SubcriptionRepository { get; }
         public IRatingRepository RatingRepository { get; }
         public IMessageRepository MessageRepository { get; }
+        public IChatRoomRepository ChatRoomRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }

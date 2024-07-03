@@ -38,7 +38,7 @@ namespace MobileAPI.Controllers
             }
             return Ok(message);
         }
-        [Authorize]
+        /*[Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateMessage([FromBody] CreateMessageModel message)
         {
@@ -48,7 +48,7 @@ namespace MobileAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
+        }*/
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMessage([FromBody] UpdateMessageModel message)
