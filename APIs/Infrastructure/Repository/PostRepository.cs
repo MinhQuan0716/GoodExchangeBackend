@@ -55,7 +55,7 @@ namespace Infrastructure.Repository
                                                    ProductStatus = x.Product.ProductStatus,
                                                    RequestedProduct = x.Product.RequestedProduct
                                                }
-                                           }).AsNoTracking().ToListAsync();
+                                           }).AsQueryable().AsNoTracking().ToListAsync();
             /*return await (from post in _appDbContext.Posts
                           join product in _appDbContext.Products on post.ProductId equals product.Id
                           join category in _appDbContext.Categories on product.CategoryId equals category.CategoryId
@@ -147,7 +147,7 @@ namespace Infrastructure.Repository
                 ConditionTypeName = x.Product.ConditionType.ConditionType,
                 ProductStatus = x.Product.ProductStatus,
                 RequestedProduct = x.Product.RequestedProduct,
-                PostAuthor = _appDbContext.Users.Where(user => user.Id == x.CreatedBy).AsSplitQuery().Select(postAuthor => new PostAuthor
+                PostAuthor = _appDbContext.Users.Where(user => user.Id == x.CreatedBy).Include(user=>user.RatedUsers).AsSplitQuery().Select(postAuthor => new PostAuthor
                 {
                     AuthorId = x.CreatedBy.Value,
                     CreatedDate = x.CreationDate.HasValue ? DateOnly.FromDateTime(x.CreationDate.Value) : null,
@@ -155,8 +155,8 @@ namespace Infrastructure.Repository
                     Email = postAuthor.Email,
                     PhoneNumber = postAuthor.PhoneNumber,
                     HomeAddress = postAuthor.HomeAddress,
-                    Rating = (float)(postAuthor.RatedUsers.Count() > 0
-                    ? (double)postAuthor.RatedUsers.Sum(r => r.RatingPoint) / (postAuthor.RatedUsers.Count())
+                    Rating = (postAuthor.RatedUsers.Count() > 0
+                    ? postAuthor.RatedUsers.Sum(r => r.RatingPoint) / (postAuthor.RatedUsers.Count())
                     : 0),
                     AuthorImage = postAuthor.VerifyUser.UserImage
                 }).Single()
@@ -167,55 +167,77 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
-            string sql = @"
-                     SELECT p.Id,
-                    p.PostTitle,
-                    p.PostContent,
-         p.CreationDate,
-         prod.Id AS ProductId,
-         prod.CategoryId,
-         cat.CategoryName,
-         prod.ConditionId,
-         ec.ConditionType ,
-         prod.ProductImageUrl,
-         prod.ProductPrice,
-         prod.ProductStatus,
-         prod.RequestedProduct
-  FROM Posts p
-  INNER JOIN Products prod ON p.ProductId = prod.Id
-  INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
-  INNER JOIN ExchangeConditions ec  ON prod.ConditionId=ec.ConditionId
-  WHERE p.IsDelete = 0 AND p.PostTitle LIKE @SearchTerm;";
-            var parameters = new { SearchTerm = "%" + productName + "%" };
-            var queryResult = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>
-                (
-                sql,
-                (post, productViewModel) =>
-                {
-                    var postViewModel = new PostViewModel();
-                    postViewModel.PostId = post.Id;
-                    postViewModel.PostContent = post.PostContent;
-                    postViewModel.PostTitle = post.PostTitle;
-                    postViewModel.CreationDate = DateOnly.FromDateTime(post.CreationDate.Value);
-                    postViewModel.Product = new ProductModel
-                    {
-                        CategoryId = productViewModel.CategoryId,
-                        ProductPrice = productViewModel.ProductPrice,
-                        CategoryName = productViewModel.CategoryName,
-                        ConditionId = productViewModel.ConditionId,
-                        ConditionName = productViewModel.ConditionName,
-                        ProductId = productViewModel.ProductId,
-                        ProductImageUrl = productViewModel.ProductImageUrl,
-                        ProductStatus = productViewModel.ProductStatus,
-                        RequestedProduct = productViewModel.RequestedProduct,
-                    };
+            /*   string sql = @"
+                        SELECT p.Id,
+                       p.PostTitle,
+                       p.PostContent,
+            p.CreationDate,
+            prod.Id AS ProductId,
+            prod.CategoryId,
+            cat.CategoryName,
+            prod.ConditionId,
+            ec.ConditionType ,
+            prod.ProductImageUrl,
+            prod.ProductPrice,
+            prod.ProductStatus,
+            prod.RequestedProduct
+     FROM Posts p
+     INNER JOIN Products prod ON p.ProductId = prod.Id
+     INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
+     INNER JOIN ExchangeConditions ec  ON prod.ConditionId=ec.ConditionId
+     WHERE p.IsDelete = 0 AND p.PostTitle LIKE @SearchTerm;";
+               var parameters = new { SearchTerm = "%" + productName + "%" };
+               var queryResult = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>
+                   (
+                   sql,
+                   (post, productViewModel) =>
+                   {
+                       var postViewModel = new PostViewModel();
+                       postViewModel.PostId = post.Id;
+                       postViewModel.PostContent = post.PostContent;
+                       postViewModel.PostTitle = post.PostTitle;
+                       postViewModel.CreationDate = DateOnly.FromDateTime(post.CreationDate.Value);
+                       postViewModel.Product = new ProductModel
+                       {
+                           CategoryId = productViewModel.CategoryId,
+                           ProductPrice = productViewModel.ProductPrice,
+                           CategoryName = productViewModel.CategoryName,
+                           ConditionId = productViewModel.ConditionId,
+                           ConditionName = productViewModel.ConditionName,
+                           ProductId = productViewModel.ProductId,
+                           ProductImageUrl = productViewModel.ProductImageUrl,
+                           ProductStatus = productViewModel.ProductStatus,
+                           RequestedProduct = productViewModel.RequestedProduct,
+                       };
 
-                    return postViewModel;
-                },
-                parameters,
-                splitOn: "ProductId"
-                );
-            return queryResult.ToList();
+                       return postViewModel;
+                   },
+                   parameters,
+                   splitOn: "ProductId"
+                   );
+               return queryResult.ToList();*/
+            return await _appDbContext.Posts.Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false).AsSplitQuery()
+                                            .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
+                                            .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
+                                            .Select(x => new PostViewModel
+                                            {
+                                                PostId=x.Id,
+                                                PostTitle= x.PostTitle,
+                                                PostContent= x.PostContent,
+                                                CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                                Product=new ProductModel
+                                                {
+                                                    ProductId=x.ProductId,
+                                                    CategoryId=x.Product.CategoryId,
+                                                    ConditionId=x.Product.ConditionId,
+                                                   CategoryName=x.Product.Category.CategoryName,
+                                                   ConditionName=x.Product.ConditionType.ConditionType,
+                                                   ProductImageUrl=x.Product.ProductImageUrl,
+                                                   ProductPrice=x.Product.ProductPrice,
+                                                   ProductStatus=x.Product.ProductStatus,
+                                                   RequestedProduct=x.Product.RequestedProduct
+                                                }
+                                            }).AsQueryable().AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)

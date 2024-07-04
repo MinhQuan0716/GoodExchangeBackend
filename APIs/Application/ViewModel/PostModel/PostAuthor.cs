@@ -16,6 +16,6 @@ namespace Application.ViewModel.PostModel
         public string HomeAddress { get; set; }
         public string AuthorImage { get; set; }
         public DateOnly? CreatedDate { get; set; }
-        public float Rating { get; set; }
+        public double Rating { get; set; }
     }
 }

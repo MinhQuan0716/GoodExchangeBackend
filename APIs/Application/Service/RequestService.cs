@@ -56,7 +56,7 @@ namespace Application.Service
                 throw new Exception("This user do not create this post");
             }
             var duplicateRequest = await _unitOfWork.RequestRepository.GetRequestByUserIdAndPostId(requestModel.AuthorId, requestModel.PostId);
-            if (duplicateRequest != null)
+            if (duplicateRequest.Count()>0)
             {
                 throw new Exception("You already send the request for this post");
             }

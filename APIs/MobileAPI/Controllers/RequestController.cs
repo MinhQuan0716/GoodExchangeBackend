@@ -36,5 +36,27 @@ namespace MobileAPI.Controllers
             }
             return BadRequest(ModelState);
         }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> AcceptRequest(Guid requestId)
+        {
+            var isAccepted = await _requestService.AcceptRequest(requestId);
+            if (isAccepted)
+            {
+                return Ok();
+            }
+            return BadRequest();  
+        }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> RejectRequest(Guid requestId)
+        {
+            var isRejected = await _requestService.RejectRequest(requestId);
+            if (isRejected)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }

@@ -187,10 +187,10 @@ namespace MobileAPI.Controllers
             return Ok(postDetail);
         }
         [HttpGet]   
-        public async Task<IActionResult> SearchPostByProductName(string productName)
+        public async Task<IActionResult> SearchPostByPostTitle(string postTitle,int pageIndex,int pageSize)
         {
-            var listPost=await _postService.SearchPostByProductName(productName);
-            if (listPost.Count() == 0)
+            var listPost=await _postService.SearchPostByPostTitle(postTitle,pageIndex,pageSize);
+            if (listPost.Items.Count() == 0)
             {
                 return NotFound();
             }

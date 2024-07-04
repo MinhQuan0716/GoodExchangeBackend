@@ -178,10 +178,11 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
+        public async Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle, int pageIndex, int pageSize)
         {
-            var listSearchPost = await _unitOfWork.PostRepository.SearchPostByProductName(productName);
-            return listSearchPost;
+            var listSearchPost = await _unitOfWork.PostRepository.SearchPostByProductName(postTitle);
+            var paginationList = PaginationUtil<PostViewModel>.ToPagination(listSearchPost, pageIndex, pageSize);
+            return paginationList;
         }
 
         public async Task<List<WishListViewModel>> SeeAllFavoritePost()
