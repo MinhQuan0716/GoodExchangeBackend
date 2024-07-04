@@ -11,5 +11,7 @@ namespace Application.InterfaceService
     {
         Task<bool>SendRequest(CreateRequestModel requestModel);
         Task<List<RequestViewModel>> GetAllRequestsOfCurrentUserAsync();
+        Task<bool> AcceptRequest(Guid requestId);
+        Task<bool> RejectRequest(Guid requestId);
     }
 }

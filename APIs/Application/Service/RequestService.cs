@@ -19,30 +19,51 @@ namespace Application.Service
             _claimService = claimService;
         }
 
+        public async Task<bool> AcceptRequest(Guid requestId)
+        {
+            var request=await _unitOfWork.RequestRepository.GetByIdAsync(requestId);
+            if(request.RequestStatusId==2||request.RequestStatusId==3)
+            {
+                throw new Exception("You already accept or reject this request");
+            }
+            request.RequestStatusId = 2;
+            _unitOfWork.RequestRepository.Update(request);
+            return await _unitOfWork.SaveChangeAsync()>0;
+        }
+
         public async Task<List<RequestViewModel>> GetAllRequestsOfCurrentUserAsync()
         {
             return await _unitOfWork.RequestRepository.GetAllRequestByCurrentUserId(_claimService.GetCurrentUserId);
         }
 
+        public async Task<bool> RejectRequest(Guid requestId)
+        {
+            var request = await _unitOfWork.RequestRepository.GetByIdAsync(requestId);
+            if (request.RequestStatusId == 2 || request.RequestStatusId == 3)
+            {
+                throw new Exception("You already accept or reject this request");
+            }
+            request.RequestStatusId = 3;
+            _unitOfWork.RequestRepository.Update(request);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
         public async Task<bool> SendRequest(CreateRequestModel requestModel)
         {
-           var user=await _unitOfWork.UserRepository.FindUserByEmail(requestModel.Email);
-            var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
+            var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(requestModel.UserId);
             if(!post.Where(x=>x.Id==requestModel.PostId).Any())
             {
                 throw new Exception("This user do not create this post");
             }
-            if (user != null)
-            {
                 Request request = new Request
                 {
-                    UserId=user.Id,
+                    UserId=requestModel.UserId,
                     RequestMessage=requestModel.RequestMessage,
                     PostId=requestModel.PostId,
                     RequestStatusId=1
                 };
                 await _unitOfWork.RequestRepository.AddAsync(request);
-            }
+            
             return await _unitOfWork.SaveChangeAsync()>0;
         }
     }
