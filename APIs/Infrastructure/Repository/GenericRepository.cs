@@ -15,6 +15,7 @@ namespace Infrastructure.Repository
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
         protected DbSet<TEntity> _dbSet;
+        private AppDbContext appDbContext;
         private readonly IClaimService _claimService;
         private readonly ICurrentTime _currentTime;
         public GenericRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime)
@@ -22,6 +23,11 @@ namespace Infrastructure.Repository
             _dbSet = appDbContext.Set<TEntity>();
             _claimService = claimService;
             _currentTime = currentTime;
+        }
+
+        public GenericRepository(AppDbContext appDbContext)
+        {
+            this.appDbContext = appDbContext;
         }
 
         public async Task AddAsync(TEntity entity)

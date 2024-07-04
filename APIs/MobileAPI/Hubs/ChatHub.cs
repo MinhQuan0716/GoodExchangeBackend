@@ -1,6 +1,6 @@
-﻿using Application.InterfaceService;
+﻿using Application.InterfaceRepository;
+using Application.InterfaceService;
 using Application.ViewModel.MessageModel;
-using Azure.Messaging;
 using Domain.Entities;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
@@ -28,32 +28,28 @@ namespace MobileAPI.Hubs
                 throw new HubException("Invalid recipient user ID.");
             }
 
+            var chatRoom = await _messageService.GetOrCreateChatRoomAsync(recipientUserId);
+            if (chatRoom == null)
+            {
+                throw new HubException("Unable to create or retrieve chat room.");
+            }
+
             var createMessageModel = new CreateMessageModel
             {
                 SenderId = senderUserId,
                 ReceiverId = recipientUserId,
-                MessageContent = messageContent
+                MessageContent = messageContent,
+                RoomId = chatRoom.Id
             };
 
-            var success = await _messageService.CreateMessage(createMessageModel);
-            if (!success)
+            var message = await _messageService.CreateMessage(createMessageModel);
+            if (message.CreatedBy == null)
             {
                 return;
             }
 
-            var msg = new Message
-            {
-               /* SenderId = senderUserId,
-                ReceiverId = recipientUserId,*/
-                MessageContent = messageContent,
-                CreationDate = DateTime.UtcNow
-            };
-
-            if (!PrivateMessages.ContainsKey(recipientUserId))
-            {
-                PrivateMessages[recipientUserId] = new ConcurrentBag<Message>();
-            }
-            PrivateMessages[recipientUserId].Add(msg);
+            var messages = PrivateMessages.GetOrAdd(chatRoom.Id, _ => new ConcurrentBag<Message>());
+            messages.Add(message);
 
             foreach (var connectionId in recipientConnections)
             {
@@ -61,43 +57,47 @@ namespace MobileAPI.Hubs
             }
         }
 
-        public async Task<IEnumerable<Message>> GetPrivateMessages(Guid recipientUserId)
+        public async Task<IEnumerable<Message>> GetPrivateMessages(Guid chatRoomId)
         {
-            var senderUserId = _claimService.GetCurrentUserId;
-            if (senderUserId == Guid.Empty)
+            var userId = _claimService.GetCurrentUserId;
+            if (userId == Guid.Empty)
             {
                 return Enumerable.Empty<Message>();
             }
 
-            if (PrivateMessages.TryGetValue(recipientUserId, out var messages))
+            if (PrivateMessages.TryGetValue(chatRoomId, out var messages))
             {
                 var allMessages = messages.ToList();
-                var persistentMessages = await _messageService.GetMessagesBy2UserId(recipientUserId);
+                var persistentMessages = await _messageService.GetMessagesByChatRoomId(chatRoomId);
                 var combinedMessages = allMessages.Concat(persistentMessages)
-                    .DistinctBy(m => m.Id)  // Ensure messages are unique by their Id
-                    .OrderBy(m => m.CreationDate);  // Ensure messages are sorted by creation date
+                    .DistinctBy(m => m.Id)
+                    .OrderBy(m => m.CreationDate);
                 return combinedMessages;
             }
 
             return Enumerable.Empty<Message>();
         }
 
-        public async Task ClosePrivateChat(Guid recipientUserId)
+        public async Task ClosePrivateChat(Guid chatRoomId)
         {
-            var senderUserId = _claimService.GetCurrentUserId;
-            if (senderUserId == Guid.Empty)
+            var userId = _claimService.GetCurrentUserId;
+            if (userId == Guid.Empty)
             {
-                throw new HubException("Invalid recipient user ID.");
+                throw new HubException("Invalid user ID.");
             }
 
-            if (PrivateMessages.TryRemove(recipientUserId, out _))
+            if (PrivateMessages.TryRemove(chatRoomId, out _))
             {
-                // Notify the recipient that the chat is closed
-                if (UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
+                var chatRoom = await _messageService.GetChatRoomByIdAsync(chatRoomId);
+                if (chatRoom != null)
                 {
-                    foreach (var connectionId in recipientConnections)
+                    var recipientUserId = chatRoom.SenderId == userId ? chatRoom.ReceiverId : chatRoom.SenderId;
+                    if (UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
                     {
-                        await Clients.Client(connectionId).SendAsync("ChatClosed", senderUserId.ToString());
+                        foreach (var connectionId in recipientConnections)
+                        {
+                            await Clients.Client(connectionId).SendAsync("ChatClosed", userId.ToString());
+                        }
                     }
                 }
             }
@@ -112,8 +112,8 @@ namespace MobileAPI.Hubs
             }
             return base.OnConnectedAsync();
         }
-        // disconnect
-        public override Task OnDisconnectedAsync(System.Exception exception)
+
+        public override Task OnDisconnectedAsync(Exception exception)
         {
             var userId = _claimService.GetCurrentUserId.ToString();
             if (!string.IsNullOrEmpty(userId) && UserConnections.TryGetValue(userId, out var connections))
@@ -125,6 +125,17 @@ namespace MobileAPI.Hubs
                 }
             }
             return base.OnDisconnectedAsync(exception);
+        }
+        public async Task<IEnumerable<ChatRoom>> GetAllRooms()
+        {
+            var userId = _claimService.GetCurrentUserId;
+            if (userId == Guid.Empty)
+            {
+                throw new HubException("Invalid user ID.");
+            }
+
+            var chatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
+            return chatRooms;
         }
     }
 }
