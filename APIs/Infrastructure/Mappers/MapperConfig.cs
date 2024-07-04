@@ -50,7 +50,7 @@ namespace Infrastructure.Mappers
         {
             CreateMap<UpdateProductModel, Product>()
                 .ForMember(src => src.CategoryId, opt => opt.MapFrom(x => x.CategoryId))
-                .ForMember(src => src.ConditionId, opt => opt.MapFrom(x => x.ConditionId))
+                .ForMember(src => src.ConditionId, opt => opt.Ignore())
                 .ReverseMap();
         }
         internal void CreatePostMap()
