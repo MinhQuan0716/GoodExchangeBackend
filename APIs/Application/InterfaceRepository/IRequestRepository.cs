@@ -11,5 +11,6 @@ namespace Application.InterfaceRepository
     public interface IRequestRepository:IGenericRepository<Request>
     {
         Task<List<RequestViewModel>> GetAllRequestByCurrentUserId(Guid userId);
+        Task<Request> GetRequestByUserIdAndPostId(Guid userId, Guid postId);
     }
 }

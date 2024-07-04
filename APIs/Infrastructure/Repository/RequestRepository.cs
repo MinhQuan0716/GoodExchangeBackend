@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public class RequestRepository : GenericRepository<Request>,IRequestRepository
+    public class RequestRepository : GenericRepository<Request>, IRequestRepository
     {
         private readonly IDbConnection _connection;
         private readonly AppDbContext _dbContext;
@@ -64,6 +64,11 @@ namespace Infrastructure.Repository
             );
 
             return result.ToList();
+        }
+
+        public async Task<Request> GetRequestByUserIdAndPostId(Guid userId, Guid postId)
+        {
+            return await _dbContext.Requests.Where(x=>x.UserId==userId&&x.PostId==postId).SingleAsync();
         }
     }
 }

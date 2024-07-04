@@ -10,6 +10,6 @@ namespace Application.ViewModel.RequestModel
     {
         public Guid PostId { get; set; }
         public string RequestMessage { get; set; }
-        public Guid UserId { get; set; }
+        public Guid AuthorId { get; set; }
     }
 }
