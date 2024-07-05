@@ -106,6 +106,7 @@ namespace Infrastructure.Repository
                                              {
                                                  RequestId = x.Id,
                                                  RequestMessage = x.RequestMessage,
+                                                 RequestStatus=x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                  Post = new PostViewModelForRequest
                                                  {
