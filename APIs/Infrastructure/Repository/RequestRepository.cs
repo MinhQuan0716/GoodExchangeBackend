@@ -46,7 +46,7 @@ namespace Infrastructure.Repository
                                                     PostContent = x.Post.PostContent,
                                                     PostTitle = x.Post.PostTitle
                                                 },
-                                                User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
                                                 {
                                                     SenderId = x.CreatedBy.Value,
                                                     SenderEmail = u.Email,
@@ -113,7 +113,7 @@ namespace Infrastructure.Repository
                                                      PostContent = x.Post.PostContent,
                                                      PostTitle = x.Post.PostTitle
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
