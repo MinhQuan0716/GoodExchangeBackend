@@ -27,7 +27,40 @@ namespace Infrastructure.Repository
             _dbContext = appDbContext;
         }
 
-        public async Task<List<RequestViewModel>> GetAllRequestByCurrentUserId(Guid userId)
+        public async Task<List<SentRequestViewModel>> GetAllRequestByCreatedByUserId(Guid userId)
+        {
+            var listRequest = await _dbContext.Requests.Where(x => x.IsDelete == false && x.CreatedBy == userId)
+                                            .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
+                                            .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
+                                            .Include(x => x.Post).AsSplitQuery()
+                                            .Include(x => x.Status).AsSplitQuery()
+                                            .Select(x => new SentRequestViewModel
+                                            {
+                                                RequestId = x.Id,
+                                                RequestMessage = x.RequestMessage,
+                                                RequestStatus=x.Status.StatusName,
+                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                Post = new PostViewModelForRequest
+                                                {
+                                                    PostId = x.PostId,
+                                                    PostContent = x.Post.PostContent,
+                                                    PostTitle = x.Post.PostTitle
+                                                },
+                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                {
+                                                    SenderId = x.CreatedBy.Value,
+                                                    SenderEmail = u.Email,
+                                                    SenderHomeAddress = u.HomeAddress,
+                                                    SenderImageUrl = u.VerifyUser.UserImage,
+                                                    SenderRating = (u.RatedUsers.Count() > 0
+                                                                 ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
+                                                    SenderUsername = u.UserName
+                                                }).Single()
+                                            }).AsQueryable().AsNoTracking().ToListAsync();
+            return listRequest;
+        }
+
+        public async Task<List<ReceiveRequestViewModel>> GetAllRequestByCurrentUserId(Guid userId)
         {
             /* var sql = @"
          SELECT 
@@ -69,11 +102,10 @@ namespace Infrastructure.Repository
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).AsSplitQuery()
                                              .Include(x => x.Status).AsSplitQuery()
-                                             .Select(x => new RequestViewModel
+                                             .Select(x => new ReceiveRequestViewModel
                                              {
                                                  RequestId = x.Id,
                                                  RequestMessage = x.RequestMessage,
-                                                 RequestStatus = x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                  Post = new PostViewModelForRequest
                                                  {

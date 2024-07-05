@@ -10,7 +10,8 @@ namespace Application.InterfaceRepository
 {
     public interface IRequestRepository:IGenericRepository<Request>
     {
-        Task<List<RequestViewModel>> GetAllRequestByCurrentUserId(Guid userId);
+        Task<List<ReceiveRequestViewModel>> GetAllRequestByCurrentUserId(Guid userId);
+        Task<List<SentRequestViewModel>> GetAllRequestByCreatedByUserId(Guid userId);
         Task<List<Request>> GetRequestByUserIdAndPostId(Guid userId, Guid postId);
     }
 }

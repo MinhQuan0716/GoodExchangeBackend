@@ -10,7 +10,8 @@ namespace Application.InterfaceService
     public interface IRequestService
     {
         Task<bool>SendRequest(CreateRequestModel requestModel);
-        Task<List<RequestViewModel>> GetAllRequestsOfCurrentUserAsync();
+        Task<List<ReceiveRequestViewModel>> GetAllRequestsOfCurrentUserAsync();
+        Task<List<SentRequestViewModel>> GetAllRequestsOfCreatebByUserAsync();
         Task<bool> AcceptRequest(Guid requestId);
         Task<bool> RejectRequest(Guid requestId);
     }

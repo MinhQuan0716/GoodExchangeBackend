@@ -31,7 +31,12 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<RequestViewModel>> GetAllRequestsOfCurrentUserAsync()
+        public async Task<List<SentRequestViewModel>> GetAllRequestsOfCreatebByUserAsync()
+        {
+            return await _unitOfWork.RequestRepository.GetAllRequestByCreatedByUserId(_claimService.GetCurrentUserId);
+        }
+
+        public async Task<List<ReceiveRequestViewModel>> GetAllRequestsOfCurrentUserAsync()
         {
             return await _unitOfWork.RequestRepository.GetAllRequestByCurrentUserId(_claimService.GetCurrentUserId);
         }

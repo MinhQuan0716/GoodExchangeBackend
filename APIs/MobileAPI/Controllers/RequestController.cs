@@ -27,14 +27,25 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SeeExchangeOrDonationRequest()
+        public async Task<IActionResult> GetReceieveRequest()
         {
             var requestList = await _requestService.GetAllRequestsOfCurrentUserAsync();
             if (requestList.Any())
             {
                 return Ok(requestList);
             }
-            return BadRequest(ModelState);
+            return NotFound();
+        }
+        [Authorize]
+        [HttpGet]   
+        public async Task<IActionResult> GetSentRequest()
+        {
+            var requestList = await _requestService.GetAllRequestsOfCreatebByUserAsync();
+            if (requestList.Any())
+            {
+                return Ok(requestList);
+            }
+            return NotFound();
         }
         [Authorize]
         [HttpPut]
