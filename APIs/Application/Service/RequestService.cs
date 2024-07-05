@@ -1,6 +1,7 @@
 ﻿using Application.InterfaceService;
 using Application.ViewModel.RequestModel;
 using Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,10 +61,10 @@ namespace Application.Service
             {
                 throw new Exception("This user do not create this post");
             }
-            var duplicateRequest = await _unitOfWork.RequestRepository.GetRequestByUserIdAndPostId(requestModel.AuthorId, requestModel.PostId);
-            if (duplicateRequest.Count()>0)
+            var duplicateRequest = await _unitOfWork.RequestRepository.GetRequestByUserIdAndPostId(requestModel.AuthorId,requestModel.PostId);
+            if (duplicateRequest.Where(x=>x.CreatedBy==_claimService.GetCurrentUserId).Any())
             {
-                throw new Exception("You already send the request for this post");
+                throw new Exception("You already send the request");
             }
             Request request = new Request
             {

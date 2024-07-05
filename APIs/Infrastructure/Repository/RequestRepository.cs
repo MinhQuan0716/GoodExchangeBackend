@@ -46,7 +46,7 @@ namespace Infrastructure.Repository
                                                     PostContent = x.Post.PostContent,
                                                     PostTitle = x.Post.PostTitle
                                                 },
-                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
                                                 {
                                                     SenderId = x.CreatedBy.Value,
                                                     SenderEmail = u.Email,
@@ -127,9 +127,9 @@ namespace Infrastructure.Repository
             return listRequest;
         }
 
-        public async Task<List<Request>> GetRequestByUserIdAndPostId(Guid userId, Guid postId)
+        public async Task<List<Request>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
         {
-            return await _dbContext.Requests.Where(x => x.UserId == userId && x.PostId == postId).ToListAsync();
+            return await _dbContext.Requests.Where(x => x.UserId == userId&&x.PostId==postId).AsNoTracking().ToListAsync();
         }
     }
 }
