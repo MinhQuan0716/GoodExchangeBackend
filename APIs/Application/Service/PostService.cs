@@ -191,10 +191,12 @@ namespace Application.Service
             return listFavoritePost;
         }
 
-        public async Task<List<PostViewModel>> SortPostByCategory(int categoryId)
+        public async Task<Pagination<PostViewModel>> SortPostByCategory(int categoryId, int pageIndex, int pageSize)
         {
             var sortPost = await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
-            return _mapper.Map<List<PostViewModel>>(sortPost);
+            var sortPostViewModel= _mapper.Map<List<PostViewModel>>(sortPost);
+            var paginationSortListPost = PaginationUtil<PostViewModel>.ToPagination(sortPostViewModel, pageIndex, pageSize);
+            return paginationSortListPost;
         }
 
         public async Task<bool> UpdatePost(UpdatePostModel postModel)

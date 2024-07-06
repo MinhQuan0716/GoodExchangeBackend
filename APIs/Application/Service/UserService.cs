@@ -369,5 +369,10 @@ namespace Application.Service
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+
+        public async Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWeb()
+        {
+            return await _unitOfWork.UserRepository.GetCurrentLoginUserForWebAsync(_claimService.GetCurrentUserId);
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Application.InterfaceService
         Task<Pagination<PostViewModel>> GetAllPost(int pageIndex,int pageSize);
         Task<List<PostViewModel>> GetPostSortByCreationDay();
         Task<List<PostViewModel>> GetPostByCreatedById();
-        Task<List<PostViewModel>> SortPostByCategory(int categoryId);
+        Task<Pagination<PostViewModel>> SortPostByCategory(int categoryId,int pageIndex,int pageSize);
         Task<bool> AddPostToWishList(Guid postId);
         Task<PostDetailViewModel> GetPostDetailAsync(Guid postId);  
         Task<bool> RemovePostFromFavorite(Guid postId);

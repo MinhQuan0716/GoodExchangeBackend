@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.ModelValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Application.ViewModel.ProductModel
 {
     public class CreateProductModel
     {
+        [CheckFileExtension(new string[] {".jpg",".png",".jpeg"})]
         public IFormFile ProductImage { get; set; }
         public string ProductStatus { get; set; }
         public long ProductPrice { get; set; }

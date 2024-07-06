@@ -50,5 +50,16 @@ namespace Infrastructure.Repository
             }).SingleOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
         }
+
+        public async Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWebAsync(Guid userId)
+        {
+          var currentUser= await _dbContext.Users.Where(x => x.Id == userId).Include(x=>x.Role).AsSplitQuery().Select(x => new CurrentLoginUserForWebViewModel
+            {
+               UserId=x.Id,
+               Role=x.Role.RoleName,
+               Email=x.Email
+            }).AsSplitQuery().AsQueryable().AsNoTracking().SingleOrDefaultAsync();
+            return currentUser;
+        }
     }
 }

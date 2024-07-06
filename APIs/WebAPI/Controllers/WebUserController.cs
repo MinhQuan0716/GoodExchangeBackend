@@ -16,16 +16,6 @@ namespace WebAPI.Controllers
             _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel registerModel)
-        {
-            var isCreate = await _userService.CreateAccount(registerModel);
-            if (!isCreate)
-            {
-                return BadRequest();
-            }
-            return Ok();
-        }
-        [HttpPost]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
             string apiOrigin = "Web";
@@ -41,6 +31,13 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CurrentLoginUserInfo()
+        {
+            var currentUser = await _userService.GetCurrentLoginUserForWeb();
+            return Ok(currentUser);
         }
         [HttpGet]
         public IActionResult CheckVerifyCode(string code)

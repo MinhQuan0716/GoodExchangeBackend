@@ -27,5 +27,6 @@ namespace Application.InterfaceService
         Task<CurrentUserModel> GetCurrentLoginUser();
         Task<bool> UpdatePasswordAsync(UpdatePasswordModel updatePasswordModel);
         Task<bool> UploadImageForVerifyUser(IFormFile userImage);
+        Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWeb();
     }
 }
