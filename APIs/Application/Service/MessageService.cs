@@ -27,10 +27,10 @@ namespace Application.Service
 
         public async Task<Message> CreateMessage(CreateMessageModel messageModel)
         {
-            messageModel.SenderId = _claimService.GetCurrentUserId;
             var newMessage = _mapper.Map<Message>(messageModel);
             newMessage.CreationDate = DateTime.UtcNow;
             await _unitOfWork.MessageRepository.AddAsync(newMessage);
+            await _unitOfWork.SaveChangeAsync();
             return newMessage;
         }
 
@@ -79,7 +79,7 @@ namespace Application.Service
 
             await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);
             await _unitOfWork.SaveChangeAsync();
-            return chatRoom;
+            return newRoom;
         }
 
         public async Task<List<Message>> GetMessagesByChatRoomId(Guid chatRoomId)

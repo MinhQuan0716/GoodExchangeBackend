@@ -9,8 +9,6 @@ namespace Application.ViewModel.MessageModel
     public class CreateMessageModel
     {
         public string MessageContent { get; set; }
-        public Guid SenderId { get; set; }
-        public Guid ReceiverId { get; set; }
         public Guid RoomId { get; set; }
     }
 }
