@@ -3,6 +3,7 @@ using Application.InterfaceService;
 using Application.Service;
 using Application.ViewModel.MessageModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
@@ -22,7 +23,7 @@ namespace MobileAPI.Hubs
             _messageService = messageService;
             _userService = userService;
         }
-
+        [Authorize]
         public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
         {
             var user = await _userService.GetCurrentLoginUser();
@@ -65,7 +66,7 @@ namespace MobileAPI.Hubs
                 await Clients.Caller.SendAsync("RecipientNotConnected", recipientUserId.ToString());
             }
         }
-
+        [Authorize]
         public async Task<IEnumerable<Message>> GetPrivateMessages(Guid chatRoomId)
         {
             var userId = _claimService.GetCurrentUserId;
@@ -86,7 +87,7 @@ namespace MobileAPI.Hubs
 
             return Enumerable.Empty<Message>();
         }
-
+        [Authorize]
         public async Task ClosePrivateChat(Guid chatRoomId)
         {
             var userId = _claimService.GetCurrentUserId;
@@ -111,7 +112,7 @@ namespace MobileAPI.Hubs
                 }
             }
         }
-
+        [Authorize]
         public override async Task OnConnectedAsync()
         {
             var userId = _claimService.GetCurrentUserId;
@@ -124,7 +125,7 @@ namespace MobileAPI.Hubs
                 UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
                 // Await the task to get the list of chat rooms
-                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(Guid.Parse(userId.ToString()));
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
                 foreach (var chatRoom in userChatRooms)
                 {
                     if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
@@ -138,7 +139,7 @@ namespace MobileAPI.Hubs
             }
             await base.OnConnectedAsync();
         }
-
+        [Authorize]
         public override Task OnDisconnectedAsync(Exception exception)
         {
             var userId = _claimService.GetCurrentUserId.ToString();
@@ -152,6 +153,7 @@ namespace MobileAPI.Hubs
             }
             return base.OnDisconnectedAsync(exception);
         }
+        [Authorize]
         public async Task<IEnumerable<ChatRoom>> GetAllRooms()
         {
             var userId = _claimService.GetCurrentUserId;

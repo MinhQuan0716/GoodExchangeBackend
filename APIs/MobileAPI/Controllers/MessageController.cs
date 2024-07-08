@@ -95,6 +95,5 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
-        
     }
 }
