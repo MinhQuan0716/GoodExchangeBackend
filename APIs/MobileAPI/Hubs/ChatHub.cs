@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.Service;
 using Application.ViewModel.MessageModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.SignalR;
@@ -11,18 +12,21 @@ namespace MobileAPI.Hubs
     {
         private readonly IClaimService _claimService;
         private readonly IMessageService _messageService;
+        private readonly IUserService _userService;
         private static readonly ConcurrentDictionary<string, ConcurrentBag<string>> UserConnections = new();
         private static readonly ConcurrentDictionary<Guid, ConcurrentBag<Message>> PrivateMessages = new();
 
-        public ChatHub(IClaimService claimService, IMessageService messageService)
+        public ChatHub(IClaimService claimService, IMessageService messageService, IUserService userService)
         {
             _claimService = claimService;
             _messageService = messageService;
+            _userService = userService;
         }
 
         public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
         {
-            var senderUserId = _claimService.GetCurrentUserId;
+            var user = await _userService.GetCurrentLoginUser();
+            var senderUserId = user.Userid;
             if (senderUserId == Guid.Empty)
             {
                 throw new HubException("Invalid sender user ID.");
