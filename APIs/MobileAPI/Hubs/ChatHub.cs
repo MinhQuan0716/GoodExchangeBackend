@@ -114,13 +114,17 @@ namespace MobileAPI.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var userId = _claimService.GetCurrentUserId.ToString();
-            if (!string.IsNullOrEmpty(userId))
+            var userId = _claimService.GetCurrentUserId;
+            if (userId == Guid.Empty)
             {
-                UserConnections.AddOrUpdate(userId, _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
+                throw new HubException("Invalid user ID.");
+            }
+            if (!string.IsNullOrEmpty(userId.ToString()))
+            {
+                UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
                 // Await the task to get the list of chat rooms
-                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(Guid.Parse(userId));
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(Guid.Parse(userId.ToString()));
                 foreach (var chatRoom in userChatRooms)
                 {
                     if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
