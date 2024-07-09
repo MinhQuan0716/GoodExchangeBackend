@@ -23,13 +23,16 @@ namespace Infrastructure.Repository
         {
             var room = await _appDbContext.ChatRooms.Where(m => (m.SenderId == userId) || 
                                                                 (m.ReceiverId == userId)).
-                                                     Where(x => x.IsDelete == false).ToListAsync();
+                                                     Where(x => x.IsDelete == false).
+                                                     Include(c => c.Messages).ToListAsync();
             return room;
         }
 
         public async Task<List<Message>> GetMessagesByRoomId(Guid roomId)
         {
-            var chatRoom = await _appDbContext.ChatRooms.Where(m => m.Id == roomId).Include(m => m.Messages).FirstOrDefaultAsync();
+            var chatRoom = await _appDbContext.ChatRooms.Where(m => m.Id == roomId).
+                                                     Where(x => x.IsDelete == false).
+                                                     Include(m => m.Messages).FirstOrDefaultAsync();
             var messages = chatRoom.Messages.OrderBy(m=>m.CreationDate).ToList();
             return messages;
         }
