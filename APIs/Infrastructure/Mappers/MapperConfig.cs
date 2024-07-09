@@ -99,6 +99,7 @@ namespace Infrastructure.Mappers
         {
             CreateMap<CreateMessageModel, Message>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ChatRoomId, opt => opt.MapFrom(rmodel => rmodel.RoomId))
                 .ReverseMap();
         }
     }

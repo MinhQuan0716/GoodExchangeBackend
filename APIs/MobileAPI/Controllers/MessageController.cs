@@ -71,5 +71,29 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        [HttpPost]
+        public async Task<IActionResult> TestSendMessageToUser(Guid recipientUserId, Guid Id, string messageContent)
+        {
+            var senderUserId = Id;
+
+            var chatRoom = await _messageService.GetOrCreateChatRoomAsync(recipientUserId);
+            if (chatRoom == null)
+            {
+                throw new HubException("Unable to create or retrieve chat room.");
+            }
+
+            var createMessageModel = new CreateMessageModel
+            {
+                MessageContent = messageContent,
+                RoomId = chatRoom.Id
+            };
+
+            var message = await _messageService.CreateMessage(createMessageModel);
+            if (message.CreatedBy == null)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
     }
 }

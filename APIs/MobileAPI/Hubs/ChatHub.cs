@@ -1,7 +1,9 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.Service;
 using Application.ViewModel.MessageModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
@@ -11,21 +13,24 @@ namespace MobileAPI.Hubs
     {
         private readonly IClaimService _claimService;
         private readonly IMessageService _messageService;
+        private readonly IUserService _userService;
         private static readonly ConcurrentDictionary<string, ConcurrentBag<string>> UserConnections = new();
         private static readonly ConcurrentDictionary<Guid, ConcurrentBag<Message>> PrivateMessages = new();
 
-        public ChatHub(IClaimService claimService, IMessageService messageService)
+        public ChatHub(IClaimService claimService, IMessageService messageService, IUserService userService)
         {
             _claimService = claimService;
             _messageService = messageService;
+            _userService = userService;
         }
-
+        [Authorize]
         public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
         {
-            var senderUserId = _claimService.GetCurrentUserId;
-            if (senderUserId == Guid.Empty || !UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
+            var user = await _userService.GetCurrentLoginUser();
+            var senderUserId = user.Userid;
+            if (senderUserId == Guid.Empty)
             {
-                throw new HubException("Invalid recipient user ID.");
+                throw new HubException("Invalid sender user ID.");
             }
 
             var chatRoom = await _messageService.GetOrCreateChatRoomAsync(recipientUserId);
@@ -36,8 +41,6 @@ namespace MobileAPI.Hubs
 
             var createMessageModel = new CreateMessageModel
             {
-                SenderId = senderUserId,
-                ReceiverId = recipientUserId,
                 MessageContent = messageContent,
                 RoomId = chatRoom.Id
             };
@@ -51,12 +54,19 @@ namespace MobileAPI.Hubs
             var messages = PrivateMessages.GetOrAdd(chatRoom.Id, _ => new ConcurrentBag<Message>());
             messages.Add(message);
 
-            foreach (var connectionId in recipientConnections)
+            if (UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
             {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", senderUserId.ToString(), messageContent);
+                foreach (var connectionId in recipientConnections)
+                {
+                    await Clients.Client(connectionId).SendAsync("ReceiveMessage", senderUserId.ToString(), messageContent);
+                }
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("RecipientNotConnected", recipientUserId.ToString());
             }
         }
-
+        [Authorize]
         public async Task<IEnumerable<Message>> GetPrivateMessages(Guid chatRoomId)
         {
             var userId = _claimService.GetCurrentUserId;
@@ -77,7 +87,7 @@ namespace MobileAPI.Hubs
 
             return Enumerable.Empty<Message>();
         }
-
+        [Authorize]
         public async Task ClosePrivateChat(Guid chatRoomId)
         {
             var userId = _claimService.GetCurrentUserId;
@@ -102,17 +112,34 @@ namespace MobileAPI.Hubs
                 }
             }
         }
-
-        public override Task OnConnectedAsync()
+        [Authorize]
+        public override async Task OnConnectedAsync()
         {
-            var userId = _claimService.GetCurrentUserId.ToString();
-            if (!string.IsNullOrEmpty(userId))
+            var userId = _claimService.GetCurrentUserId;
+            if (userId == Guid.Empty)
             {
-                UserConnections.AddOrUpdate(userId, _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
+                throw new HubException("Invalid user ID.");
             }
-            return base.OnConnectedAsync();
-        }
+            if (!string.IsNullOrEmpty(userId.ToString()))
+            {
+                UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
+                // Await the task to get the list of chat rooms
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
+                foreach (var chatRoom in userChatRooms)
+                {
+                    if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
+                    {
+                        foreach (var message in messages)
+                        {
+                            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", message.CreatedBy.ToString(), message.MessageContent);
+                        }
+                    }
+                }
+            }
+            await base.OnConnectedAsync();
+        }
+        [Authorize]
         public override Task OnDisconnectedAsync(Exception exception)
         {
             var userId = _claimService.GetCurrentUserId.ToString();
@@ -126,6 +153,7 @@ namespace MobileAPI.Hubs
             }
             return base.OnDisconnectedAsync(exception);
         }
+        [Authorize]
         public async Task<IEnumerable<ChatRoom>> GetAllRooms()
         {
             var userId = _claimService.GetCurrentUserId;
