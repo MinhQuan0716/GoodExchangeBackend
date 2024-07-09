@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Infrastructure
         private readonly ICategoryRepository _categoryRepository;
         private readonly IWishListRepository _wishListRepository;
         private readonly ISubcriptionRepository _subcriptionRepository;
+        private readonly ISubscriptionHistoryRepository _subscriptionHistoryRepository;
         private readonly IRatingRepository _ratingRepository;
         private readonly IMessageRepository _messageRepository;
         private readonly IRequestRepository _requestRepository;
@@ -30,7 +32,7 @@ namespace Infrastructure
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
             ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,
             IRatingRepository ratingRepository, IMessageRepository messageRepository, IRequestRepository requestRepository, 
-            IChatRoomRepository chatRoomRepository)
+            IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -46,6 +48,7 @@ namespace Infrastructure
             _messageRepository = messageRepository; 
             _requestRepository = requestRepository;
             _chatRoomRepository = chatRoomRepository;
+            _subscriptionHistoryRepository=subscriptionHistoryRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -73,6 +76,8 @@ namespace Infrastructure
         public IRequestRepository RequestRepository => _requestRepository;
 
         public IChatRoomRepository ChatRoomRepository => _chatRoomRepository;
+
+        public ISubscriptionHistoryRepository SubscriptionHistoryRepository => _subscriptionHistoryRepository;
 
         public Task<int> SaveChangeAsync()
         {

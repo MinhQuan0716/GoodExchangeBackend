@@ -85,7 +85,7 @@ namespace Infrastructure.Repository
         {
             entity.IsDelete = true;
             entity.DeletedBy = _claimService.GetCurrentUserId;
-            entity.DeletetionDate = DateTime.Now;
+            entity.DeletetionDate =_currentTime.GetCurrentTime();
             _dbSet.Update(entity);
         }
 

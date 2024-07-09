@@ -19,6 +19,7 @@ namespace Application
         public ICategoryRepository CategoryRepository { get; }
         public IWishListRepository WishListRepository { get; }
         public ISubcriptionRepository SubcriptionRepository { get; }
+        public ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
         public IRatingRepository RatingRepository { get; }
         public IMessageRepository MessageRepository { get; }
         public IRequestRepository RequestRepository { get; }

@@ -81,6 +81,15 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
+            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetLastSubscriptionByUserIdAsync(_claimService.GetCurrentUserId);
+            if(listSubscription==null)
+            {
+                throw new Exception("You must subscribe to  create post");
+            }
+            if (listSubscription.EndDate==DateTime.UtcNow)
+            {
+                throw new Exception("Your subscription has expired");
+            }
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
