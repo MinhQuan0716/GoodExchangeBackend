@@ -30,6 +30,7 @@ namespace Infrastructure
         public DbSet<Report> Reports { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestStatus> RequestStatuses { get; set; }
+        public DbSet<VerificationStatus> VerificationStatuses { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<WishList> WishLists { get; set; }

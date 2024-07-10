@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240606123347_AddDataToExchangeCondition")]
-    partial class AddDataToExchangeCondition
+    [Migration("20240710083614_AddEntity")]
+    partial class AddEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,7 +61,64 @@ namespace Infrastructure.Migrations
                         {
                             CategoryId = 4,
                             CategoryName = "Sporting Goods"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryName = "Home and Kitchen"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            CategoryName = "Toys and Games"
+                        },
+                        new
+                        {
+                            CategoryId = 7,
+                            CategoryName = "Books"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.ChatRoom", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatRooms");
                 });
 
             modelBuilder.Entity("Domain.Entities.Comment", b =>
@@ -135,11 +192,16 @@ namespace Infrastructure.Migrations
                         new
                         {
                             ConditionId = 1,
-                            ConditionType = "For exchanging"
+                            ConditionType = "For selling"
                         },
                         new
                         {
                             ConditionId = 2,
+                            ConditionType = "For exchanging"
+                        },
+                        new
+                        {
+                            ConditionId = 3,
                             ConditionType = "For donation"
                         });
                 });
@@ -148,6 +210,9 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChatRoomId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -175,17 +240,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ReceiverId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
+                    b.HasIndex("ChatRoomId");
 
                     b.ToTable("Messages");
                 });
@@ -230,6 +287,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
                     b.ToTable("Posts");
                 });
 
@@ -266,29 +326,27 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ProductImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ProductPrice")
                         .HasColumnType("bigint");
 
+                    b.Property<int?>("ProductQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestedProduct")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ConditionId");
-
-                    b.HasIndex("PostId")
-                        .IsUnique()
-                        .HasFilter("[PostId] IS NOT NULL");
 
                     b.ToTable("Products");
                 });
@@ -328,6 +386,12 @@ namespace Infrastructure.Migrations
 
                     b.Property<float>("RatingPoint")
                         .HasColumnType("real");
+
+                    b.Property<string>("RatingTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReviewContent")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -382,6 +446,91 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ReportUserId");
 
                     b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Request", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequestMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("RequestStatusId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RequestStatus", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("RequestStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            StatusId = 1,
+                            StatusName = "Pending"
+                        },
+                        new
+                        {
+                            StatusId = 2,
+                            StatusName = "Accept"
+                        },
+                        new
+                        {
+                            StatusId = 3,
+                            StatusName = "Reject"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -440,6 +589,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("ExpiryMonth")
+                        .HasColumnType("real");
+
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -456,7 +608,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("WalletTransactionId")
+                    b.Property<Guid?>("WalletTransactionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -526,7 +678,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("BirthDay")
+                    b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatedBy")
@@ -548,7 +700,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsBuisnessAccount")
+                    b.Property<string>("HomeAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsBuisnessAccount")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsDelete")
@@ -568,7 +723,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
@@ -594,6 +748,40 @@ namespace Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.VerificationStatus", b =>
+                {
+                    b.Property<int>("VerificationStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VerificationStatusId"));
+
+                    b.Property<string>("VerificationStatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VerificationStatusId");
+
+                    b.ToTable("VerificationStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            VerificationStatusId = 1,
+                            VerificationStatusName = "Pending"
+                        },
+                        new
+                        {
+                            VerificationStatusId = 2,
+                            VerificationStatusName = "Approved"
+                        },
+                        new
+                        {
+                            VerificationStatusId = 3,
+                            VerificationStatusName = "Denied"
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.VerifyUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -615,9 +803,6 @@ namespace Infrastructure.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsStudentAccount")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -630,10 +815,15 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UserImage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VerifyStatusId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("VerifyStatusId");
 
                     b.ToTable("VerifyUsers");
                 });
@@ -747,7 +937,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
@@ -755,11 +945,30 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("WishLists");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ChatRoom", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Receiver")
+                        .WithMany("ChatRooms2")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "Sender")
+                        .WithMany("ChatRooms1")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Domain.Entities.Comment", b =>
@@ -787,21 +996,24 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Message", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Receiver")
-                        .WithMany("ReceiverMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("Domain.Entities.ChatRoom", "ChatRoom")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "Sender")
-                        .WithMany("SenderMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.Navigation("ChatRoom");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Post", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithOne("Post")
+                        .HasForeignKey("Domain.Entities.Post", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -814,15 +1026,9 @@ namespace Infrastructure.Migrations
                         .WithMany("Products")
                         .HasForeignKey("ConditionId");
 
-                    b.HasOne("Domain.Entities.Post", "Post")
-                        .WithOne("Product")
-                        .HasForeignKey("Domain.Entities.Product", "PostId");
-
                     b.Navigation("Category");
 
                     b.Navigation("ConditionType");
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rating", b =>
@@ -859,13 +1065,38 @@ namespace Infrastructure.Migrations
                     b.Navigation("ReportUser");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Request", b =>
+                {
+                    b.HasOne("Domain.Entities.Post", "Post")
+                        .WithMany("Requests")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.RequestStatus", "Status")
+                        .WithMany("Requests")
+                        .HasForeignKey("RequestStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Requests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Subcription", b =>
                 {
                     b.HasOne("Domain.Entities.WalletTransaction", "WalletTransaction")
                         .WithMany("Subcriptions")
-                        .HasForeignKey("WalletTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WalletTransactionId");
 
                     b.Navigation("WalletTransaction");
                 });
@@ -908,7 +1139,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.VerificationStatus", "VerificationStatus")
+                        .WithMany("VerifyUsers")
+                        .HasForeignKey("VerifyStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("User");
+
+                    b.Navigation("VerificationStatus");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>
@@ -935,9 +1174,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.WishList", b =>
                 {
-                    b.HasOne("Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                    b.HasOne("Domain.Entities.Post", "Post")
+                        .WithMany("WishLists")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -947,9 +1186,14 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.Navigation("Post");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ChatRoom", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Comment", b =>
@@ -966,8 +1210,20 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Product")
+                    b.Navigation("Requests");
+
+                    b.Navigation("WishLists");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Post")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.RequestStatus", b =>
+                {
+                    b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subcription", b =>
@@ -977,21 +1233,28 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.Navigation("ChatRooms1");
+
+                    b.Navigation("ChatRooms2");
+
                     b.Navigation("Comments");
 
                     b.Navigation("RatedUsers");
 
                     b.Navigation("Raters");
 
-                    b.Navigation("ReceiverMessages");
-
-                    b.Navigation("SenderMessages");
+                    b.Navigation("Requests");
 
                     b.Navigation("VerifyUser")
                         .IsRequired();
 
                     b.Navigation("Wallet")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificationStatus", b =>
+                {
+                    b.Navigation("VerifyUsers");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>

@@ -47,6 +47,9 @@ builder.Services.AddSwaggerGen(opt =>
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
+builder.Services.AddCors(options
+     => options.AddDefaultPolicy(policy
+         => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,9 +76,7 @@ if (app.Environment.IsProduction())
 app.UseAuthorization();
 
 app.UseSession();
-
-app.UseWebSockets();
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();

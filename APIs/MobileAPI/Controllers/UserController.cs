@@ -144,7 +144,7 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
-        [Authorize]
+      /*  [Authorize]
         [HttpPost]
         public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)
         {
@@ -154,6 +154,6 @@ namespace MobileAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
+        }*/
     }
 }

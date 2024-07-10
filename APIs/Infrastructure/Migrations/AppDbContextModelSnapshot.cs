@@ -586,6 +586,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("ExpiryMonth")
+                        .HasColumnType("real");
+
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -742,6 +745,40 @@ namespace Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.VerificationStatus", b =>
+                {
+                    b.Property<int>("VerificationStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VerificationStatusId"));
+
+                    b.Property<string>("VerificationStatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VerificationStatusId");
+
+                    b.ToTable("VerificationStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            VerificationStatusId = 1,
+                            VerificationStatusName = "Pending"
+                        },
+                        new
+                        {
+                            VerificationStatusId = 2,
+                            VerificationStatusName = "Approved"
+                        },
+                        new
+                        {
+                            VerificationStatusId = 3,
+                            VerificationStatusName = "Denied"
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.VerifyUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -763,9 +800,6 @@ namespace Infrastructure.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsStudentAccount")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -778,10 +812,15 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UserImage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VerifyStatusId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("VerifyStatusId");
 
                     b.ToTable("VerifyUsers");
                 });
@@ -1097,7 +1136,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.VerificationStatus", "VerificationStatus")
+                        .WithMany("VerifyUsers")
+                        .HasForeignKey("VerifyStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("User");
+
+                    b.Navigation("VerificationStatus");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>
@@ -1200,6 +1247,11 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Wallet")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificationStatus", b =>
+                {
+                    b.Navigation("VerifyUsers");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>

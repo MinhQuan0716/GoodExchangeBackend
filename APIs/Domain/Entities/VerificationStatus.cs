@@ -9,8 +9,8 @@ namespace Domain.Entities
 {
     public class VerificationStatus
     {
-        [Key]
         public int VerificationStatusId { get; set; }
         public string VerificationStatusName { get; set; }
+        public ICollection<VerifyUser> VerifyUsers { get; set; }    
     }
 }

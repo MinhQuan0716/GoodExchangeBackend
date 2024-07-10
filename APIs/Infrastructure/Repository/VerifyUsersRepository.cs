@@ -27,14 +27,16 @@ namespace Infrastructure.Repository
 
         public async Task<List<VerifyViewModel>> GetAllVerifyUserAsync()
         {
-            var listVerifyUser=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.UserImage.IsNullOrEmpty()==false)
+            var listVerifyUser=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false)
                                                               .Include(x=>x.User).ThenInclude(u=>u.Role).AsSplitQuery()
+                                                              .Include(x=>x.VerificationStatus).AsSplitQuery()
                                                               .Select(x=>new VerifyViewModel
                                                               {
                                                                   Email=x.User.Email,
                                                                   ProfileImage=x.UserImage,
                                                                   RoleName=x.User.Role.RoleName,
-                                                                  UserName=x.User.UserName
+                                                                  UserName=x.User.UserName,
+                                                                  VerifyStatus=x.VerificationStatus.VerificationStatusName
                                                               }).ToListAsync();
             return listVerifyUser;
         }

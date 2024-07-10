@@ -312,7 +312,7 @@ namespace Application.Service
             VerifyUser newVerifyUser = new VerifyUser
             {
                 UserId = userId,
-                IsStudentAccount = false
+                VerifyStatusId=1,
             };
             await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
             await _unitOfWork.SaveChangeAsync();
@@ -357,18 +357,7 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<bool> UploadImageForVerifyUser(IFormFile userImage)
-        {
-            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
-            if (verifyUser != null)
-            {
-                string imageUrl =await _uploadFile.UploadFileToFireBase(userImage, "User");
-                verifyUser.UserImage=imageUrl;
-                verifyUser.IsStudentAccount = true;
-                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
-            }
-            return await _unitOfWork.SaveChangeAsync() > 0;
-        }
+    
 
         public async Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWeb()
         {

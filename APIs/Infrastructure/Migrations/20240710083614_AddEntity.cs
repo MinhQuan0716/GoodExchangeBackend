@@ -40,24 +40,16 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Posts",
+                name: "RequestStatuses",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PostTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    StatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.PrimaryKey("PK_RequestStatuses", x => x.StatusId);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,15 +66,29 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VerificationStatuses",
+                columns: table => new
+                {
+                    VerificationStatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VerificationStatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VerificationStatuses", x => x.VerificationStatusId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductPrice = table.Column<long>(type: "bigint", nullable: false),
+                    RequestedProduct = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductQuantity = table.Column<int>(type: "int", nullable: true),
                     ConditionId = table.Column<int>(type: "int", nullable: true),
-                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -105,11 +111,6 @@ namespace Infrastructure.Migrations
                         column: x => x.ConditionId,
                         principalTable: "ExchangeConditions",
                         principalColumn: "ConditionId");
-                    table.ForeignKey(
-                        name: "FK_Products_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -120,13 +121,15 @@ namespace Infrastructure.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsBuisnessAccount = table.Column<bool>(type: "bit", nullable: false),
+                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    HomeAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsBuisnessAccount = table.Column<bool>(type: "bit", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     WalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    VerifyUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -143,6 +146,155 @@ namespace Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatRooms",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReceiverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatRooms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ChatRooms_Users_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ChatRooms_Users_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ratings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RaterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RatingPoint = table.Column<float>(type: "real", nullable: false),
+                    RatingTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReviewContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RatedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ratings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Ratings_Users_RatedUserId",
+                        column: x => x.RatedUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Ratings_Users_RaterId",
+                        column: x => x.RaterId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VerifyUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VerifyStatusId = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VerifyUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VerifyUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VerifyUsers_VerificationStatuses_VerifyStatusId",
+                        column: x => x.VerifyStatusId,
+                        principalTable: "VerificationStatuses",
+                        principalColumn: "VerificationStatusId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wallets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserBalance = table.Column<float>(type: "real", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wallets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wallets_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -185,68 +337,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReceiverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Messages_Users_ReceiverId",
-                        column: x => x.ReceiverId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Messages_Users_SenderId",
-                        column: x => x.SenderId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ratings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RaterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RatingPoint = table.Column<float>(type: "real", nullable: false),
-                    RatedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ratings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ratings_Users_RatedUserId",
-                        column: x => x.RatedUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Ratings_Users_RaterId",
-                        column: x => x.RaterId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
@@ -278,13 +368,14 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VerifyUser",
+                name: "Requests",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequestMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsStudentAccount = table.Column<bool>(type: "bit", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -295,36 +386,22 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VerifyUser", x => x.Id);
+                    table.PrimaryKey("PK_Requests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_VerifyUser_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Requests_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wallets",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserBalance = table.Column<float>(type: "real", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wallets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Wallets_Users_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Requests_RequestStatuses_RequestStatusId",
+                        column: x => x.RequestStatusId,
+                        principalTable: "RequestStatuses",
+                        principalColumn: "StatusId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Requests_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -335,7 +412,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -349,15 +426,41 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_WishLists", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WishLists_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_WishLists_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WishLists_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChatRoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_ChatRooms_ChatRoomId",
+                        column: x => x.ChatRoomId,
+                        principalTable: "ChatRooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -395,7 +498,8 @@ namespace Infrastructure.Migrations
                     Price = table.Column<long>(type: "bigint", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubcriptionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WalletTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WalletTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExpiryMonth = table.Column<float>(type: "real", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletetionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -411,8 +515,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Subcriptions_WalletTransactions_WalletTransactionId",
                         column: x => x.WalletTransactionId,
                         principalTable: "WalletTransactions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -459,7 +562,30 @@ namespace Infrastructure.Migrations
                     { 1, "Apparel and Accessories" },
                     { 2, "Electronics" },
                     { 3, "Office Supplies" },
-                    { 4, "Sporting Goods" }
+                    { 4, "Sporting Goods" },
+                    { 5, "Home and Kitchen" },
+                    { 6, "Toys and Games" },
+                    { 7, "Books" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ExchangeConditions",
+                columns: new[] { "ConditionId", "ConditionType" },
+                values: new object[,]
+                {
+                    { 1, "For selling" },
+                    { 2, "For exchanging" },
+                    { 3, "For donation" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RequestStatuses",
+                columns: new[] { "StatusId", "StatusName" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Accept" },
+                    { 3, "Reject" }
                 });
 
             migrationBuilder.InsertData(
@@ -471,6 +597,26 @@ namespace Infrastructure.Migrations
                     { 2, "Moderator" },
                     { 3, "Member" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "VerificationStatuses",
+                columns: new[] { "VerificationStatusId", "VerificationStatusName" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Approved" },
+                    { 3, "Denied" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatRooms_ReceiverId",
+                table: "ChatRooms",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatRooms_SenderId",
+                table: "ChatRooms",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
@@ -488,14 +634,15 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ReceiverId",
+                name: "IX_Messages_ChatRoomId",
                 table: "Messages",
-                column: "ReceiverId");
+                column: "ChatRoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderId",
-                table: "Messages",
-                column: "SenderId");
+                name: "IX_Posts_ProductId",
+                table: "Posts",
+                column: "ProductId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -506,13 +653,6 @@ namespace Infrastructure.Migrations
                 name: "IX_Products_ConditionId",
                 table: "Products",
                 column: "ConditionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_PostId",
-                table: "Products",
-                column: "PostId",
-                unique: true,
-                filter: "[PostId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ratings_RatedUserId",
@@ -533,6 +673,21 @@ namespace Infrastructure.Migrations
                 name: "IX_Reports_ReportUserId",
                 table: "Reports",
                 column: "ReportUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_PostId",
+                table: "Requests",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_RequestStatusId",
+                table: "Requests",
+                column: "RequestStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_UserId",
+                table: "Requests",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubcriptionHistories_SubcriptionId",
@@ -561,9 +716,15 @@ namespace Infrastructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerifyUser_UserId",
-                table: "VerifyUser",
-                column: "UserId");
+                name: "IX_VerifyUsers_UserId",
+                table: "VerifyUsers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VerifyUsers_VerifyStatusId",
+                table: "VerifyUsers",
+                column: "VerifyStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_OwnerId",
@@ -577,9 +738,9 @@ namespace Infrastructure.Migrations
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WishLists_ProductId",
+                name: "IX_WishLists_PostId",
                 table: "WishLists",
-                column: "ProductId");
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WishLists_UserId",
@@ -603,34 +764,46 @@ namespace Infrastructure.Migrations
                 name: "Reports");
 
             migrationBuilder.DropTable(
+                name: "Requests");
+
+            migrationBuilder.DropTable(
                 name: "SubcriptionHistories");
 
             migrationBuilder.DropTable(
-                name: "VerifyUser");
+                name: "VerifyUsers");
 
             migrationBuilder.DropTable(
                 name: "WishLists");
 
             migrationBuilder.DropTable(
+                name: "ChatRooms");
+
+            migrationBuilder.DropTable(
+                name: "RequestStatuses");
+
+            migrationBuilder.DropTable(
                 name: "Subcriptions");
+
+            migrationBuilder.DropTable(
+                name: "VerificationStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "WalletTransactions");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "WalletTransactions");
+                name: "Wallets");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "ExchangeConditions");
-
-            migrationBuilder.DropTable(
-                name: "Posts");
-
-            migrationBuilder.DropTable(
-                name: "Wallets");
 
             migrationBuilder.DropTable(
                 name: "Users");

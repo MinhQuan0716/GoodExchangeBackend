@@ -14,6 +14,7 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<VerifyUser> builder)
         {
             builder.HasOne(x=>x.User).WithOne(x=>x.VerifyUser).HasForeignKey<VerifyUser>(x=>x.UserId);
+            builder.HasOne(x => x.VerificationStatus).WithMany(x => x.VerifyUsers).HasForeignKey(x => x.VerifyStatusId);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Infrastructure.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<VerificationStatus> builder)
         {
+            builder.HasKey(x => x.VerificationStatusId);
             builder.HasData(new VerificationStatus
             {
                 VerificationStatusId = 1,

@@ -125,7 +125,7 @@ namespace MobileAPI.Hubs
                 UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
                 // Await the task to get the list of chat rooms
-                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId); 
                 foreach (var chatRoom in userChatRooms)
                 {
                     if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
@@ -162,8 +162,8 @@ namespace MobileAPI.Hubs
                 throw new HubException("Invalid user ID.");
             }
 
-            var chatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
-            return chatRooms;
+            var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
+            return userChatRooms;
         }
     }
 }
