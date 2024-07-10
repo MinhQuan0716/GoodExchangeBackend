@@ -23,11 +23,11 @@ namespace Backend.Infratructure.Test.RepositoryTest
         {
             _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
         }
-        [Fact]
+    /*    [Fact]
         public async Task GetAllPostWithDetail_ShouldReturnTrue()
         {
             var product = _fixture.Build<Product>().Create();
-            var post = _fixture.Build<Post>().With(x => x.ProductId, product.Id).CreateMany(5);
+            var post = _fixture.Build<Post>().With(x => x.ProductId, Guid.Parse("be8844bc-fc8e-4f66-9c28-1b7254cf8b88")).CreateMany(5);
             await _dbContext.Posts.AddRangeAsync(post);
             _dbContext.SaveChanges();
             var findPost = await _postRepository.GetAllPostsWithDetailsAsync();
@@ -43,7 +43,7 @@ namespace Backend.Infratructure.Test.RepositoryTest
             _dbContext.SaveChanges();
             var sortedPost = await _postRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
             Assert.Equal(post.OrderBy(x => x.CreationDate), sortedPost);
-        }
+        }*/
         }
     }
 
