@@ -1,4 +1,5 @@
-﻿using Application.ViewModel.MessageModel;
+﻿using Application.ViewModel.ChatRoomModel;
+using Application.ViewModel.MessageModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace Application.InterfaceService
         Task<bool> UpdateMessage(UpdateMessageModel message);
         Task<bool> DeleteMessage(Guid id);
         Task<ChatRoom> GetOrCreateChatRoomAsync(Guid receiverId);
-        Task<List<Message>> GetMessagesByChatRoomId(Guid chatRoomId);
+        Task<ChatRoomDto> GetMessagesByChatRoomId(Guid chatRoomId);
         Task<ChatRoom> GetChatRoomByIdAsync(Guid chatRoomId);
-        Task<List<ChatRoom>> GetAllChatRoomsByUserIdAsync();
+        Task<List<ChatRoomDto>> GetAllChatRoomsByUserIdAsync();
     }
 }

@@ -8,9 +8,7 @@ using MobileAPI.Hubs;
 
 namespace MobileAPI.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class MessageController : ControllerBase
+    public class MessageController : BaseController
     {
         private readonly IMessageService _messageService;
         private readonly IHubContext<ChatHub> _hubContext;
@@ -94,6 +92,22 @@ namespace MobileAPI.Controllers
                 return BadRequest();
             }
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllRooms()
+        {
+            var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync();
+            return Ok(userChatRooms);
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPrivateMessagesByChatRoomId(Guid id)
+        {
+            var allMessages = await _messageService.GetMessagesByChatRoomId(id);
+            return Ok(allMessages);
         }
     }
 }
