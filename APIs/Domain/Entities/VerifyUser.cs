@@ -11,6 +11,7 @@ namespace Domain.Entities
         public Guid UserId { get; set; }
         public User User { get; set; }
         public string? UserImage { get; set; }
-        public bool IsStudentAccount { get; set; }
+        public int VerifyStatusId { get; set; }
+        public VerificationStatus VerificationStatus { get; set; }
     }
 }

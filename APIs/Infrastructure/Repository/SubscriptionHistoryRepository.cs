@@ -18,11 +18,10 @@ namespace Infrastructure.Repository
             _appDbContext = appDbContext;
         }
 
-        public async Task<SubcriptionHistory> GetLastSubscriptionByUserIdAsync(Guid userId)
+        public async Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId)
         {
-            var subscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId)
-                                                                             .OrderBy(x=>x.CreationDate)
-                                                                             .LastAsync();
+            var subscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId&&x.IsDelete==false)
+                                                                       .ToListAsync();
             return subscription;
         }
     }

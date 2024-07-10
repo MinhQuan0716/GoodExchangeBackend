@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAPI.Controllers
 {
     
-    public class WebPostController : BaseController
+    public class PostController : BaseController
     {
         private readonly IPostService _postService;
-        public WebPostController(IPostService postService)
+        public PostController(IPostService postService)
         {
             _postService = postService;
         }

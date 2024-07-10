@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    public class WebUserController : BaseController
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        public WebUserController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
         }
         [Authorize(Roles ="Admin")]
         [HttpGet]
-        public async Task<IActionResult> GeAllUser()
+        public async Task<IActionResult> Users()
         {
             List<User> user=await _userService.GetAllUserAsync();
             return Ok(user);

@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAPI.Controllers
 {
   
-    public class WebSubcriptionController : BaseController
+    public class SubcriptionController : BaseController
     {
         private readonly ISubcriptionService _subcriptionService;
-        public WebSubcriptionController(ISubcriptionService subcriptionService)
+        public SubcriptionController(ISubcriptionService subcriptionService)
         {
             _subcriptionService = subcriptionService;
         }
         [Authorize(Roles ="Admin")]
         [HttpPost]
-        public async Task<IActionResult>CreateSubcription(CreateSubcriptionModel createSubcriptionModel)
+        public async Task<IActionResult>Subscription(CreateSubcriptionModel createSubcriptionModel)
         {
             bool isCreated = await _subcriptionService.CreateSubcription(createSubcriptionModel);
             if(isCreated) 

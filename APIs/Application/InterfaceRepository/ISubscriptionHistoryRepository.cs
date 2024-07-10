@@ -9,6 +9,6 @@ namespace Application.InterfaceRepository
 {
     public interface ISubscriptionHistoryRepository:IGenericRepository<SubcriptionHistory>
     {
-        Task<SubcriptionHistory> GetLastSubscriptionByUserIdAsync(Guid userId);
+        Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId);
     }
 }

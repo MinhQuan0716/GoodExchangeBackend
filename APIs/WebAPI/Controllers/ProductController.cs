@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAPI.Controllers
 {
    
-    public class WebProductController : BaseController
+    public class ProductController : BaseController
     {
         private readonly IProductService _productService;
-        public WebProductController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }

@@ -1,7 +1,9 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.VerifyModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,20 @@ namespace Infrastructure.Repository
         public async Task<VerifyUser> FindVerifyUserIdByUserId(Guid userId)
         {
             return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId).SingleOrDefaultAsync();
+        }
+
+        public async Task<List<VerifyViewModel>> GetAllVerifyUserAsync()
+        {
+            var listVerifyUser=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.UserImage.IsNullOrEmpty()==false)
+                                                              .Include(x=>x.User).ThenInclude(u=>u.Role).AsSplitQuery()
+                                                              .Select(x=>new VerifyViewModel
+                                                              {
+                                                                  Email=x.User.Email,
+                                                                  ProfileImage=x.UserImage,
+                                                                  RoleName=x.User.Role.RoleName,
+                                                                  UserName=x.User.UserName
+                                                              }).ToListAsync();
+            return listVerifyUser;
         }
     }
 }
