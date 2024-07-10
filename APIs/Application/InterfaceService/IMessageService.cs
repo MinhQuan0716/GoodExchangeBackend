@@ -18,6 +18,6 @@ namespace Application.InterfaceService
         Task<ChatRoom> GetOrCreateChatRoomAsync(Guid receiverId);
         Task<List<Message>> GetMessagesByChatRoomId(Guid chatRoomId);
         Task<ChatRoom> GetChatRoomByIdAsync(Guid chatRoomId);
-        Task<List<ChatRoom>> GetAllChatRoomsByUserIdAsync(Guid chatRoomId);
+        Task<List<ChatRoom>> GetAllChatRoomsByUserIdAsync();
     }
 }

@@ -4,6 +4,8 @@ using Application.Service;
 using Application.ViewModel.MessageModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
@@ -67,12 +69,12 @@ namespace MobileAPI.Hubs
             }
         }
         [Authorize]
-        public async Task<IEnumerable<Message>> GetPrivateMessages(Guid chatRoomId)
+        public async Task<List<Message>> GetPrivateMessages(Guid chatRoomId)
         {
             var userId = _claimService.GetCurrentUserId;
             if (userId == Guid.Empty)
             {
-                return Enumerable.Empty<Message>();
+                throw new HubException("Invalid userId.");
             }
 
             if (PrivateMessages.TryGetValue(chatRoomId, out var messages))
@@ -81,11 +83,11 @@ namespace MobileAPI.Hubs
                 var persistentMessages = await _messageService.GetMessagesByChatRoomId(chatRoomId);
                 var combinedMessages = allMessages.Concat(persistentMessages)
                     .DistinctBy(m => m.Id)
-                    .OrderBy(m => m.CreationDate);
+                    .OrderBy(m => m.CreationDate)
+                    .ToList();
                 return combinedMessages;
             }
-
-            return Enumerable.Empty<Message>();
+            throw new HubException("Invalid chatRoomId.");
         }
         [Authorize]
         public async Task ClosePrivateChat(Guid chatRoomId)
@@ -125,7 +127,7 @@ namespace MobileAPI.Hubs
                 UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
                 // Await the task to get the list of chat rooms
-                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId); 
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(); 
                 foreach (var chatRoom in userChatRooms)
                 {
                     if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
@@ -154,7 +156,7 @@ namespace MobileAPI.Hubs
             return base.OnDisconnectedAsync(exception);
         }
         [Authorize]
-        public async Task<IEnumerable<ChatRoom>> GetAllRooms()
+        public async Task<List<ChatRoom>> GetAllRooms()
         {
             var userId = _claimService.GetCurrentUserId;
             if (userId == Guid.Empty)
@@ -162,7 +164,7 @@ namespace MobileAPI.Hubs
                 throw new HubException("Invalid user ID.");
             }
 
-            var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(userId);
+            var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync();
             return userChatRooms;
         }
     }
