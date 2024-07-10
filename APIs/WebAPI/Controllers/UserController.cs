@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
         }
         [Authorize(Roles ="Admin")]
         [HttpGet]
-        public async Task<IActionResult> Users()
+        public async Task<IActionResult> GetAllUsers()
         {
             List<User> user=await _userService.GetAllUserAsync();
             return Ok(user);

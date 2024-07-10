@@ -37,6 +37,39 @@ namespace Application.Service
             _cacheService = cacheService;
             _uploadFile = uploadFile;
         }
+
+        public async Task<bool> ApproveImageAsync(Guid verifyId)
+        {
+            var findVerified=await _unitOfWork.VerifyUsersRepository.GetByIdAsync(verifyId);
+            if(findVerified == null)
+            {
+                return false;   
+            }
+            if(findVerified.VerifyStatusId==2)
+            {
+                return false;
+            }
+            findVerified.VerifyStatusId = 2;
+            _unitOfWork.VerifyUsersRepository.Update(findVerified);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> DenyImageAsync(Guid verifyId)
+        {
+            var findVerified = await _unitOfWork.VerifyUsersRepository.GetByIdAsync(verifyId);
+            if (findVerified == null)
+            {
+                return false;
+            }
+            if(findVerified.VerifyStatusId == 2)
+            {
+                return false;
+            }
+            findVerified.VerifyStatusId = 3;
+            _unitOfWork.VerifyUsersRepository.Update(findVerified);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
         public async Task<List<VerifyViewModel>> GetAllWaitingUserToApproveAsync()
         {
            return await _unitOfWork.VerifyUsersRepository.GetAllVerifyUserAsync();

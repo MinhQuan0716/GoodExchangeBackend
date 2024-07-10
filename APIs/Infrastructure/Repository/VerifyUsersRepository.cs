@@ -32,6 +32,7 @@ namespace Infrastructure.Repository
                                                               .Include(x=>x.VerificationStatus).AsSplitQuery()
                                                               .Select(x=>new VerifyViewModel
                                                               {
+                                                                  Id= x.Id,
                                                                   Email=x.User.Email,
                                                                   ProfileImage=x.UserImage,
                                                                   RoleName=x.User.Role.RoleName,
