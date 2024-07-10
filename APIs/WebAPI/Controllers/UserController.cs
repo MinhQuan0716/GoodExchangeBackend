@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
             var newToken = await _userService.Login(loginModel,apiOrigin);
             return Ok(newToken);
         }
-        [HttpGet]
+       /* [HttpGet]
         public async Task<IActionResult> SendVerificationCode(string email)
         {
             bool sendSuccess = await _userService.SendVerificationCodeToEmail(email);
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
+        }*/
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CurrentLoginUserInfo()
@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
             var currentUser = await _userService.GetCurrentLoginUserForWeb();
             return Ok(currentUser);
         }
-        [HttpGet]
+     /*   [HttpGet]
         public IActionResult CheckVerifyCode(string code)
         {
             bool isCorrect = _userService.CheckVerifyCode(code);
@@ -49,8 +49,8 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
-        [HttpPost]
+        }*/
+      /*  [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
         {
             string verifycode = HttpContext.Session.GetString("verifycode");
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
+        }*/
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin,Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
