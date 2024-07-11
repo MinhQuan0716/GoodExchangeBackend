@@ -63,7 +63,7 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<ChatRoom> GetOrCreateChatRoomAsync(Guid user1)
+        public async Task<ChatRoomDto> GetOrCreateChatRoomAsync(Guid user1, Guid postId)
         {
             Guid user2 = _claimService.GetCurrentUserId;
             var chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
@@ -77,10 +77,21 @@ namespace Application.Service
                 SenderId = user1,
                 ReceiverId = user2
             };
-
+            var room = _mapper.Map<ChatRoom>(newRoom);
             await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);
             await _unitOfWork.SaveChangeAsync();
-            return newRoom;
+            var postModel = await _unitOfWork.PostRepository.GetPostDetail(postId);
+            var createMessageModel = new CreateMessageModel
+            {
+                MessageContent = "Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl,
+                RoomId = room.Id
+            };
+            var newMessage = _mapper.Map<Message>(createMessageModel);
+            newMessage.CreationDate = DateTime.UtcNow;
+            await _unitOfWork.MessageRepository.AddAsync(newMessage);
+            await _unitOfWork.SaveChangeAsync();
+            var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(newRoom.Id);
+            return messages;
         }
 
         public async Task<ChatRoomDto> GetMessagesByChatRoomId(Guid chatRoomId)

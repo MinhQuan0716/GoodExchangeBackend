@@ -26,7 +26,7 @@ namespace MobileAPI.Hubs
             _userService = userService;
         }
         [Authorize]
-        public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
+        public async Task SendMessageToUser(Guid recipientUserId, string messageContent, Guid postId)
         {
             var user = await _userService.GetCurrentLoginUser();
             var senderUserId = user.Userid;
@@ -35,7 +35,7 @@ namespace MobileAPI.Hubs
                 throw new HubException("Invalid sender user ID.");
             }
 
-            var chatRoom = await _messageService.GetOrCreateChatRoomAsync(recipientUserId);
+            var chatRoom = await _messageService.GetOrCreateChatRoomAsync(recipientUserId, postId);
             if (chatRoom == null)
             {
                 throw new HubException("Unable to create or retrieve chat room.");
@@ -44,7 +44,7 @@ namespace MobileAPI.Hubs
             var createMessageModel = new CreateMessageModel
             {
                 MessageContent = messageContent,
-                RoomId = chatRoom.Id
+                RoomId = chatRoom.roomId
             };
 
             var message = await _messageService.CreateMessage(createMessageModel);
@@ -53,7 +53,7 @@ namespace MobileAPI.Hubs
                 return;
             }
 
-            var messages = PrivateMessages.GetOrAdd(chatRoom.Id, _ => new ConcurrentBag<Message>());
+            var messages = PrivateMessages.GetOrAdd(chatRoom.roomId, _ => new ConcurrentBag<Message>());
             messages.Add(message);
 
             if (UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
@@ -130,7 +130,7 @@ namespace MobileAPI.Hubs
                 var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(); 
                 foreach (var chatRoom in userChatRooms)
                 {
-                    if (PrivateMessages.TryGetValue(chatRoom.Id, out var messages))
+                    if (PrivateMessages.TryGetValue(chatRoom.roomId, out var messages))
                     {
                         foreach (var message in messages)
                         {

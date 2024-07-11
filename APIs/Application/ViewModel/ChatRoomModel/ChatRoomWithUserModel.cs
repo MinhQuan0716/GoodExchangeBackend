@@ -14,6 +14,8 @@ namespace Application.ViewModel.ChatRoomModel
         public string SenderName { get; set; }
         public Guid ReceiverId { get; set; }
         public string ReceiverName { get; set; }
+        public string SenderAvatar { get; set; }  // Add this line
+        public string ReceiverAvatar { get; set; }
         // Other necessary properties
 
         public List<MessageDto> Messages { get; set; }
@@ -27,6 +29,7 @@ namespace Application.ViewModel.ChatRoomModel
         public string CreatedByUserName { get; set; }
         public string? CreatedDate { get; set;}
         public string? CreatedTime { get; set; }
+        public string? Avatar { get; set; }
         // Other necessary properties
     }
 }
