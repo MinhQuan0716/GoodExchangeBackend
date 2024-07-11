@@ -71,7 +71,7 @@ namespace MobileAPI.Hubs
         [Authorize]
         public async Task<List<Message>> GetPrivateMessages(Guid chatRoomId)
         {
-            var userId = _claimService.GetCurrentUserId;
+            /*var userId = _claimService.GetCurrentUserId;
             if (userId == Guid.Empty)
             {
                 throw new HubException("Invalid userId.");
@@ -86,7 +86,7 @@ namespace MobileAPI.Hubs
                     .OrderBy(m => m.CreationDate)
                     .ToList();
                 return combinedMessages;
-            }
+            }*/
             throw new HubException("Invalid chatRoomId.");
         }
         [Authorize]
@@ -155,17 +155,6 @@ namespace MobileAPI.Hubs
             }
             return base.OnDisconnectedAsync(exception);
         }
-        [Authorize]
-        public async Task<List<ChatRoom>> GetAllRooms()
-        {
-            var userId = _claimService.GetCurrentUserId;
-            if (userId == Guid.Empty)
-            {
-                throw new HubException("Invalid user ID.");
-            }
-
-            var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync();
-            return userChatRooms;
-        }
+        
     }
 }

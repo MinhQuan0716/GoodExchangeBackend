@@ -7,23 +7,24 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.ChatRoomModel
 {
-    public class ChatRoomWithUserModel
+    public class ChatRoomDto
     {
         public Guid Id { get; set; }
-        public Guid userId { get; set; }
-        public UserModel User { get; set; }
-        public MessageModel Messages { get; set; }
-        
-    }
-    public class UserModel
-    {
-        public string UserName { get; set; }
-    }
-    public class MessageModel
-    {
-        public string MessageContent { get; set; }
-        public Guid RoomId { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid SenderId { get; set; }
+        public string SenderName { get; set; }
+        public Guid ReceiverId { get; set; }
+        public string ReceiverName { get; set; }
+        // Other necessary properties
 
+        public List<MessageDto> Messages { get; set; }
+    }
+
+    public class MessageDto
+    {
+        public Guid Id { get; set; }
+        public string Content { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set;}
+        // Other necessary properties
     }
 }

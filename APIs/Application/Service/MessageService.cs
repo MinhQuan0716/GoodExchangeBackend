@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.ChatRoomModel;
 using Application.ViewModel.MessageModel;
 using AutoMapper;
 using Domain.Entities;
@@ -82,7 +83,7 @@ namespace Application.Service
             return newRoom;
         }
 
-        public async Task<List<Message>> GetMessagesByChatRoomId(Guid chatRoomId)
+        public async Task<ChatRoomDto> GetMessagesByChatRoomId(Guid chatRoomId)
         {
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(chatRoomId);
             return messages;
@@ -94,7 +95,7 @@ namespace Application.Service
             return chatroom;
         }
 
-        public async Task<List<ChatRoom>> GetAllChatRoomsByUserIdAsync()
+        public async Task<List<ChatRoomDto>> GetAllChatRoomsByUserIdAsync()
         {
             var userId = _claimService.GetCurrentUserId;
             var chatroom = await _unitOfWork.ChatRoomRepository.GetByUserIdAsync(userId);
