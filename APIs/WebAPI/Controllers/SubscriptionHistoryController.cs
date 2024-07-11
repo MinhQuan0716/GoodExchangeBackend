@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace WebAPI.Controllers
         {
             _subscriptionHistoryService = subscriptionHistoryService;
         }
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllSubscriptionHistory() 
         {
