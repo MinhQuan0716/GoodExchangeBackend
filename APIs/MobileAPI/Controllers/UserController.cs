@@ -144,6 +144,17 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UploadProfileImage(IFormFile userImage)
+        {
+            var isUploaded=await _userService.UploadProfileImage(userImage);
+            if (!isUploaded)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
       /*  [Authorize]
         [HttpPost]
         public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)

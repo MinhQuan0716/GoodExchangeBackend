@@ -87,7 +87,6 @@ namespace Application.Service
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
-
         public async Task<bool> UploadImage(IFormFile ImageVerify)
         {
             var imageUrl = await _uploadFile.UploadFileToFireBase(ImageVerify, "Verify");

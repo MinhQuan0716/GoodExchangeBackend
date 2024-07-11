@@ -32,6 +32,43 @@ namespace Application.Service
             _currentUserIp = currentUserIp;
         }
 
+        public async Task<bool> BuySubscription(Guid subscriptionId)
+        {
+            var subscription=await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            if(subscription == null)
+            {
+                return false;
+            }
+            var userWallet = await _unitOfWork.WalletRepository.GetWalletByUserId(_claimsService.GetCurrentUserId);
+            var wallet = await _unitOfWork.WalletRepository.GetByIdAsync(userWallet.Id);
+            if(userWallet == null)
+            {
+                return false;
+            }
+            if (userWallet.UserBalance < subscription.Price)
+            {
+                return false;
+            }
+           wallet.UserBalance=userWallet.UserBalance-subscription.Price;
+            _unitOfWork.WalletRepository.Update(wallet);
+            WalletTransaction walletTransaction = new WalletTransaction()
+            {
+                WalletId=wallet.Id,
+                CreatedBy=userWallet.Id,
+                SubscriptionId=subscriptionId,
+            };
+            SubcriptionHistory subcriptionHistory = new SubcriptionHistory()
+            {
+                SubcriptionId=subscriptionId,
+                UserId=_claimsService.GetCurrentUserId,
+                StartDate=DateTime.UtcNow,
+                EndDate=DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth)
+            };
+            await _unitOfWork.WalletRepository.AddAsync(wallet);
+            await _unitOfWork.SubscriptionHistoryRepository.AddAsync(subcriptionHistory);
+          return await _unitOfWork.SaveChangeAsync()>0;
+        }
+
         public string GetPayemntUrl()
         {
             string paymentUrl = "";

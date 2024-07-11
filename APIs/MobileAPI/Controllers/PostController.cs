@@ -22,6 +22,7 @@ namespace MobileAPI.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {

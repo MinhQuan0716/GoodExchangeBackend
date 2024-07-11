@@ -121,7 +121,7 @@ namespace Application.Service
 
         public async Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition, int pageIndex, int pageSize)
         {
-            var listPostModel = await _unitOfWork.PostRepository.GetAllPost();
+            var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
             ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
             ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
             ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
@@ -132,7 +132,7 @@ namespace Application.Service
 
         public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
         {
-            var listPostModel = await _unitOfWork.PostRepository.GetAllPost();
+            var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
             Pagination<PostViewModel> pagination = PaginationUtil<PostViewModel>.ToPagination(listPostModel, pageIndex, pageSize);
             return pagination;
         }

@@ -29,9 +29,9 @@ namespace Infrastructure.Repository
             this._dbConnection = dbConnection;
         }
 
-        public async Task<List<PostViewModel>> GetAllPost()
+        public async Task<List<PostViewModel>> GetAllPost(Guid userId)
         {
-            return await _appDbContext.Posts.Where(x => x.IsDelete == false).Include(x => x.Product)
+            return await _appDbContext.Posts.Where(x => x.IsDelete == false&&x.CreatedBy!=userId).Include(x => x.Product)
                                            .ThenInclude(p => p.Category)
                                            .AsSplitQuery()
                                            .Include(x => x.Product)
@@ -158,7 +158,7 @@ namespace Infrastructure.Repository
                     Rating = (postAuthor.RatedUsers.Count() > 0
                     ? postAuthor.RatedUsers.Sum(r => r.RatingPoint) / (postAuthor.RatedUsers.Count())
                     : 0),
-                    AuthorImage = postAuthor.VerifyUser.UserImage
+                    AuthorImage = postAuthor.ProfileImage
                 }).Single()
             }).SingleOrDefaultAsync();
             return postDetail;

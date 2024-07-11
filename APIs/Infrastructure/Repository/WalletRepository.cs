@@ -29,6 +29,7 @@ namespace Infrastructure.Repository
            var userWallet= await _appDbContext.Wallets.Where(x=>x.OwnerId==userId)
                                               .Select(x=>new WalletViewModel
                                               {
+                                                  Id = x.Id,
                                                   Email=x.Owner.Email,
                                                   Username=x.Owner.UserName,
                                                   UserBalance=x.UserBalance

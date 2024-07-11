@@ -11,6 +11,7 @@ namespace Domain.Entities
         public string TransactionType { get; set; }
         public Guid WalletId { get; set; }  
         public Wallet Wallet { get; set; }  
-        public ICollection<Subcription> Subcriptions { get; set;}
+        public Guid SubscriptionId { get; set; }
+        public Subcription Subcription { get; set; }
     }
 }

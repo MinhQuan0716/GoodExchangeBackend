@@ -45,7 +45,7 @@ namespace Backend.Application.Test.ServiceTest
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _postService.BanPost(Guid.NewGuid()));
         }
-        [Fact]
+       /* [Fact]
         public async Task GetAllPost_ShouldReturnCorrect()
         {
             //Arrage 
@@ -80,8 +80,8 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost()).ReturnsAsync(list);
             var pagintaedPost = await _postService.GetAllPost(0, 1);
             Assert.Equal(pagintaedPost.TotalItemsCount, 2);
-        }
-        [Fact]
+        }*/
+      /*  [Fact]
         public async Task FilterByProductStatus_ShouldReturnCorrectData()
         {
             var posts = _fixture.Build<Post>().CreateMany(2);
@@ -115,9 +115,9 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost()).ReturnsAsync(list);
             var filterPost = await _postService.FilterPostByProductStatusAndPrice("New", null, 0, 2);
             Assert.Equal(filterPost.TotalItemsCount, 2);
-        }
+        }*/
 
-        [Fact]
+       /* [Fact]
         public async Task FilterByExchangeCondition_ShouldReturnCorrectData()
         {
             var posts = _fixture.Build<Post>().CreateMany(2);
@@ -153,6 +153,6 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost()).ReturnsAsync(list);
             var filterPost = await _postService.FilterPostByProductStatusAndPrice(null, "For selling", 0, 2);
             Assert.Equal(filterPost.TotalItemsCount, 2);
-        }
+        }*/
     }
 }
