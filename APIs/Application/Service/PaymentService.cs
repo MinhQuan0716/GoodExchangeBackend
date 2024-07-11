@@ -56,15 +56,18 @@ namespace Application.Service
                 WalletId=wallet.Id,
                 CreatedBy=userWallet.Id,
                 SubscriptionId=subscriptionId,
+                TransactionType="Wallet"
             };
             SubcriptionHistory subcriptionHistory = new SubcriptionHistory()
             {
                 SubcriptionId=subscriptionId,
                 UserId=_claimsService.GetCurrentUserId,
                 StartDate=DateTime.UtcNow,
-                EndDate=DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth)
+                EndDate=DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth),
+                Status=true
             };
-            await _unitOfWork.WalletRepository.AddAsync(wallet);
+            _unitOfWork.WalletRepository.Update(wallet);
+            await _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);
             await _unitOfWork.SubscriptionHistoryRepository.AddAsync(subcriptionHistory);
           return await _unitOfWork.SaveChangeAsync()>0;
         }

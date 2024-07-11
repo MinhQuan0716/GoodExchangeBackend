@@ -26,7 +26,7 @@ namespace MobileAPI.Controllers
             }
             return Ok(payemntUrl);
         }
-        [HttpGet]
+      /*  [HttpGet]
         public async Task<IActionResult> VnPayReturn([FromQuery] VnPayResponse vnPayResponse)
         {
             var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
@@ -35,7 +35,7 @@ namespace MobileAPI.Controllers
                 return Ok(isUpdated);
             }
             return BadRequest(isUpdated);
-        }
+        }*/
         [HttpGet]
         public async Task<IActionResult> VnPayRedirect([FromQuery] VnPayResponse vnPayResponse)
         {
@@ -43,6 +43,17 @@ namespace MobileAPI.Controllers
             if (isUpdated != null)
             {
                 return Ok("Payment success");
+            }
+            return BadRequest();
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PurchaseSubscription(Guid subscriptionId)
+        {
+            var isPurchases = await _paymentService.BuySubscription(subscriptionId);
+            if (isPurchases)
+            {
+                return Ok();
             }
             return BadRequest();
         }

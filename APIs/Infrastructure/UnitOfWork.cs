@@ -27,12 +27,13 @@ namespace Infrastructure
         private readonly IMessageRepository _messageRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IChatRoomRepository _chatRoomRepository;
+        private readonly IWalletTransactionRepository _walletTransactionRepository;
         public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
             IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository, 
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
             ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,
             IRatingRepository ratingRepository, IMessageRepository messageRepository, IRequestRepository requestRepository, 
-            IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository)
+            IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository,IWalletTransactionRepository walletTransactionRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -49,6 +50,7 @@ namespace Infrastructure
             _requestRepository = requestRepository;
             _chatRoomRepository = chatRoomRepository;
             _subscriptionHistoryRepository=subscriptionHistoryRepository;
+            _walletTransactionRepository = walletTransactionRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -78,6 +80,8 @@ namespace Infrastructure
         public IChatRoomRepository ChatRoomRepository => _chatRoomRepository;
 
         public ISubscriptionHistoryRepository SubscriptionHistoryRepository => _subscriptionHistoryRepository;
+
+        public IWalletTransactionRepository WalletTransactionRepository => _walletTransactionRepository;
 
         public Task<int> SaveChangeAsync()
         {
