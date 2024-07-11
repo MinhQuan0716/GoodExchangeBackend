@@ -38,10 +38,10 @@ namespace MobileAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPrivateMessagesByChatRoomId(Guid id)
+        [HttpGet("{roomId}")]
+        public async Task<IActionResult> GetPrivateMessagesByChatRoomId(Guid roomId)
         {
-            var allMessages = await _messageService.GetMessagesByChatRoomId(id);
+            var allMessages = await _messageService.GetMessagesByChatRoomId(roomId);
             return Ok(allMessages);
         }
 
