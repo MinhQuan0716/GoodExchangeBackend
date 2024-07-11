@@ -1,4 +1,5 @@
 ﻿using Application.ViewModel.SubcriptionModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceService
     public interface ISubcriptionService
     {
         Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel);
+        Task<List<Subcription>> GetAllSubscriptionAsync();
     }
 }

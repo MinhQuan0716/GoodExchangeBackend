@@ -27,5 +27,10 @@ namespace Application.Service
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+
+        public async Task<List<Subcription>> GetAllSubscriptionAsync()
+        {
+          return await _unitOfWork.SubcriptionRepository.GetAllAsync();
+        }
     }
 }

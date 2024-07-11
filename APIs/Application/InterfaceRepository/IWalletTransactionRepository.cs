@@ -9,5 +9,6 @@ namespace Application.InterfaceRepository
 {
     public interface IWalletTransactionRepository:IGenericRepository<WalletTransaction>
     {
+        Task<Guid> GetLastSaveWalletTransactionId();
     }
 }

@@ -86,30 +86,5 @@ namespace Application.Service
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
-
-        /*public async Task<bool> UploadImage(IFormFile ImageVerify)
-        {
-            var imageUrl = await _uploadFile.UploadFileToFireBase(ImageVerify, "Verify");
-            var userId = _claimService.GetCurrentUserId;
-            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(userId);
-            if (verifyUser == null)
-            {
-                VerifyUser newVerifyUser = new VerifyUser
-                {
-                    UserId = userId,
-                    IsStudentAccount = false,
-                    UserImage = imageUrl
-                };
-                await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
-                return await _unitOfWork.SaveChangeAsync() > 0;
-            }
-            else
-            {
-                verifyUser.UserImage = imageUrl;
-                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
-                return await _unitOfWork.SaveChangeAsync() > 0;
-            }
-            
-        }*/
     }
 }

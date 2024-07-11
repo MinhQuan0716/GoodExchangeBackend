@@ -14,6 +14,7 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<WalletTransaction> builder)
         {
             builder.HasOne(x => x.Wallet).WithMany(x => x.Transactions).HasForeignKey(x => x.WalletId).OnDelete(deleteBehavior: DeleteBehavior.NoAction);
+            builder.HasOne(x => x.Subcription).WithMany(x => x.WalletTransactions).HasForeignKey(x => x.SubscriptionId);
         }
     }
 }
