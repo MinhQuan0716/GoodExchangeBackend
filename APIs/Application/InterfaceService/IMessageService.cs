@@ -16,7 +16,7 @@ namespace Application.InterfaceService
         Task<Message> CreateMessage(CreateMessageModel message);
         Task<bool> UpdateMessage(UpdateMessageModel message);
         Task<bool> DeleteMessage(Guid id);
-        Task<ChatRoom> GetOrCreateChatRoomAsync(Guid receiverId);
+        Task<ChatRoomDto> GetOrCreateChatRoomAsync(Guid receiverId, Guid postId);
         Task<ChatRoomDto> GetMessagesByChatRoomId(Guid chatRoomId);
         Task<ChatRoom> GetChatRoomByIdAsync(Guid chatRoomId);
         Task<List<ChatRoomDto>> GetAllChatRoomsByUserIdAsync();

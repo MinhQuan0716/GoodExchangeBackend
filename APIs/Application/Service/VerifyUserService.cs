@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Application.Service
 {
@@ -85,6 +86,40 @@ namespace Application.Service
                 _unitOfWork.VerifyUsersRepository.Update(verifyUser);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+        public async Task<bool> UploadImage(IFormFile ImageVerify)
+        {
+            var imageUrl = await _uploadFile.UploadFileToFireBase(ImageVerify, "Verify");
+            var userId = _claimService.GetCurrentUserId;
+            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(userId);
+            if (verifyUser == null)
+            {
+                VerifyUser newVerifyUser = new VerifyUser
+                {
+                    UserId = userId,
+                    UserImage = imageUrl,
+                    VerifyStatusId = 1
+                };
+                await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
+                return await _unitOfWork.SaveChangeAsync() > 0;
+            }
+            else
+            {
+                verifyUser.UserImage = imageUrl;
+                verifyUser.VerifyStatusId= 1;
+                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
+                return await _unitOfWork.SaveChangeAsync() > 0;
+            }
+        }
+        public async Task<string> getVerifyStatus()
+        {
+            var userId = _claimService.GetCurrentUserId;
+            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(userId);
+            if (verifyUser == null)
+            {
+                return "no verification";
+            }
+            return verifyUser.VerificationStatus.VerificationStatusName;
         }
     }
 }

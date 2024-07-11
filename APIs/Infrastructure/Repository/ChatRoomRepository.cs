@@ -33,18 +33,21 @@ namespace Infrastructure.Repository
             // Map entities to DTOs
             var roomDtos = rooms.Select(room => new ChatRoomDto
             {
-                Id = room.Id,
+                roomId = room.Id,
                 SenderId = room.SenderId,
                 ReceiverId = room.ReceiverId,
                 ReceiverName = room.Receiver.UserName,
                 SenderName = room.Sender.UserName,
+                SenderAvatar = room.Sender.ProfileImage,
+                ReceiverAvatar = room.Receiver.ProfileImage,
                 // Map other properties as needed
                 Messages = room.Messages.Select(message => new MessageDto
                 {
-                    Id = message.Id,
+                    messageId = message.Id,
                     Content = message.MessageContent,
                     CreatedBy = message.CreatedBy,
-                    CreatedDate = message.CreationDate
+                    CreatedDate = message.CreationDate.Value.ToShortDateString(),
+                    CreatedTime = message.CreationDate.Value.ToShortTimeString()
                     // Map other properties as needed
                 }).ToList()
             }).ToList();
@@ -60,31 +63,98 @@ namespace Infrastructure.Repository
                                                      .Include(c => c.Sender)
                                                      .Include(c => c.Receiver)
                                                      .FirstOrDefaultAsync();
+            if (chatRoom == null)
+            {
+                return null; // Or handle the case when the chat room is not found
+            }
+
+            // Fetch users for all CreatedBy user IDs in the messages
+            var userIds = chatRoom.Messages
+                .Where(m => m.CreatedBy.HasValue)
+                .Select(m => m.CreatedBy.Value)
+                .Distinct()
+                .ToList();
+
+            var users = await _appDbContext.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
+
             var roomDto = new ChatRoomDto
             {
-                Id = chatRoom.Id,
+                roomId = chatRoom.Id,
                 SenderId = chatRoom.SenderId,
                 ReceiverId = chatRoom.ReceiverId,
                 SenderName = chatRoom.Sender.UserName,
                 ReceiverName = chatRoom.Receiver.UserName,
+                SenderAvatar = chatRoom.Sender.ProfileImage,  // Add this line
+                ReceiverAvatar = chatRoom.Receiver.ProfileImage,  // Add this line
                 Messages = chatRoom.Messages.Select(message => new MessageDto
                 {
-                    Id = message.Id,
+                    messageId = message.Id,
                     Content = message.MessageContent,
                     CreatedBy = message.CreatedBy,
-                    CreatedDate = message.CreationDate
-                    // Map other properties as needed
+                    CreatedByUserName = message.CreatedBy.HasValue && users.ContainsKey(message.CreatedBy.Value)
+                                        ? users[message.CreatedBy.Value].UserName
+                                        : "Unknown User",
+                    Avatar = message.CreatedBy.HasValue && users.ContainsKey(message.CreatedBy.Value)
+                                        ? users[message.CreatedBy.Value].ProfileImage
+                                        : "Unknown Avatar",  // Add this line
+                    CreatedDate = message.CreationDate.Value.ToShortDateString(),
+                    CreatedTime = message.CreationDate.Value.ToShortTimeString()
                 }).OrderBy(m => m.CreatedDate).ToList()
             };
             return roomDto;
         }
 
-        public async Task<ChatRoom> GetRoomBy2UserId(Guid user1, Guid user2)
+        public async Task<ChatRoomDto> GetRoomBy2UserId(Guid user1, Guid user2)
         {
-            var room = await _appDbContext.ChatRooms.Where(m => (m.SenderId == user1 && m.ReceiverId == user2) ||
-                                                                    (m.SenderId == user2 && m.ReceiverId == user1)).
-                                                                    Where(x => x.IsDelete == false).FirstOrDefaultAsync();
-            return room;
+            var chatRoom = await _appDbContext.ChatRooms.Where(m => (m.SenderId == user1 && m.ReceiverId == user2) ||
+                                                                    (m.SenderId == user2 && m.ReceiverId == user1))
+                                                                    .Include(m => m.Messages)
+                                                                    .Include(c => c.Sender)
+                                                                    .Include(c => c.Receiver)
+                                                                    .Where(x => x.IsDelete == false).FirstOrDefaultAsync();
+            if (chatRoom == null)
+            {
+                return null; // Or handle the case when the chat room is not found
+            }
+
+            // Fetch users for all CreatedBy user IDs in the messages
+            var userIds = chatRoom.Messages
+                .Where(m => m.CreatedBy.HasValue)
+                .Select(m => m.CreatedBy.Value)
+                .Distinct()
+                .ToList();
+
+            var users = await _appDbContext.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
+
+            var roomDto = new ChatRoomDto
+            {
+                roomId = chatRoom.Id,
+                SenderId = chatRoom.SenderId,
+                ReceiverId = chatRoom.ReceiverId,
+                SenderName = chatRoom.Sender.UserName,
+                ReceiverName = chatRoom.Receiver.UserName,
+                SenderAvatar = chatRoom.Sender.ProfileImage,  // Add this line
+                ReceiverAvatar = chatRoom.Receiver.ProfileImage,  // Add this line
+                Messages = chatRoom.Messages.Select(message => new MessageDto
+                {
+                    messageId = message.Id,
+                    Content = message.MessageContent,
+                    CreatedBy = message.CreatedBy,
+                    CreatedByUserName = message.CreatedBy.HasValue && users.ContainsKey(message.CreatedBy.Value)
+                                        ? users[message.CreatedBy.Value].UserName
+                                        : "Unknown User",
+                    Avatar = message.CreatedBy.HasValue && users.ContainsKey(message.CreatedBy.Value)
+                                        ? users[message.CreatedBy.Value].ProfileImage
+                                        : "Unknown Avatar",  // Add this line
+                    CreatedDate = message.CreationDate.Value.ToShortDateString(),
+                    CreatedTime = message.CreationDate.Value.ToShortTimeString()
+                }).OrderBy(m => m.CreatedDate).ToList()
+            };
+            return roomDto;
         }
     }
 }
