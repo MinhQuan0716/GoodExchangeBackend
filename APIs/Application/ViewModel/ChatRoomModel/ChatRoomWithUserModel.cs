@@ -9,7 +9,7 @@ namespace Application.ViewModel.ChatRoomModel
 {
     public class ChatRoomDto
     {
-        public Guid Id { get; set; }
+        public Guid roomId { get; set; }
         public Guid SenderId { get; set; }
         public string SenderName { get; set; }
         public Guid ReceiverId { get; set; }
@@ -21,10 +21,12 @@ namespace Application.ViewModel.ChatRoomModel
 
     public class MessageDto
     {
-        public Guid Id { get; set; }
+        public Guid messageId { get; set; }
         public string Content { get; set; }
         public Guid? CreatedBy { get; set; }
-        public DateTime? CreatedDate { get; set;}
+        public string CreatedByUserName { get; set; }
+        public string? CreatedDate { get; set;}
+        public string? CreatedTime { get; set; }
         // Other necessary properties
     }
 }

@@ -33,7 +33,7 @@ namespace Infrastructure.Repository
             // Map entities to DTOs
             var roomDtos = rooms.Select(room => new ChatRoomDto
             {
-                Id = room.Id,
+                roomId = room.Id,
                 SenderId = room.SenderId,
                 ReceiverId = room.ReceiverId,
                 ReceiverName = room.Receiver.UserName,
@@ -41,10 +41,11 @@ namespace Infrastructure.Repository
                 // Map other properties as needed
                 Messages = room.Messages.Select(message => new MessageDto
                 {
-                    Id = message.Id,
+                    messageId = message.Id,
                     Content = message.MessageContent,
                     CreatedBy = message.CreatedBy,
-                    CreatedDate = message.CreationDate
+                    CreatedDate = message.CreationDate.Value.ToShortDateString(),
+                    CreatedTime = message.CreationDate.Value.ToShortTimeString()
                     // Map other properties as needed
                 }).ToList()
             }).ToList();
@@ -60,19 +61,39 @@ namespace Infrastructure.Repository
                                                      .Include(c => c.Sender)
                                                      .Include(c => c.Receiver)
                                                      .FirstOrDefaultAsync();
+            if (chatRoom == null)
+            {
+                return null; // Or handle the case when the chat room is not found
+            }
+
+            // Fetch users for all CreatedBy user IDs in the messages
+            var userIds = chatRoom.Messages
+                .Where(m => m.CreatedBy.HasValue)
+                .Select(m => m.CreatedBy.Value)
+                .Distinct()
+                .ToList();
+
+            var users = await _appDbContext.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.UserName);
+
             var roomDto = new ChatRoomDto
             {
-                Id = chatRoom.Id,
+                roomId = chatRoom.Id,
                 SenderId = chatRoom.SenderId,
                 ReceiverId = chatRoom.ReceiverId,
                 SenderName = chatRoom.Sender.UserName,
                 ReceiverName = chatRoom.Receiver.UserName,
                 Messages = chatRoom.Messages.Select(message => new MessageDto
                 {
-                    Id = message.Id,
+                    messageId = message.Id,
                     Content = message.MessageContent,
                     CreatedBy = message.CreatedBy,
-                    CreatedDate = message.CreationDate
+                    CreatedByUserName = message.CreatedBy.HasValue && users.ContainsKey(message.CreatedBy.Value)
+                                        ? users[message.CreatedBy.Value]
+                                        : "Unknown User",
+                    CreatedDate = message.CreationDate.Value.ToShortDateString(),
+                    CreatedTime = message.CreationDate.Value.ToShortTimeString()
                     // Map other properties as needed
                 }).OrderBy(m => m.CreatedDate).ToList()
             };
