@@ -22,46 +22,6 @@ namespace WebAPI.Controllers
             var newToken = await _userService.Login(loginModel,apiOrigin);
             return Ok(newToken);
         }
-       /* [HttpGet]
-        public async Task<IActionResult> SendVerificationCode(string email)
-        {
-            bool sendSuccess = await _userService.SendVerificationCodeToEmail(email);
-            if (sendSuccess)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }*/
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> CurrentLoginUserInfo()
-        {
-            var currentUser = await _userService.GetCurrentLoginUserForWeb();
-            return Ok(currentUser);
-        }
-     /*   [HttpGet]
-        public IActionResult CheckVerifyCode(string code)
-        {
-            bool isCorrect = _userService.CheckVerifyCode(code);
-            HttpContext.Session.SetString("verifycode", code);
-            if (isCorrect)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }*/
-      /*  [HttpPost]
-        public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
-        {
-            string verifycode = HttpContext.Session.GetString("verifycode");
-            HttpContext.Session.Clear();
-            bool isResetSuccess = await _userService.ResetPassword(verifycode, resetPasswordModel);
-            if (isResetSuccess)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }*/
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -102,6 +62,24 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
+        }
+        [Authorize(Roles ="Admin,Moderator")]
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UnbanUser(Guid userId)
+        {
+            bool isUnban=await _userService.UnBanUserAsync(userId);
+            if (isUnban)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+        [Authorize(Roles ="Admin,Moderator")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> detail(Guid id)
+        {
+            var useDetail = await _userService.GetUserInformation(id);
+            return Ok(useDetail);
         }
     }
 }

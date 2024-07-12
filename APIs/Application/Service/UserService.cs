@@ -255,7 +255,7 @@ namespace Application.Service
 
         public async Task<bool> BanUser(Guid userId)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId,u=>u.Role);
             if (user == null)
             {
                 throw new Exception("User cannot be found");
@@ -375,6 +375,27 @@ namespace Application.Service
             findUser.ProfileImage= userImageUrl;
             _unitOfWork.UserRepository.Update(findUser); 
             return await _unitOfWork.SaveChangeAsync()>0;
+        }
+
+        public async Task<bool> UnBanUserAsync(Guid userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetBannedUserById(userId);
+            if (user == null)
+            {
+                throw new Exception("User cannot be found");
+            }
+            if (user.Role.RoleName == nameof(RoleName.Admin))
+            {
+                throw new Exception("You cannot unban this user");
+            }
+            user.IsDelete= false;
+            _unitOfWork.UserRepository.Update(user);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<UserDetailViewModel> GetUserInformation(Guid userId)
+        {
+            return await _unitOfWork.UserRepository.GetUserDetail(userId);
         }
     }
 }

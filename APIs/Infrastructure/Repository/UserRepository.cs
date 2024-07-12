@@ -62,5 +62,25 @@ namespace Infrastructure.Repository
             }).AsSplitQuery().AsQueryable().AsNoTracking().SingleOrDefaultAsync();
             return currentUser;
         }
+
+        public async Task<User> GetBannedUserById(Guid id)
+        {
+            var user = await _dbContext.Users.Where(x => x.IsDelete == true && x.Id == id).Include(x=>x.Role).SingleAsync();
+            return user;
+        }
+        public async Task<UserDetailViewModel>GetUserDetail (Guid userId)
+        {
+            var user = await _dbContext.Users.Where(x => x.IsDelete == false && x.Id == userId)
+                                            .Select(x => new UserDetailViewModel
+                                            {
+                                                Email=x.Email,  
+                                                Username=x.UserName,
+                                                Phonenumber=x.PhoneNumber,
+                                                ProfileImage=x.ProfileImage,
+                                                Birthday=x.BirthDay.HasValue?DateOnly.FromDateTime(x.BirthDay.Value):DateOnly.FromDateTime(DateTime.UtcNow),
+                                                Fullname=x.FirstName+""+x.LastName
+                                            }).SingleAsync();
+            return user;
+        } 
     }
 }

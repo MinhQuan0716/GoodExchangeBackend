@@ -29,5 +29,7 @@ namespace Application.InterfaceService
         
         Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWeb();
         Task<bool> UploadProfileImage(IFormFile userImage);
+        Task<bool> UnBanUserAsync(Guid userId);
+        Task<UserDetailViewModel> GetUserInformation(Guid userId);
     }
 }

@@ -14,5 +14,7 @@ namespace Application.InterfaceRepository
         Task UpdateUserAsync(User user);
         Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId);
         Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWebAsync(Guid userId);
+        Task<User> GetBannedUserById(Guid id);
+        Task<UserDetailViewModel> GetUserDetail(Guid userId);
     }
 }
