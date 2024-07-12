@@ -74,8 +74,8 @@ namespace Application.Service
 
             var newRoom = new ChatRoom
             {
-                SenderId = user1,
-                ReceiverId = user2
+                SenderId = user2,
+                ReceiverId = user1
             };
             var room = _mapper.Map<ChatRoom>(newRoom);
             await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);

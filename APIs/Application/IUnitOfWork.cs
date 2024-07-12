@@ -25,6 +25,7 @@ namespace Application
         public IRequestRepository RequestRepository { get; }
         public IChatRoomRepository ChatRoomRepository { get; }
         public IWalletTransactionRepository WalletTransactionRepository { get; }
+        public IReportRepository ReportRepository { get; }
         public Task<int> SaveChangeAsync();
 
     }
