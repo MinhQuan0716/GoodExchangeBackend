@@ -26,6 +26,7 @@ namespace WebAPI
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<ISubcriptionService, SubcriptionService>();
+            services.AddScoped<ISubscriptionHistoryService, SubscriptionHistoryService>();
             services.AddScoped<IVerifyUserService, VerifyUserService>();
             services.AddDistributedMemoryCache();
             services.AddSession();

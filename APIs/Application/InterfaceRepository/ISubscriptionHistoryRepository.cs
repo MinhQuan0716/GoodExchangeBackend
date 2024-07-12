@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.SubscriptionHistoryModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceRepository
     public interface ISubscriptionHistoryRepository:IGenericRepository<SubcriptionHistory>
     {
         Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId);
+        Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistory();
     }
 }
