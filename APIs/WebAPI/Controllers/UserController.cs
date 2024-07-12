@@ -81,5 +81,12 @@ namespace WebAPI.Controllers
             var useDetail = await _userService.GetUserInformation(id);
             return Ok(useDetail);
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var currentUser = await _userService.GetCurrentLoginUserForWeb();
+            return Ok(currentUser);
+        }
     }
 }
