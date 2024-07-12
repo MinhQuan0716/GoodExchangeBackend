@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
@@ -28,12 +29,14 @@ namespace Infrastructure
         private readonly IRequestRepository _requestRepository;
         private readonly IChatRoomRepository _chatRoomRepository;
         private readonly IWalletTransactionRepository _walletTransactionRepository;
+        private readonly IReportRepository _reportRepository;
         public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
             IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository, 
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
             ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,
             IRatingRepository ratingRepository, IMessageRepository messageRepository, IRequestRepository requestRepository, 
-            IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository,IWalletTransactionRepository walletTransactionRepository)
+            IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository,IWalletTransactionRepository walletTransactionRepository,
+            IReportRepository reportRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -51,6 +54,7 @@ namespace Infrastructure
             _chatRoomRepository = chatRoomRepository;
             _subscriptionHistoryRepository=subscriptionHistoryRepository;
             _walletTransactionRepository = walletTransactionRepository;
+            _reportRepository = reportRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -82,6 +86,8 @@ namespace Infrastructure
         public ISubscriptionHistoryRepository SubscriptionHistoryRepository => _subscriptionHistoryRepository;
 
         public IWalletTransactionRepository WalletTransactionRepository => _walletTransactionRepository;
+
+        public IReportRepository ReportRepository => _reportRepository;
 
         public Task<int> SaveChangeAsync()
         {

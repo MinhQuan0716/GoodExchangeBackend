@@ -26,8 +26,9 @@ namespace MobileAPI.Hubs
             _userService = userService;
         }
         [Authorize]
-        public async Task SendMessageToUser(Guid recipientUserId, string messageContent, Guid postId)
+        public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
         {
+            var postId = Guid.Empty;
             var user = await _userService.GetCurrentLoginUser();
             var senderUserId = user.Userid;
             if (senderUserId == Guid.Empty)
