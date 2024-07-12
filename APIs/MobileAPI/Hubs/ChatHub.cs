@@ -131,7 +131,7 @@ namespace MobileAPI.Hubs
                 var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(); 
                 foreach (var chatRoom in userChatRooms)
                 {
-                    if (PrivateMessages.TryGetValue(chatRoom.room, out var messages))
+                    if (PrivateMessages.TryGetValue(chatRoom.roomId, out var messages))
                     {
                         foreach (var message in messages)
                         {
