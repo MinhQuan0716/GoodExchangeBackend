@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 
 namespace MobileAPI.Hubs
@@ -156,6 +157,5 @@ namespace MobileAPI.Hubs
             }
             return base.OnDisconnectedAsync(exception);
         }
-        
     }
 }

@@ -10,5 +10,6 @@ namespace Application.ViewModel.MessageModel
     {
         public string MessageContent { get; set; }
         public Guid RoomId { get; set; }
+        public Guid CreatedBy { get; set; }
     }
 }

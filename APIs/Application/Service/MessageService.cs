@@ -30,6 +30,7 @@ namespace Application.Service
         {
             var newMessage = _mapper.Map<Message>(messageModel);
             newMessage.CreationDate = DateTime.UtcNow;
+            newMessage.CreatedBy = messageModel.CreatedBy;
             await _unitOfWork.MessageRepository.AddAsync(newMessage);
             await _unitOfWork.SaveChangeAsync();
             return newMessage;
