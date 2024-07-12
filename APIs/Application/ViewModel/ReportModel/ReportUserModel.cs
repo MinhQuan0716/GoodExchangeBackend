@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.UserModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

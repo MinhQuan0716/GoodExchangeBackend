@@ -13,5 +13,6 @@ namespace Application.InterfaceService
         Task<bool> CreateReportAsync(Report report);
         Task<bool> CreateReportForPostAsync(ReportPostModel reportPostModel);
         Task<bool> CreateReportForUserAsync(ReportUserModel reportUserModel);
+        Task<List<ReportModel>> GetAllReportsAsync();
     }
 }

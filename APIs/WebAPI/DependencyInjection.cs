@@ -28,6 +28,7 @@ namespace WebAPI
             services.AddScoped<ISubcriptionService, SubcriptionService>();
             services.AddScoped<ISubscriptionHistoryService, SubscriptionHistoryService>();
             services.AddScoped<IVerifyUserService, VerifyUserService>();
+            services.AddScoped<IReportService, ReportService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
