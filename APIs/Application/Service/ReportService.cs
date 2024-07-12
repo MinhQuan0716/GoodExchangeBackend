@@ -50,7 +50,8 @@ namespace Application.Service
         }
         public async Task<List<ReportModel>> GetAllReportsAsync()
         {
-            var reports = await _unitOfWork.ReportRepository.GetAllAsync(report => report.ReportUser, report => report.ReportPost);
+            var reports = await _unitOfWork.ReportRepository.GetAllAsync(report => report.ReportUser, report => report.ReportPost, 
+                report => report.ReportPost.Product, report => report.ReportPost.Product.Category, report => report.ReportPost.Product.ConditionType);
 
             var reportModels = reports.Select(report => new ReportModel
             {
@@ -73,7 +74,6 @@ namespace Application.Service
                     ProductImageUrl = report.ReportPost.Product.ProductImageUrl,
                     ProductPrice = report.ReportPost.Product.ProductPrice,
                     ProductStatus = report.ReportPost.Product.ProductStatus,
-                    RequestedProduct = report.ReportPost.Product.RequestedProduct,
                     ProductQuantity = report.ReportPost.Product.ProductQuantity,
                     ConditionTypeId = report.ReportPost.Product.ConditionType.ConditionId,
                     ConditionTypeName = report.ReportPost.Product.ConditionType.ConditionType,

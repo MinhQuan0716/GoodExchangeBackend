@@ -26,8 +26,9 @@ namespace MobileAPI.Hubs
             _userService = userService;
         }
         [Authorize]
-        public async Task SendMessageToUser(Guid recipientUserId, string messageContent, Guid postId)
+        public async Task SendMessageToUser(Guid recipientUserId, string messageContent)
         {
+            var postId = Guid.Empty;
             var user = await _userService.GetCurrentLoginUser();
             var senderUserId = user.Userid;
             if (senderUserId == Guid.Empty)
@@ -130,7 +131,7 @@ namespace MobileAPI.Hubs
                 var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(); 
                 foreach (var chatRoom in userChatRooms)
                 {
-                    if (PrivateMessages.TryGetValue(chatRoom.roomId, out var messages))
+                    if (PrivateMessages.TryGetValue(chatRoom.room, out var messages))
                     {
                         foreach (var message in messages)
                         {
