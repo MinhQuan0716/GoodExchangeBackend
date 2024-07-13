@@ -32,7 +32,7 @@ namespace Infrastructure.Repository
 
         public async Task AddAsync(TEntity entity)
         {
-            if(entity.CreatedBy == null)
+            if(entity.CreatedBy == Guid.Empty)
             {
                 entity.CreatedBy = _claimService.GetCurrentUserId;
             }
