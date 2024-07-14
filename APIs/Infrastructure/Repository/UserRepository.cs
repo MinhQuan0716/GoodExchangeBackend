@@ -81,6 +81,19 @@ namespace Infrastructure.Repository
                                                 Fullname=x.FirstName+""+x.LastName
                                             }).SingleAsync();
             return user;
-        } 
+        }
+
+        public async Task<List<UserViewModelForWeb>> GetAllUserForWeb()
+        {
+            var listUser = await _dbContext.Users.Select(x => new UserViewModelForWeb
+            {
+                UserId=x.Id,
+                Username=x.UserName,
+                Email=x.Email,
+                Fullname=x.FirstName+""+x.LastName,
+                Status=x.IsDelete.Value?"Ban":"Not ban"
+            }).ToListAsync();
+            return listUser;
+        }
     }
 }

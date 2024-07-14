@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            List<User> user=await _userService.GetAllUserAsync();
+            List<UserViewModelForWeb> user=await _userService.GetAllUserForWeb();
             return Ok(user);
         }
         [Authorize(Roles ="Admin")]

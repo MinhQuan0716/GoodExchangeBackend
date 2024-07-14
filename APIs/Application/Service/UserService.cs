@@ -398,5 +398,10 @@ namespace Application.Service
         {
             return await _unitOfWork.UserRepository.GetUserDetail(userId);
         }
+
+        public async Task<List<UserViewModelForWeb>> GetAllUserForWeb()
+        {
+            return await _unitOfWork.UserRepository.GetAllUserForWeb();
+        }
     }
 }
