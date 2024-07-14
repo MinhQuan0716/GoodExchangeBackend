@@ -91,6 +91,7 @@ namespace Application.Service
                 };
                 var newMessage = _mapper.Map<Message>(createMessageModel);
                 newMessage.CreationDate = DateTime.UtcNow;
+                newMessage.CreatedBy = user2;
                 await _unitOfWork.MessageRepository.AddAsync(newMessage);
                 await _unitOfWork.SaveChangeAsync();
             }
