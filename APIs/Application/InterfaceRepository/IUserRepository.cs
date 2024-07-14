@@ -16,5 +16,6 @@ namespace Application.InterfaceRepository
         Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWebAsync(Guid userId);
         Task<User> GetBannedUserById(Guid id);
         Task<UserDetailViewModel> GetUserDetail(Guid userId);
+        Task<List<UserViewModelForWeb>> GetAllUserForWeb();
     }
 }
