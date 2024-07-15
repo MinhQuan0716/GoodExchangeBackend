@@ -37,17 +37,17 @@ namespace Application.Service
             var subscription=await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
             if(subscription == null)
             {
-                return false;
+                throw new Exception("Cannot find subscription");
             }
             var userWallet = await _unitOfWork.WalletRepository.GetWalletByUserId(_claimsService.GetCurrentUserId);
             var wallet = await _unitOfWork.WalletRepository.GetByIdAsync(userWallet.Id);
             if(userWallet == null)
             {
-                return false;
+                throw new Exception("Cannot find wallet");
             }
             if (userWallet.UserBalance < subscription.Price)
             {
-                return false;
+                throw new Exception("User balance not enough to purchase");
             }
            wallet.UserBalance=userWallet.UserBalance-subscription.Price;
             _unitOfWork.WalletRepository.Update(wallet);
