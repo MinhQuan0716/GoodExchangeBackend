@@ -50,6 +50,10 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> ContactNow(Guid userId, Guid postId)
         {
             var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
+            if (userChatRooms == null)
+            {
+                return BadRequest("userId not exist");
+            }
             return Ok(userChatRooms);
         }
     }

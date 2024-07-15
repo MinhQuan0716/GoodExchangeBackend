@@ -66,13 +66,17 @@ namespace Application.Service
 
         public async Task<ChatRoomDto> GetOrCreateChatRoomAsync(Guid user1, Guid postId)
         {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(user1);
+            if (user == null)
+            {
+                return null;
+            }
             Guid user2 = _claimService.GetCurrentUserId;
             var chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
             if (chatRoom != null)
             {
                 return chatRoom;
             }
-
             var newRoom = new ChatRoom
             {
                 SenderId = user2,

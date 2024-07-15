@@ -119,7 +119,7 @@ namespace MobileAPI.Hubs
         [Authorize]
         public override async Task OnConnectedAsync()
         {
-            var userId = _claimService.GetCurrentUserId;
+            /*var userId = _claimService.GetCurrentUserId;
             if (userId == Guid.Empty)
             {
                 throw new HubException("Invalid user ID.");
@@ -140,7 +140,7 @@ namespace MobileAPI.Hubs
                         }
                     }
                 }
-            }
+            }*/
             await base.OnConnectedAsync();
         }
         [Authorize]
