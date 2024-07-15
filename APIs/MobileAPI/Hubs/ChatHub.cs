@@ -46,15 +46,16 @@ namespace MobileAPI.Hubs
             var createMessageModel = new CreateMessageModel
             {
                 MessageContent = messageContent,
-                RoomId = chatRoom.roomId
+                RoomId = chatRoom.roomId,
+                CreatedBy = user.Userid
             };
 
             var message = await _messageService.CreateMessage(createMessageModel);
-            if (message.CreatedBy == null)
+            var checkMessage = await _messageService.GetMessageById(message.Id);
+            if (checkMessage == null)
             {
-                return;
+                throw new HubException("Unable to create message");
             }
-
             var messages = PrivateMessages.GetOrAdd(chatRoom.roomId, _ => new ConcurrentBag<Message>());
             messages.Add(message);
 
@@ -94,8 +95,9 @@ namespace MobileAPI.Hubs
         [Authorize]
         public async Task ClosePrivateChat(Guid chatRoomId)
         {
-            var userId = _claimService.GetCurrentUserId;
-            if (userId == Guid.Empty)
+            var user = await _userService.GetCurrentLoginUser();
+            var senderUserId = user.Userid;
+            if (senderUserId == Guid.Empty)
             {
                 throw new HubException("Invalid user ID.");
             }
@@ -105,12 +107,12 @@ namespace MobileAPI.Hubs
                 var chatRoom = await _messageService.GetChatRoomByIdAsync(chatRoomId);
                 if (chatRoom != null)
                 {
-                    var recipientUserId = chatRoom.SenderId == userId ? chatRoom.ReceiverId : chatRoom.SenderId;
+                    var recipientUserId = chatRoom.SenderId == senderUserId ? chatRoom.ReceiverId : chatRoom.SenderId;
                     if (UserConnections.TryGetValue(recipientUserId.ToString(), out var recipientConnections))
                     {
                         foreach (var connectionId in recipientConnections)
                         {
-                            await Clients.Client(connectionId).SendAsync("ChatClosed", userId.ToString());
+                            await Clients.Client(connectionId).SendAsync("ChatClosed", senderUserId.ToString());
                         }
                     }
                 }
@@ -119,17 +121,28 @@ namespace MobileAPI.Hubs
         [Authorize]
         public override async Task OnConnectedAsync()
         {
-            var userId = _claimService.GetCurrentUserId;
-            if (userId == Guid.Empty)
+            var user = await _userService.GetCurrentLoginUser();
+            var senderUserId = user.Userid;
+            if (senderUserId == Guid.Empty)
             {
                 throw new HubException("Invalid user ID.");
             }
-            if (!string.IsNullOrEmpty(userId.ToString()))
+            if (!string.IsNullOrEmpty(senderUserId.ToString()))
             {
-                UserConnections.AddOrUpdate(userId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
+                UserConnections.AddOrUpdate(senderUserId.ToString(), _ => new ConcurrentBag<string> { Context.ConnectionId }, (_, bag) => { bag.Add(Context.ConnectionId); return bag; });
 
                 // Await the task to get the list of chat rooms
-                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync();
+                var userChatRooms = await _messageService.GetAllChatRoomsByUserIdAsync(); 
+                foreach (var chatRoom in userChatRooms)
+                {
+                    if (PrivateMessages.TryGetValue(chatRoom.roomId, out var messages))
+                    {
+                        foreach (var message in messages)
+                        {
+                            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", message.CreatedBy.ToString(), message.MessageContent);
+                        }
+                    }
+                }
             }
             await base.OnConnectedAsync();
         }
