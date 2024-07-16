@@ -2,6 +2,7 @@
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Application.ViewModel.RatingModel;
+using Application.ViewModel.RequestModel;
 using Application.ViewModel.SubcriptionModel;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
@@ -30,6 +31,7 @@ namespace Infrastructure.Mappers
             SubcriptionMap();
             RatingMap();
             MessageMap();
+            OrderMap();
         }
         internal void CreateUserMap()
         {
@@ -100,6 +102,13 @@ namespace Infrastructure.Mappers
             CreateMap<CreateMessageModel, Message>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.ChatRoomId, opt => opt.MapFrom(rmodel => rmodel.RoomId))
+                .ReverseMap();
+        }
+        internal void OrderMap()
+        {
+            CreateMap<CreateOrderModel,Order>()
+                .ForMember(dest=>dest.PostId,opt=>opt.MapFrom(model=>model.PostId))
+                .ForMember(dest=>dest.UserId,opt=>opt.MapFrom(model=>model.AuthorId))
                 .ReverseMap();
         }
     }

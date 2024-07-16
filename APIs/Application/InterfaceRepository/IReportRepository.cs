@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface IReportRepository : IGenericRepository<Report>
+    public  interface IReportRepository:IGenericRepository<Report>
     {
-        // Define any additional methods specific to Report if needed
     }
 }

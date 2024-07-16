@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class RequestStatus
+    public  class OrderStatus
     {
         public int StatusId { get; set; }
         public string StatusName { get; set; }
-        public ICollection<Request> Requests { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Request:BaseEntity
+    public class Order:BaseEntity
     {
-        public string RequestMessage { get; set; }
-        public int RequestStatusId { get; set; }
-        public RequestStatus Status { get; set; }
+        public string OrderMessage { get; set; }
+        public int OrderStatusId { get; set; }
+        public OrderStatus Status { get; set; }
         public Guid UserId { get; set; }
         public User User { get; set; }
         public Guid PostId { get; set; }

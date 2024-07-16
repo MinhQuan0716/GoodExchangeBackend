@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EntityConfiguration
 {
-    internal class RequestStatusConfiguration : IEntityTypeConfiguration<RequestStatus>
+    internal class OrderStatusConfiguration : IEntityTypeConfiguration<OrderStatus>
     {
-        public void Configure(EntityTypeBuilder<RequestStatus> builder)
+        public void Configure(EntityTypeBuilder<OrderStatus> builder)
         {
             builder.HasKey(reqstatus => reqstatus.StatusId);
-            builder.HasData(new RequestStatus
+            builder.HasData(new OrderStatus
             {
                 StatusId = 1,
                 StatusName=nameof(StatusName.Pending),
             },
-            new RequestStatus
+            new OrderStatus
             {
                 StatusId= 2,
                 StatusName= nameof(StatusName.Accept),
             },
-            new RequestStatus
+            new OrderStatus
             {
                 StatusId=3,
                 StatusName=nameof(StatusName.Reject),

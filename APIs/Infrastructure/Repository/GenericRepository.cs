@@ -32,10 +32,8 @@ namespace Infrastructure.Repository
 
         public async Task AddAsync(TEntity entity)
         {
-            if(entity.CreatedBy == Guid.Empty)
-            {
-                entity.CreatedBy = _claimService.GetCurrentUserId;
-            }
+            
+            entity.CreatedBy = _claimService.GetCurrentUserId;
             entity.CreationDate =_currentTime.GetCurrentTime();
             entity.IsDelete = false;
             await _dbSet.AddAsync(entity);

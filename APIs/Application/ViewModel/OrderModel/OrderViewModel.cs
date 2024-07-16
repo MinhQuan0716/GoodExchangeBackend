@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.RequestModel
 {
-    public class SentRequestViewModel
+    public class ReceiveOrderViewModel
     {
-        public Guid RequestId { get; set; }
-        public string RequestMessage { get; set; }
-        public string RequestStatus { get; set; }
+        public Guid OrderId { get; set; }
+        public string OrderMessage { get; set; }
+        public string OrderStatus { get; set; }
         public DateOnly CreationDate { get; set; }
         public PostViewModelForRequest Post { get; set; }
-        public UserViewModelForRequest User { get; set; }
+        public UserViewModelForRequest User{ get; set; }
     }
 }

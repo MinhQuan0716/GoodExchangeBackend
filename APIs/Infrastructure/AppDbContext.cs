@@ -28,8 +28,8 @@ namespace Infrastructure
         public DbSet<ChatRoom> ChatRooms { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Report> Reports { get; set; }
-        public DbSet<Request> Requests { get; set; }
-        public DbSet<RequestStatus> RequestStatuses { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<VerificationStatus> VerificationStatuses { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Post> Posts { get; set; }

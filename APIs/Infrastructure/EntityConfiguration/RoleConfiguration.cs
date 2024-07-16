@@ -30,7 +30,6 @@ namespace Infrastructure.EntityConfiguration
                 RoleId=3,
                 RoleName=nameof(RoleName.Member),
             }
-             
             );
         }
     }

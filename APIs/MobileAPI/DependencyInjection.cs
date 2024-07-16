@@ -34,7 +34,7 @@ namespace MobileAPI
             services.AddScoped<ISubcriptionService, SubcriptionService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IVerifyUserService, VerifyUserService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddDistributedMemoryCache();

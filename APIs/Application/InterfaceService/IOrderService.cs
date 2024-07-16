@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceService
 {
-    public interface IRequestService
+    public interface IOrderService
     {
-        Task<bool>SendRequest(CreateRequestModel requestModel);
-        Task<List<ReceiveRequestViewModel>> GetAllRequestsOfCurrentUserAsync();
-        Task<List<SentRequestViewModel>> GetAllRequestsOfCreatebByUserAsync();
+        Task<bool>SendRequest(CreateOrderModel requestModel);
+        Task<List<ReceiveOrderViewModel>> GetAllRequestsOfCurrentUserAsync();
+        Task<List<SentOrderViewModel>> GetAllRequestsOfCreatebByUserAsync();
         Task<bool> AcceptRequest(Guid requestId);
         Task<bool> RejectRequest(Guid requestId);
     }

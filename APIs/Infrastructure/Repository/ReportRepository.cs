@@ -11,8 +11,7 @@ namespace Infrastructure.Repository
 {
     public class ReportRepository : GenericRepository<Report>, IReportRepository
     {
-        public ReportRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime)
-            : base(appDbContext, claimService, currentTime)
+        public ReportRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime) : base(appDbContext, claimService, currentTime)
         {
         }
     }

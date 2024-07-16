@@ -22,7 +22,7 @@ namespace Application
         public ISubscriptionHistoryRepository SubscriptionHistoryRepository { get; }
         public IRatingRepository RatingRepository { get; }
         public IMessageRepository MessageRepository { get; }
-        public IRequestRepository RequestRepository { get; }
+        public IOrderRepository OrderRepository { get; }
         public IChatRoomRepository ChatRoomRepository { get; }
         public IWalletTransactionRepository WalletTransactionRepository { get; }
         public IReportRepository ReportRepository { get; }

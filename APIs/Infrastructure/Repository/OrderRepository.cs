@@ -16,29 +16,29 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public class RequestRepository : GenericRepository<Request>, IRequestRepository
+    public class OrderRepository : GenericRepository<Order>, IOrderRepository
     {
         private readonly IDbConnection _connection;
         private readonly AppDbContext _dbContext;
-        public RequestRepository(AppDbContext appDbContext, IClaimService claimService
+        public OrderRepository(AppDbContext appDbContext, IClaimService claimService
             , ICurrentTime currentTime, IDbConnection connection) : base(appDbContext, claimService, currentTime)
         {
             _connection = connection;
             _dbContext = appDbContext;
         }
 
-        public async Task<List<SentRequestViewModel>> GetAllRequestByCreatedByUserId(Guid userId)
+        public async Task<List<SentOrderViewModel>> GetAllRequestByCreatedByUserId(Guid userId)
         {
-            var listRequest = await _dbContext.Requests.Where(x => x.IsDelete == false && x.CreatedBy == userId)
+            var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.CreatedBy == userId)
                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                             .Include(x => x.Post).AsSplitQuery()
                                             .Include(x => x.Status).AsSplitQuery()
-                                            .Select(x => new SentRequestViewModel
+                                            .Select(x => new SentOrderViewModel
                                             {
-                                                RequestId = x.Id,
-                                                RequestMessage = x.RequestMessage,
-                                                RequestStatus=x.Status.StatusName,
+                                                OrderId = x.Id,
+                                                OrderMessage = x.OrderMessage,
+                                                OrderStatus=x.Status.StatusName,
                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                 Post = new PostViewModelForRequest
                                                 {
@@ -60,7 +60,7 @@ namespace Infrastructure.Repository
             return listRequest;
         }
 
-        public async Task<List<ReceiveRequestViewModel>> GetAllRequestByCurrentUserId(Guid userId)
+        public async Task<List<ReceiveOrderViewModel>> GetAllRequestByCurrentUserId(Guid userId)
         {
             /* var sql = @"
          SELECT 
@@ -97,16 +97,16 @@ namespace Infrastructure.Repository
              );
 
              return result.ToList();*/
-            var listRequest = await _dbContext.Requests.Where(x => x.IsDelete == false && x.UserId == userId)
+            var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.UserId == userId)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).AsSplitQuery()
                                              .Include(x => x.Status).AsSplitQuery()
-                                             .Select(x => new ReceiveRequestViewModel
+                                             .Select(x => new ReceiveOrderViewModel
                                              {
-                                                 RequestId = x.Id,
-                                                 RequestMessage = x.RequestMessage,
-                                                 RequestStatus=x.Status.StatusName,
+                                                 OrderId = x.Id,
+                                                 OrderMessage = x.OrderMessage,
+                                                 OrderStatus=x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                  Post = new PostViewModelForRequest
                                                  {
@@ -128,9 +128,9 @@ namespace Infrastructure.Repository
             return listRequest;
         }
 
-        public async Task<List<Request>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
+        public async Task<List<Order>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
         {
-            return await _dbContext.Requests.Where(x => x.UserId == userId&&x.PostId==postId).AsNoTracking().ToListAsync();
+            return await _dbContext.Orders.Where(x => x.UserId == userId&&x.PostId==postId).AsNoTracking().ToListAsync();
         }
     }
 }

@@ -14,6 +14,6 @@ namespace Domain.Entities
         public Product Product { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<WishList> WishLists { get; set; }
-        public ICollection<Request> Requests { get; set; }
+        public ICollection<Order> Requests { get; set; }
     }
 }

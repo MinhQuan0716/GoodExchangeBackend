@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace MobileAPI.Controllers
 {
   
-    public class RequestController : BaseController
+    public class OrderController : BaseController
     {
-        private readonly IRequestService _requestService;
-        public RequestController(IRequestService requestService)
+        private readonly IOrderService _requestService;
+        public OrderController(IOrderService requestService)
         {
             _requestService = requestService;
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SendRequestForExchangeOrDonation(CreateRequestModel model)
+        public async Task<IActionResult> SendOrder(CreateOrderModel model)
         {
             bool isCreated=await _requestService.SendRequest(model);
             if (isCreated)
@@ -27,7 +27,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetReceieveRequest()
+        public async Task<IActionResult> GetReceieveOrder()
         {
             var requestList = await _requestService.GetAllRequestsOfCurrentUserAsync();
             if (requestList.Any())
@@ -38,7 +38,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]   
-        public async Task<IActionResult> GetSentRequest()
+        public async Task<IActionResult> GetSentOrder()
         {
             var requestList = await _requestService.GetAllRequestsOfCreatebByUserAsync();
             if (requestList.Any())
@@ -49,7 +49,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> AcceptRequest(Guid requestId)
+        public async Task<IActionResult> AcceptOrder(Guid requestId)
         {
             var isAccepted = await _requestService.AcceptRequest(requestId);
             if (isAccepted)
@@ -60,7 +60,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> RejectRequest(Guid requestId)
+        public async Task<IActionResult> RejectOrder(Guid requestId)
         {
             var isRejected = await _requestService.RejectRequest(requestId);
             if (isRejected)

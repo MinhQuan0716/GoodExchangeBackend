@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.RequestModel
 {
-    public class CreateRequestModel
+    public class CreateOrderModel
     {
         public Guid PostId { get; set; }
-        public string RequestMessage { get; set; }
+        public string OrderMessage { get; set; }
         public Guid AuthorId { get; set; }
     }
 }
