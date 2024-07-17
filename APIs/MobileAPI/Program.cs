@@ -66,6 +66,15 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
 /*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
 /*builder.Services.AddHostedService<SocketServerBackgroundService>();*/
 builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -88,6 +97,7 @@ if (app.Environment.IsProduction())
 
     });
 }
+app.UseCors("AllowAll");
 app.UseAuthorization();
 app.UseMiddleware<PerformanceMiddleware>();
 app.UseSession();
