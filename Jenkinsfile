@@ -30,8 +30,16 @@ pipeline{
               }
             }
           }
-       
-         stage('Clean workspace'){
+       stage('SSH Server')
+         {
+         steps
+              {
+      sshagent(['ssh-remote']) {
+    sh 'ssh -o StrictHostKeyChecking=no -l root 34.150.89.99 uname -a'
+     }
+    }
+   }
+    stage('Clean workspace'){
            steps{
              cleanWs()
            }
