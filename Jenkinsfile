@@ -6,7 +6,7 @@ pipeline{
       stages {
         stage('Checkout'){
           steps{
-            git branch: 'main', credentialsId: 'e8212876-bdbb-4735-9f7a-668ee9df4a10', url: 'https://github.com/Goods-Exchange/BackendAPIProject.git'
+          git branch: 'main', credentialsId: '17f8e4c7-0641-406a-9115-b05cd1c57358', url: 'https://github.com/Goods-Exchange/BackendAPIProject'
         }
         }
          stage('Restore solution'){
@@ -30,11 +30,7 @@ pipeline{
               }
             }
           }
-        stage('Pull code to server'){
-          steps{
-           sshPublisher(publishers: [sshPublisherDesc(configName: 'CapstoneServer', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: './githubpull.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-          }
-        }
+       
          stage('Clean workspace'){
            steps{
              cleanWs()
