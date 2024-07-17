@@ -44,6 +44,7 @@ namespace Infrastructure.Repository
                                                PostTitle = x.PostTitle,
                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                                Location= _appDbContext.Users.Where(u=>u.Id==x.CreatedBy).Select(u=>u.HomeAddress).AsSplitQuery().Single(),
+                                               AuthorId=x.CreatedBy.Value,
                                                Product = new ProductModel
                                                {
                                                    ProductId = x.ProductId,
