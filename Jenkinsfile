@@ -30,7 +30,7 @@ pipeline{
               }
             }
           }
-        stage('Pull code to server'){
+        stage('Pull code '){
           steps{
             sshPublisher(publishers: [sshPublisherDesc(configName: 'capstone', 
                                                        transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: './githubpull.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')]
