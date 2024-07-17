@@ -30,6 +30,13 @@ pipeline{
               }
             }
           }
+         stage('SSH Server'){
+              steps{
+               sshagent(['ssh-remote']) {
+                  sh 'githubpull.sh'
+              }
+             }
+            }
     stage('Clean workspace'){
            steps{
              cleanWs()
