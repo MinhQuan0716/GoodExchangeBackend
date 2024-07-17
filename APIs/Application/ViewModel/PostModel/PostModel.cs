@@ -14,6 +14,7 @@ namespace Application.ViewModel.PostModel
         public DateOnly CreationDate { get; set; }
         public ProductModel Product { get; set; }
         public string Location { get; set; }
+        public Guid AuthorId { get; set; }
        
     }
 

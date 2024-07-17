@@ -81,7 +81,8 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            /*var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetLastSubscriptionByUserIdAsync(_claimService.GetCurrentUserId);
+/*            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetLastSubscriptionByUserIdAsync(_claimService.GetCurrentUserId);
+            var userWallet = await _unitOfWork.WalletRepository.GetWalletByUserId(_claimService.GetCurrentUserId);
             if (listSubscription.Count() == 0)
             {
                 throw new Exception("You must subscribe to  create post");
