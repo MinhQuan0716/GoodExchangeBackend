@@ -26,3 +26,12 @@ jobs:
       run: dotnet build BackendAPI.sln --no-restore
     - name: Test
       run: dotnet test BackendAPI.sln --no-build --verbosity normal
+    - name: Pull code 
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: ./githubpull.sh
+    
