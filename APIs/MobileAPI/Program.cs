@@ -71,7 +71,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .WithOrigins("http://192.168.1.5:8081", "https://192.168.1.5:8081")
+            .SetIsOriginAllowed((host) => true)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
