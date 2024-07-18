@@ -34,4 +34,5 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: ./githubpull.sh
+        debug: true
     
