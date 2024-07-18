@@ -11,6 +11,6 @@ namespace Application.ViewModel.ReportModel
     public class ReportUserModel
     {
         public string ReportContent { get; set; }
-        public Guid ReportUserId { get; set; }
+        public Guid authorId { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace Application.Service
             var report = new Report
             {
                 ReportContent = reportPostModel.ReportContent,
-                ReportPostId = reportPostModel.ReportPostId
+                ReportPostId = reportPostModel.postId
             };
 
             await _unitOfWork.ReportRepository.AddAsync(report);
@@ -42,7 +42,7 @@ namespace Application.Service
             var report = new Report
             {
                 ReportContent = reportUserModel.ReportContent,
-                ReportUserId = reportUserModel.ReportUserId
+                ReportUserId = reportUserModel.authorId
             };
 
             await _unitOfWork.ReportRepository.AddAsync(report);
