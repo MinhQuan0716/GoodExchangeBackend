@@ -15,10 +15,12 @@ namespace Application.Service
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public SubcriptionService(IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly IClaimService _claimService;
+        public SubcriptionService(IUnitOfWork unitOfWork,IMapper mapper, IClaimService claimService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _claimService = claimService;
         }
 
         public async Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel)
@@ -26,6 +28,11 @@ namespace Application.Service
             var subcription = _mapper.Map<Subcription>(createSubcriptionModel);
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public Task<bool> ExtendSubscription()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<List<Subcription>> GetAllSubscriptionAsync()

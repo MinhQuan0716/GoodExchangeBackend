@@ -12,5 +12,6 @@ namespace Application.InterfaceService
     {
         Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel);
         Task<List<Subcription>> GetAllSubscriptionAsync();
+        Task<bool> ExtendSubscription();
     }
 }

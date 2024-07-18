@@ -27,10 +27,10 @@ builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<VnPayConfig>(builder.Configuration.GetSection(VnPayConfig.ConfigName));
-/*builder.Services.AddHangfire(configuration => configuration
+builder.Services.AddHangfire(configuration => configuration
                      .UseSimpleAssemblyNameTypeSerializer()
                      .UseRecommendedSerializerSettings()
-                     .UseInMemoryStorage());*/
+                     .UseInMemoryStorage());
 builder.Services.AddSwaggerGen(opt =>
 {
 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -61,7 +61,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
-//builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer();
 
 /*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
 /*builder.Services.AddHostedService<SocketServerBackgroundService>();*/
@@ -106,7 +106,7 @@ app.UseSession();
 /*app.UseWebSockets();*/
 
 //app.UseRateLimiter();
-//app.MapHangfireDashboard("/dashboard");
+app.MapHangfireDashboard("/dashboard");
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");

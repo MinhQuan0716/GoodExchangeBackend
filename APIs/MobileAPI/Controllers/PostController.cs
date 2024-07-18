@@ -214,7 +214,7 @@ namespace MobileAPI.Controllers
             var isExisted = await _postService.CheckIfPostInWishList(postId);
             if(!isExisted)
             {
-                return NotFound();
+                return Ok(isExisted);
             }
             return Ok(isExisted);
         }
