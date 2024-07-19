@@ -30,7 +30,7 @@ namespace Infrastructure.Repository
                                                                                    UsertName=x.User.UserName,
                                                                                    StartDate=DateOnly.FromDateTime(x.StartDate),
                                                                                    EndDate=DateOnly.FromDateTime(x.EndDate),
-                                                                                   Status=x.Status? "Available":"Not available",
+                                                                                   Status=x.Status? "Available":"Expried",
                                                                                    SubscriptionPrice=x.Subcription.Price
                                                                                }).AsQueryable().AsNoTracking().ToListAsync();
             return subscriptionHistoryList;
@@ -41,6 +41,18 @@ namespace Infrastructure.Repository
             var subscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId&&x.IsDelete==false)
                                                                        .ToListAsync();
             return subscription;
+        }
+
+        public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId)
+        {
+           var listUserSubscription=await _appDbContext.SubcriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
+                                                                            .Select(x=>new SubscriptionHistoryDetailViewModel
+                                                                            {
+                                                                                StartDate=DateOnly.FromDateTime(x.StartDate),
+                                                                                EndDate=DateOnly.FromDateTime(x.EndDate),
+                                                                                Status=x.Status?"Available":"Expried"
+                                                                            }).ToListAsync();
+            return listUserSubscription;
         }
     }
 }

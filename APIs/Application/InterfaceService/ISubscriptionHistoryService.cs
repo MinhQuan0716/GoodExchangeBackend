@@ -10,5 +10,6 @@ namespace Application.InterfaceService
     public interface ISubscriptionHistoryService
     {
         Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistoriesAsync();
+        Task<List<SubscriptionHistoryDetailViewModel>> GetAllUsersSubscriptionHistoryDetailAsync();
     }
 }

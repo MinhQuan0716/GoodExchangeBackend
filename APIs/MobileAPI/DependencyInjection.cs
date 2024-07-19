@@ -37,6 +37,7 @@ namespace MobileAPI
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IVerifyUserService, VerifyUserService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<ISubscriptionHistoryService, SubscriptionHistoryService>();  
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {

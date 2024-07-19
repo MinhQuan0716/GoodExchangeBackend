@@ -12,13 +12,20 @@ namespace Application.Service
     public class SubscriptionHistoryService : ISubscriptionHistoryService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public SubscriptionHistoryService(IUnitOfWork unitOfWork)
+        private readonly IClaimService _claimService;
+        public SubscriptionHistoryService(IUnitOfWork unitOfWork, IClaimService claimService)
         {
             _unitOfWork = unitOfWork;
+            _claimService = claimService;
         }
         public async Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistoriesAsync()
         {
             return await _unitOfWork.SubscriptionHistoryRepository.GetAllSubscriptionHistory();
+        }
+
+        public async Task<List<SubscriptionHistoryDetailViewModel>> GetAllUsersSubscriptionHistoryDetailAsync()
+        {
+            return await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
         }
     }
 }
