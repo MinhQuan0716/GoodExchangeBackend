@@ -81,16 +81,11 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-/*            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetLastSubscriptionByUserIdAsync(_claimService.GetCurrentUserId);
-            var userWallet = await _unitOfWork.WalletRepository.GetWalletByUserId(_claimService.GetCurrentUserId);
+            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
             if (listSubscription.Count() == 0)
             {
                 throw new Exception("You must subscribe to  create post");
             }
-            if (listSubscription.OrderBy(x => x.CreationDate).Last().EndDate == DateTime.UtcNow)
-            {
-                throw new Exception("Your subscription has expired");
-            }*/
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
             var newProduct = _mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;

@@ -20,5 +20,12 @@ namespace MobileAPI.Controllers
             var subscriptionHistories =await _subscriptionHistoryService.GetAllUsersSubscriptionHistoryDetailAsync();
             return Ok(subscriptionHistories);
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UserAvailableSubscription() 
+        {
+            var subscriptionHistories = await _subscriptionHistoryService.GetCurrentUsersAvailableSubscription();
+            return Ok(subscriptionHistories);
+        }
     }
 }

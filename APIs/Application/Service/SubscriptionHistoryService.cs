@@ -27,5 +27,10 @@ namespace Application.Service
         {
             return await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
         }
+
+        public async Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUsersAvailableSubscription()
+        {
+           return await _unitOfWork.SubscriptionHistoryRepository.GetCurrentUserAvailableSubscripion(_claimService.GetCurrentUserId);
+        }
     }
 }

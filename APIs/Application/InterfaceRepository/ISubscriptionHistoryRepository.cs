@@ -13,5 +13,6 @@ namespace Application.InterfaceRepository
         Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId);
         Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistory();
         Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId);
+        Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUserAvailableSubscripion(Guid userId);
     }
 }
