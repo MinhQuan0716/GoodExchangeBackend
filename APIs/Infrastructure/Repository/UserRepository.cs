@@ -95,5 +95,11 @@ namespace Infrastructure.Repository
             }).ToListAsync();
             return listUser;
         }
+
+        public async Task<List<User>> GetAllMember()
+        {
+            var listMember = await _dbContext.Users.Where(x => x.IsDelete == false && x.RoleId == 3).ToListAsync();
+            return listMember;
+        }
     }
 }

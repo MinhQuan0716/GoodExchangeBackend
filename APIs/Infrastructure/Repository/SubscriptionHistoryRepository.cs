@@ -31,7 +31,6 @@ namespace Infrastructure.Repository
                                                                                    StartDate=DateOnly.FromDateTime(x.StartDate),
                                                                                    EndDate=DateOnly.FromDateTime(x.EndDate),
                                                                                    Status=x.Status? "Available":"Expried",
-                                                                                   SubscriptionPrice=x.Subcription.Price
                                                                                }).AsQueryable().AsNoTracking().ToListAsync();
             return subscriptionHistoryList;
         }
@@ -39,12 +38,15 @@ namespace Infrastructure.Repository
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUserAvailableSubscripion(Guid userId)
         {
             var listUserSubscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false&&x.Status==true)
-                                                                           .Select(x => new SubscriptionHistoryDetailViewModel
-                                                                           {
+                                                                               .Include(x=>x.Subcription).AsSplitQuery()
+                                                                              .Select(x => new SubscriptionHistoryDetailViewModel
+                                                                              {
                                                                                StartDate = DateOnly.FromDateTime(x.StartDate),
                                                                                EndDate = DateOnly.FromDateTime(x.EndDate),
                                                                                Status = x.Status ? "Available":"Expired",
-                                                                           }).ToListAsync();
+                                                                               SubscriptionId=x.Subcription.Id,
+                                                                               Id=x.Id
+                                                                               }).ToListAsync();
             return listUserSubscription;
         }
 
@@ -58,11 +60,14 @@ namespace Infrastructure.Repository
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId)
         {
            var listUserSubscription=await _appDbContext.SubcriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
+                                                                            .Include(x=>x.Subcription).AsSplitQuery()
                                                                             .Select(x=>new SubscriptionHistoryDetailViewModel
                                                                             {
+                                                                                Id = x.Id,
                                                                                 StartDate=DateOnly.FromDateTime(x.StartDate),
                                                                                 EndDate=DateOnly.FromDateTime(x.EndDate),
-                                                                                Status=x.Status?"Available":"Expried"
+                                                                                Status=x.Status?"Available":"Expried",
+                                                                                SubscriptionId=x.Subcription.Id,
                                                                             }).ToListAsync();
             return listUserSubscription;
         }

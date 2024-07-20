@@ -17,5 +17,6 @@ namespace Application.InterfaceRepository
         Task<User> GetBannedUserById(Guid id);
         Task<UserDetailViewModel> GetUserDetail(Guid userId);
         Task<List<UserViewModelForWeb>> GetAllUserForWeb();
+        Task<List<User>> GetAllMember();
     }
 }

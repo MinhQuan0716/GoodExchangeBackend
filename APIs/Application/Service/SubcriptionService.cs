@@ -30,9 +30,36 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public Task<bool> ExtendSubscription()
+        public async Task<bool> ExtendSubscription()
         {
-            throw new NotImplementedException();
+           var listUser=await _unitOfWork.UserRepository.GetAllMember();
+            foreach(var user in listUser)
+            {
+                var userWallet=await _unitOfWork.WalletRepository.GetWalletByUserId(user.Id);
+                var wallet=await _unitOfWork.WalletRepository.GetByIdAsync(userWallet.Id);
+                var subscriptionHistoriesViewModel=await _unitOfWork.SubscriptionHistoryRepository.GetCurrentUserAvailableSubscripion(user.Id);
+                foreach(var subscriptionHistoryViewModel in subscriptionHistoriesViewModel)
+                {
+                    var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionHistoryViewModel.SubscriptionId);
+                    var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
+                    if (subscriptionHistory.EndDate >= DateTime.UtcNow)
+                    {
+                        if (wallet.UserBalance < subscription.Price)
+                        {
+                            subscriptionHistory.Status = false;
+                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                        }
+                        else
+                        {
+                            wallet.UserBalance = wallet.UserBalance - subscription.Price;
+                            subscriptionHistory.EndDate = DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth);
+                            _unitOfWork.WalletRepository.Update(wallet);
+                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                        }
+                    }
+                }
+            }
+            return await _unitOfWork.SaveChangeAsync()>0;
         }
 
         public async Task<List<Subcription>> GetAllSubscriptionAsync()

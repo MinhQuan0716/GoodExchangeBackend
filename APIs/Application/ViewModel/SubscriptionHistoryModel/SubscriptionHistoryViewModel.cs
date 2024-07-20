@@ -10,7 +10,6 @@ namespace Application.ViewModel.SubscriptionHistoryModel
     {
         public string UsertName { get; set; }
         public string Email { get; set; }
-        public long SubscriptionPrice { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
         public string Status { get; set; }

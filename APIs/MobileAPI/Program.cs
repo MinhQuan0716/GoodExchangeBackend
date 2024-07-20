@@ -62,9 +62,6 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
 builder.Services.AddHangfireServer();
-
-/*builder.Services.AddSingleton<ISocketServerService>(new SocketServerService(1234));*/
-/*builder.Services.AddHostedService<SocketServerBackgroundService>();*/
 builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
@@ -100,18 +97,27 @@ if (app.Environment.IsProduction())
     });
 }
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<PerformanceMiddleware>();
 app.UseSession();
-/*app.UseWebSockets();*/
 
 //app.UseRateLimiter();
-app.MapHangfireDashboard("/dashboard");
+//Map hangfire
+app.MapHangfireDashboard("/dashboard",new DashboardOptions
+{
+    Authorization = new[] {new HangfireAuthen(configuration.JWTSecretKey)}
+});
+
+
+app.UseHangfireDashboard();
+
 
 app.MapControllers();
+//Map chathub
 app.MapHub<ChatHub>("/chatHub");
+//Call hangfire
+await app.StartAsync();
+RecurringJob.AddOrUpdate<ISubcriptionService>(sub => sub.ExtendSubscription(), "0 0 * * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+await app.WaitForShutdownAsync();
 
-/*var socketServer = app.Services.GetRequiredService<ISocketServerService>();
-socketServer.Start();*/
-
-app.Run();
