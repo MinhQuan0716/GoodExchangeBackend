@@ -26,7 +26,6 @@ namespace Infrastructure
         public DbSet<SubcriptionHistory> SubcriptionHistories { get; set; } 
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChatRoom> ChatRooms { get; set; }
-        public DbSet<Comment> Comments { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }

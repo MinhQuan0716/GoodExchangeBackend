@@ -24,7 +24,6 @@ namespace Domain.Entities
         public Wallet Wallet { get; set; }
         public Guid? VerifyUserId {  get; set; }
         public VerifyUser VerifyUser { get; set; }
-        public ICollection<Comment> Comments { get; set; }
         public ICollection<ChatRoom> ChatRooms1 { get; set; }
         public ICollection<ChatRoom> ChatRooms2 { get; set; }
         public ICollection<Rating> Raters {  get; set; }

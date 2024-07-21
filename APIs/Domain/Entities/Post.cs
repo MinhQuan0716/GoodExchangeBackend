@@ -12,7 +12,6 @@ namespace Domain.Entities
         public string PostContent { get; set; }
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
-        public ICollection<Comment> Comments { get; set; }
         public ICollection<WishList> WishLists { get; set; }
         public ICollection<Order> Requests { get; set; }
     }
