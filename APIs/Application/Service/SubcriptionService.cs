@@ -42,7 +42,7 @@ namespace Application.Service
                 {
                     var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionHistoryViewModel.SubscriptionId);
                     var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
-                    if (subscriptionHistory.EndDate >= DateTime.UtcNow)
+                    if (subscriptionHistory.EndDate > DateTime.UtcNow)
                     {
                         if (wallet.UserBalance < subscription.Price)
                         {
