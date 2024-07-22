@@ -32,6 +32,12 @@ namespace Application.Service
             }
             request.OrderStatusId = 2;
             _unitOfWork.OrderRepository.Update(request);
+            var rejectOrder = await _unitOfWork.OrderRepository.GetRequestByPostId(request.PostId);
+            foreach (var item in rejectOrder)
+            {
+                item.OrderStatusId = 3;
+            }
+            _unitOfWork.OrderRepository.UpdateRange(rejectOrder);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -74,6 +80,18 @@ namespace Application.Service
             await _unitOfWork.OrderRepository.AddAsync(request);
 
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+        public async Task<bool> CheckOrderStatusByPostId(Guid postId)
+        {
+            var OrderList = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+            foreach(var order in OrderList)
+            {
+                if (order.OrderStatusId == 2)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

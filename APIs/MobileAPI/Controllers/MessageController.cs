@@ -12,11 +12,13 @@ namespace MobileAPI.Controllers
     {
         private readonly IMessageService _messageService;
         private readonly IHubContext<ChatHub> _hubContext;
+        private readonly IOrderService _orderService;
 
-        public MessageController(IMessageService messageService, IHubContext<ChatHub> hubContext)
+        public MessageController(IMessageService messageService, IHubContext<ChatHub> hubContext, IOrderService orderService)
         {
             _messageService = messageService;
             _hubContext = hubContext;
+            _orderService = orderService;
         }
         /*[Authorize]
         [HttpPost]
@@ -49,6 +51,11 @@ namespace MobileAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> ContactNow(Guid userId, Guid postId)
         {
+            var checkOrderStatus = await _orderService.CheckOrderStatusByPostId(postId);
+            if (checkOrderStatus)
+            {
+                return BadRequest("Post already get accept by other user");
+            }
             var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
             if (userChatRooms == null)
             {

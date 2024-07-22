@@ -64,7 +64,7 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<ChatRoomDto> GetOrCreateChatRoomAsync(Guid user1, Guid postId)
+        public async Task<ChatRoomWithOrder> GetOrCreateChatRoomAsync(Guid user1, Guid postId)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(user1);
             if (user == null)
@@ -97,13 +97,32 @@ namespace Application.Service
                 newMessage.CreationDate = DateTime.UtcNow;
                 newMessage.CreatedBy = user2;
                 await _unitOfWork.MessageRepository.AddAsync(newMessage);
+                var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
+                if (!post.Where(x => x.Id == postId).Any())
+                {
+                    throw new Exception("This user do not create this post");
+                }
+                var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
+                if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
+                {
+                    throw new Exception("You already send the request");
+                }
+                Order request = new Order
+                {
+                    PostId = postId,
+                    OrderStatusId = 1,
+                    OrderMessage = "",
+                    UserId = user2,
+                    CreatedBy = user2,
+                };
+                await _unitOfWork.OrderRepository.AddAsync(request);
                 await _unitOfWork.SaveChangeAsync();
             }
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(newRoom.Id);
             return messages;
         }
 
-        public async Task<ChatRoomDto> GetMessagesByChatRoomId(Guid chatRoomId)
+        public async Task<ChatRoomWithOrder> GetMessagesByChatRoomId(Guid chatRoomId)
         {
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(chatRoomId);
             return messages;
@@ -115,7 +134,7 @@ namespace Application.Service
             return chatroom;
         }
 
-        public async Task<List<ChatRoomDto>> GetAllChatRoomsByUserIdAsync()
+        public async Task<List<ChatRoomWithOrder>> GetAllChatRoomsByUserIdAsync()
         {
             var userId = _claimService.GetCurrentUserId;
             var chatroom = await _unitOfWork.ChatRoomRepository.GetByUserIdAsync(userId);
