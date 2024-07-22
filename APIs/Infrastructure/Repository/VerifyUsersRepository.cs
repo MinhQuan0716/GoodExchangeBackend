@@ -42,9 +42,9 @@ namespace Infrastructure.Repository
             return listVerifyUser;
         }
 
-        public async Task<VerifyViewModel> GetVerifyUserDetailAsync(Guid userId)
+        public async Task<VerifyViewModel> GetVerifyUserDetailAsync(Guid id)
         {
-            var verfiyModel=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.UserId==userId)
+            var verfiyModel=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.Id==id)
                                                             .Include(x => x.User).ThenInclude(u => u.Role).AsSplitQuery()
                                                               .Include(x => x.VerificationStatus).AsSplitQuery()
                                                               .Select(x => new VerifyViewModel
