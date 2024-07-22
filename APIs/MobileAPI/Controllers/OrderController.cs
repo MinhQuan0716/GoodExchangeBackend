@@ -15,17 +15,6 @@ namespace MobileAPI.Controllers
             _requestService = requestService;
         }
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> SendOrder(CreateOrderModel model)
-        {
-            bool isCreated=await _requestService.SendRequest(model);
-            if (isCreated)
-            {
-                return Ok();
-            }
-            return BadRequest(ModelState);  
-        }
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetReceieveOrder()
         {
@@ -37,37 +26,15 @@ namespace MobileAPI.Controllers
             return NotFound();
         }
         [Authorize]
-        [HttpGet]   
-        public async Task<IActionResult> GetSentOrder()
-        {
-            var requestList = await _requestService.GetAllRequestsOfCreatebByUserAsync();
-            if (requestList.Any())
-            {
-                return Ok(requestList);
-            }
-            return NotFound();
-        }
-        [Authorize]
         [HttpPut]
-        public async Task<IActionResult> AcceptOrder(Guid requestId)
+        public async Task<IActionResult> AcceptOrder(Guid OrderId)
         {
-            var isAccepted = await _requestService.AcceptRequest(requestId);
+            var isAccepted = await _requestService.AcceptRequest(OrderId);
             if (isAccepted)
             {
                 return Ok();
             }
             return BadRequest();  
-        }
-        [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> RejectOrder(Guid requestId)
-        {
-            var isRejected = await _requestService.RejectRequest(requestId);
-            if (isRejected)
-            {
-                return Ok();
-            }
-            return BadRequest();
         }
     }
 }

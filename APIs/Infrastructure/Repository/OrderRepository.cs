@@ -100,7 +100,8 @@ namespace Infrastructure.Repository
             var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.UserId == userId)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
-                                             .Include(x => x.Post).AsSplitQuery()
+                                             .Include(x => x.Post).ThenInclude(p=>p.Product).ThenInclude(p=>p.Category).AsSplitQuery()
+                                             .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
                                              .Include(x => x.Status).AsSplitQuery()
                                              .Select(x => new ReceiveOrderViewModel
                                              {
@@ -112,7 +113,20 @@ namespace Infrastructure.Repository
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
-                                                     PostTitle = x.Post.PostTitle
+                                                     PostTitle = x.Post.PostTitle,
+                                                     Product = new ProductModel
+                                                     {
+                                                         CategoryId = x.Post.Product.CategoryId,
+                                                         CategoryName = x.Post.Product.Category.CategoryName,
+                                                         ConditionId = x.Post.Product.ConditionId,
+                                                         ConditionName = x.Post.Product.ConditionType.ConditionType,
+                                                         ProductId = x.Post.Product.Id,
+                                                         ProductImageUrl = x.Post.Product.ProductImageUrl,
+                                                         ProductPrice = x.Post.Product.ProductPrice,
+                                                         ProductStatus = x.Post.Product.ProductStatus,
+                                                         RequestedProduct = x.Post.Product.RequestedProduct
+                                                     }
+                                                     
                                                  },
                                                  User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
                                                  {
