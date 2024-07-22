@@ -26,18 +26,36 @@ namespace Application.Service
         public async Task<bool> AcceptRequest(Guid requestId)
         {
             var request = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
+            if (request == null)
+            {
+                throw new Exception("Request not found");
+            }
+
             if (request.OrderStatusId == 2 || request.OrderStatusId == 3)
             {
-                throw new Exception("You already accept or reject this order");
+                throw new Exception("You already accepted or rejected this order");
             }
+
+            // Update the request status
             request.OrderStatusId = 2;
             _unitOfWork.OrderRepository.Update(request);
-            var rejectOrder = await _unitOfWork.OrderRepository.GetRequestByPostId(request.PostId);
-            foreach (var item in rejectOrder)
+
+            // Get all other requests by post ID and update their statuses to rejected
+            var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(request.PostId);
+            if (rejectOrders != null && rejectOrders.Any())
             {
-                item.OrderStatusId = 3;
+                // Update their statuses to rejected
+                foreach (var item in rejectOrders)
+                {
+                    if (item.Id != request.Id)  // Skip the already updated request
+                    {
+                        item.OrderStatusId = 3;
+                        _unitOfWork.OrderRepository.Update(item);
+                    }
+                }
             }
-            _unitOfWork.OrderRepository.UpdateRange(rejectOrder);
+
+            // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
