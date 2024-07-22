@@ -134,7 +134,7 @@ namespace Application.Service
             return chatroom;
         }
 
-        public async Task<List<ChatRoomDto>> GetAllChatRoomsByUserIdAsync()
+        public async Task<List<ChatRoomWithOrder>> GetAllChatRoomsByUserIdAsync()
         {
             var userId = _claimService.GetCurrentUserId;
             var chatroom = await _unitOfWork.ChatRoomRepository.GetByUserIdAsync(userId);

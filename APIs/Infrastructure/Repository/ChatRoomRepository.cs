@@ -1,6 +1,7 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.ViewModel.ChatRoomModel;
+using Application.ViewModel.UserModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,7 +21,7 @@ namespace Infrastructure.Repository
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<ChatRoomDto>> GetByUserIdAsync(Guid userId)
+        public async Task<List<ChatRoomWithOrder>> GetByUserIdAsync(Guid userId)
         {
             var rooms = await _appDbContext.ChatRooms
                                     .Where(m => m.SenderId == userId || m.ReceiverId == userId)
@@ -31,7 +32,7 @@ namespace Infrastructure.Repository
                                     .ToListAsync();
 
             // Map entities to DTOs
-            var roomDtos = rooms.Select(room => new ChatRoomDto
+            var roomDtos = rooms.Select(room => new ChatRoomWithOrder
             {
                 roomId = room.Id,
                 SenderId = room.SenderId,
@@ -49,9 +50,15 @@ namespace Infrastructure.Repository
                     CreatedDate = message.CreationDate.Value.ToShortDateString(),
                     CreatedTime = message.CreationDate.Value.ToShortTimeString()
                     // Map other properties as needed
-                }).ToList()
+                }).ToList(),
+                Order = _appDbContext.Orders
+                .Where(o => o.Post.CreatedBy == room.ReceiverId)
+                .Where(o => o.UserId == room.SenderId).AsSplitQuery().Select(u => new OrderDto
+                {
+                    OrderId = u.Id,
+                    OrderStatusId = u.OrderStatusId
+                }).Single()
             }).ToList();
-
             return roomDtos;
         }
 

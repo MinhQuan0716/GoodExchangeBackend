@@ -13,6 +13,6 @@ namespace Application.InterfaceRepository
     {
         Task<ChatRoomWithOrder> GetMessagesByRoomId(Guid roomId);
         Task<ChatRoomWithOrder> GetRoomBy2UserId(Guid user1, Guid user2);
-        Task<List<ChatRoomDto>> GetByUserIdAsync(Guid userId);
+        Task<List<ChatRoomWithOrder>> GetByUserIdAsync(Guid userId);
     }
 }
