@@ -17,5 +17,6 @@ namespace Application.InterfaceService
         Task<bool> ApproveImageAsync(Guid verifyId);
         Task<bool> DenyImageAsync(Guid verifyId);
         Task<string> getVerifyStatus();
+        Task<VerifyViewModel> GetVerifyModelDetailByUserIdAsync(Guid userId);
     }
 }

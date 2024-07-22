@@ -11,5 +11,6 @@ namespace Application.InterfaceRepository
     {
         Task<VerifyUser> FindVerifyUserIdByUserId(Guid userId);
         Task<List<VerifyViewModel>> GetAllVerifyUserAsync();
+        Task<VerifyViewModel> GetVerifyUserDetailAsync(Guid userId);
     }
 }
