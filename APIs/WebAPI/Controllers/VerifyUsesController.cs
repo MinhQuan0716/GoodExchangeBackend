@@ -42,5 +42,12 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> detail(Guid id)
+        {
+            var verfiyDetail=await _verifyUserService.GetVerifyModelDetailByUserIdAsync(id);
+            return Ok(verfiyDetail);
+        }
     }
 }

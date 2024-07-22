@@ -121,5 +121,10 @@ namespace Application.Service
             }
             return verifyUser.VerificationStatus.VerificationStatusName;
         }
+
+        public async Task<VerifyViewModel> GetVerifyModelDetailByUserIdAsync(Guid userId)
+        {
+            return await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailAsync(userId);
+        }
     }
 }

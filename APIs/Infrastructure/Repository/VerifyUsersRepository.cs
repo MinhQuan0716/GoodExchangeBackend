@@ -41,5 +41,22 @@ namespace Infrastructure.Repository
                                                               }).ToListAsync();
             return listVerifyUser;
         }
+
+        public async Task<VerifyViewModel> GetVerifyUserDetailAsync(Guid id)
+        {
+            var verfiyModel=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.Id==id)
+                                                            .Include(x => x.User).ThenInclude(u => u.Role).AsSplitQuery()
+                                                              .Include(x => x.VerificationStatus).AsSplitQuery()
+                                                              .Select(x => new VerifyViewModel
+                                                              {
+                                                                  Id = x.Id,
+                                                                  Email = x.User.Email,
+                                                                  ProfileImage = x.UserImage,
+                                                                  RoleName = x.User.Role.RoleName,
+                                                                  UserName = x.User.UserName,
+                                                                  VerifyStatus = x.VerificationStatus.VerificationStatusName
+                                                              }).SingleAsync();
+            return verfiyModel;
+        }
     }
 }
