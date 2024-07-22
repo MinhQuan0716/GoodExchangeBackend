@@ -32,6 +32,12 @@ namespace Application.Service
             }
             request.OrderStatusId = 2;
             _unitOfWork.OrderRepository.Update(request);
+            var rejectOrder = await _unitOfWork.OrderRepository.GetRequestByPostId(request.PostId);
+            foreach (var item in rejectOrder)
+            {
+                item.OrderStatusId = 3;
+            }
+            _unitOfWork.OrderRepository.UpdateRange(rejectOrder);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -85,7 +91,7 @@ namespace Application.Service
                     return true;
                 }
             }
-            `return false;
+            return false;
         }
     }
 }

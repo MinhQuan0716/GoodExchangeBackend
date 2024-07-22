@@ -55,7 +55,7 @@ namespace Infrastructure.Repository
             return roomDtos;
         }
 
-        public async Task<ChatRoomDto> GetMessagesByRoomId(Guid roomId)
+        public async Task<ChatRoomWithOrder> GetMessagesByRoomId(Guid roomId)
         {
             var chatRoom = await _appDbContext.ChatRooms.Where(m => m.Id == roomId).
                                                      Where(x => x.IsDelete == false).
@@ -78,8 +78,10 @@ namespace Infrastructure.Repository
             var users = await _appDbContext.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
-
-            var roomDto = new ChatRoomDto
+            var Order = await _appDbContext.Orders
+                .Where(o => o.Post.CreatedBy == chatRoom.ReceiverId)
+                .Where(o => o.UserId == chatRoom.SenderId).FirstOrDefaultAsync();
+            var roomDto = new ChatRoomWithOrder
             {
                 roomId = chatRoom.Id,
                 SenderId = chatRoom.SenderId,
@@ -101,12 +103,17 @@ namespace Infrastructure.Repository
                                         : "Unknown Avatar",  // Add this line
                     CreatedDate = message.CreationDate.Value.ToShortDateString(),
                     CreatedTime = message.CreationDate.Value.ToShortTimeString()
-                }).OrderBy(m => m.CreatedDate).ToList()
+                }).OrderBy(m => m.CreatedDate).ToList(),
+                Order = new OrderDto
+                {
+                    OrderId = Order.Id,
+                    OrderStatusId = Order.OrderStatusId
+                }
             };
             return roomDto;
         }
-
-        public async Task<ChatRoomDto> GetRoomBy2UserId(Guid user1, Guid user2)
+        
+        public async Task<ChatRoomWithOrder> GetRoomBy2UserId(Guid user1, Guid user2)
         {
             var chatRoom = await _appDbContext.ChatRooms.Where(m => (m.SenderId == user1 && m.ReceiverId == user2) ||
                                                                     (m.SenderId == user2 && m.ReceiverId == user1))
@@ -128,8 +135,10 @@ namespace Infrastructure.Repository
             var users = await _appDbContext.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
-
-            var roomDto = new ChatRoomDto
+            var Order = await _appDbContext.Orders
+                .Where(o => o.Post.CreatedBy == chatRoom.ReceiverId)
+                .Where(o => o.UserId == chatRoom.SenderId).FirstOrDefaultAsync();
+            var roomDto = new ChatRoomWithOrder
             {
                 roomId = chatRoom.Id,
                 SenderId = chatRoom.SenderId,
@@ -151,7 +160,12 @@ namespace Infrastructure.Repository
                                         : "Unknown Avatar",  // Add this line
                     CreatedDate = message.CreationDate.Value.ToShortDateString(),
                     CreatedTime = message.CreationDate.Value.ToShortTimeString()
-                }).OrderBy(m => m.CreatedDate).ToList()
+                }).OrderBy(m => m.CreatedDate).ToList(),
+                Order = new OrderDto
+                {
+                    OrderId = Order.Id,
+                    OrderStatusId = Order.OrderStatusId
+                }
             };
             return roomDto;
         }
