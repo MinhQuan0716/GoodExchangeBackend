@@ -75,5 +75,17 @@ namespace Application.Service
 
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+        public async Task<bool> CheckOrderStatusByPostId(Guid postId)
+        {
+            var OrderList = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+            foreach(var order in OrderList)
+            {
+                if (order.OrderStatusId == 2)
+                {
+                    return true;
+                }
+            }
+            `return false;
+        }
     }
 }

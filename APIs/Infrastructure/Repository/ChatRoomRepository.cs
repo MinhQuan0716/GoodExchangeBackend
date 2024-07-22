@@ -112,8 +112,7 @@ namespace Infrastructure.Repository
                                                                     (m.SenderId == user2 && m.ReceiverId == user1))
                                                                     .Include(m => m.Messages)
                                                                     .Include(c => c.Sender)
-                                                                    .Include(c => c.Receiver)
-                                                                    .Where(x => x.IsDelete == false).FirstOrDefaultAsync();
+                                                                    .Include(c => c.Receiver).FirstOrDefaultAsync();
             if (chatRoom == null)
             {
                 return null; // Or handle the case when the chat room is not found

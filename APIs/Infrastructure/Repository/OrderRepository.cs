@@ -128,6 +128,11 @@ namespace Infrastructure.Repository
             return listRequest;
         }
 
+        public async Task<List<Order>> GetRequestByPostId(Guid postId)
+        {
+            return await _dbContext.Orders.Where(x => x.PostId == postId).AsNoTracking().ToListAsync();
+        }
+
         public async Task<List<Order>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
         {
             return await _dbContext.Orders.Where(x => x.UserId == userId&&x.PostId==postId).AsNoTracking().ToListAsync();
