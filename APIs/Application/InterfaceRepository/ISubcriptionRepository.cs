@@ -9,5 +9,7 @@ namespace Application.InterfaceRepository
 {
     public interface ISubcriptionRepository:IGenericRepository<Subcription>
     {
+        Task<List<Subcription>> GetAllDeactiveSubscription();
+        Task<Subcription> GetSubscriptionForRevokeAsync(Guid subscriptionId);
     }
 }

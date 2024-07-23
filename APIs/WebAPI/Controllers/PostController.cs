@@ -43,5 +43,12 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles ="Admin,Moderator")]
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> PostDetail(Guid postId)
+        {
+            var postDetail=await _postService.GetPostDetailAsync(postId);
+            return Ok(postDetail);
+        }
     }
 }

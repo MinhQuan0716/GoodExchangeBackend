@@ -66,5 +66,28 @@ namespace Application.Service
         {
           return await _unitOfWork.SubcriptionRepository.GetAllAsync();
         }
+
+        public async Task<bool> DeactiveSubscriptionAsync(Guid subscriptionId)
+        {
+            var subscription=await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            if(subscription == null)
+            {
+                return false;
+            }
+            _unitOfWork.SubcriptionRepository.SoftRemove(subscription);
+           return await _unitOfWork.SaveChangeAsync()>0;
+        }
+
+        public async Task<bool> RevokeSubscriptionAsync(Guid subscriptionId)
+        {
+            var subscription=await _unitOfWork.SubcriptionRepository.GetSubscriptionForRevokeAsync(subscriptionId);
+            if(subscription == null)
+            {
+                return false;
+            }
+            subscription.IsDelete = false;
+            _unitOfWork.SubcriptionRepository.Update(subscription);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
     }
 }
