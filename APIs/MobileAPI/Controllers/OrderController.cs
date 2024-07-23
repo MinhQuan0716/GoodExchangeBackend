@@ -36,5 +36,16 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();  
         }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> detail(Guid id)
+        {
+            var orderDetail=await _requestService.GetOrderDetailAsync(id);
+            if(orderDetail == null)
+            {
+                return NotFound();
+            }
+            return Ok(orderDetail);
+        }
     }
 }
