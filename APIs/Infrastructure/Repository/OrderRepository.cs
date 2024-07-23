@@ -143,6 +143,54 @@ namespace Infrastructure.Repository
             return listRequest;
         }
 
+        public async Task<ReceiveOrderViewModel> GetOrderDetail(Guid orderId)
+        {
+            var order = await _dbContext.Orders
+                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
+                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
+                                             .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
+                                             .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
+                                             .Include(x => x.Status).AsSplitQuery()
+                                             .Where(x => x.IsDelete == false && x.Id == orderId)
+                                             .Select(x => new ReceiveOrderViewModel
+                                             {
+                                                 OrderId = x.Id,
+                                                 OrderMessage = x.OrderMessage,
+                                                 OrderStatus = x.Status.StatusName,
+                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 Post = new PostViewModelForRequest
+                                                 {
+                                                     PostId = x.PostId,
+                                                     PostContent = x.Post.PostContent,
+                                                     PostTitle = x.Post.PostTitle,
+                                                     Product = new ProductModel
+                                                     {
+                                                         CategoryId = x.Post.Product.CategoryId,
+                                                         CategoryName = x.Post.Product.Category.CategoryName,
+                                                         ConditionId = x.Post.Product.ConditionId,
+                                                         ConditionName = x.Post.Product.ConditionType.ConditionType,
+                                                         ProductId = x.Post.Product.Id,
+                                                         ProductImageUrl = x.Post.Product.ProductImageUrl,
+                                                         ProductPrice = x.Post.Product.ProductPrice,
+                                                         ProductStatus = x.Post.Product.ProductStatus,
+                                                         RequestedProduct = x.Post.Product.RequestedProduct
+                                                     }
+
+                                                 },
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 {
+                                                     SenderId = x.CreatedBy.Value,
+                                                     SenderEmail = u.Email,
+                                                     SenderHomeAddress = u.HomeAddress,
+                                                     SenderImageUrl = u.VerifyUser.UserImage,
+                                                     SenderRating = (u.RatedUsers.Count() > 0
+                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
+                                                     SenderUsername = u.UserName
+                                                 }).Single()
+                                             }).AsQueryable().AsNoTracking().FirstOrDefaultAsync();
+            return order;
+        }
+
         public async Task<List<Order>> GetRequestByPostId(Guid postId)
         {
             return await _dbContext.Orders.Where(x => x.PostId == postId).AsNoTracking().ToListAsync();

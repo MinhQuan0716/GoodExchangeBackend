@@ -111,5 +111,10 @@ namespace Application.Service
             }
             return false;
         }
+
+        public async Task<ReceiveOrderViewModel> GetOrderDetail(Guid postId)
+        {
+            return await _unitOfWork.OrderRepository.GetOrderDetail(postId);
+        }
     }
 }
