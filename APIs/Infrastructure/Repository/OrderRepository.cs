@@ -134,7 +134,7 @@ namespace Infrastructure.Repository
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
                                                      SenderHomeAddress = u.HomeAddress,
-                                                     SenderImageUrl = u.VerifyUser.UserImage,
+                                                     SenderImageUrl = u.ProfileImage,
                                                      SenderRating = (u.RatedUsers.Count() > 0
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()): 0),
                                                      SenderUsername=u.UserName
@@ -145,50 +145,48 @@ namespace Infrastructure.Repository
 
         public async Task<ReceiveOrderViewModel> GetOrderDetail(Guid orderId)
         {
-            var order = await _dbContext.Orders
-                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
-                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
-                                             .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
-                                             .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
-                                             .Include(x => x.Status).AsSplitQuery()
-                                             .Where(x => x.IsDelete == false && x.Id == orderId)
-                                             .Select(x => new ReceiveOrderViewModel
-                                             {
-                                                 OrderId = x.Id,
-                                                 OrderMessage = x.OrderMessage,
-                                                 OrderStatus = x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
-                                                 {
-                                                     PostId = x.PostId,
-                                                     PostContent = x.Post.PostContent,
-                                                     PostTitle = x.Post.PostTitle,
-                                                     Product = new ProductModel
-                                                     {
-                                                         CategoryId = x.Post.Product.CategoryId,
-                                                         CategoryName = x.Post.Product.Category.CategoryName,
-                                                         ConditionId = x.Post.Product.ConditionId,
-                                                         ConditionName = x.Post.Product.ConditionType.ConditionType,
-                                                         ProductId = x.Post.Product.Id,
-                                                         ProductImageUrl = x.Post.Product.ProductImageUrl,
-                                                         ProductPrice = x.Post.Product.ProductPrice,
-                                                         ProductStatus = x.Post.Product.ProductStatus,
-                                                         RequestedProduct = x.Post.Product.RequestedProduct
-                                                     }
+            var detail = await _dbContext.Orders.Where(x => x.Id == orderId && x.IsDelete == false)
+                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
+                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
+                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
+                                              .Include(x => x.Status).AsSplitQuery()
+                                              .Select(x => new ReceiveOrderViewModel
+                                              {
+                                                  OrderId=orderId,
+                                                  OrderMessage=x.OrderMessage,
+                                                  OrderStatus=x.Status.StatusName,
+                                                  CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                                  Post=new PostViewModelForRequest
+                                                  {
+                                                      PostId=x.PostId,
+                                                      PostContent=x.Post.PostContent,
+                                                      PostTitle=x.Post.PostTitle,
+                                                      Product=new ProductModel
+                                                      {
+                                                          CategoryId = x.Post.Product.CategoryId,
+                                                          CategoryName = x.Post.Product.Category.CategoryName,
+                                                          ConditionId = x.Post.Product.ConditionId,
+                                                          ConditionName = x.Post.Product.ConditionType.ConditionType,
+                                                          ProductId = x.Post.Product.Id,
+                                                          ProductImageUrl = x.Post.Product.ProductImageUrl,
+                                                          ProductPrice = x.Post.Product.ProductPrice,
+                                                          ProductStatus = x.Post.Product.ProductStatus,
+                                                          RequestedProduct = x.Post.Product.RequestedProduct
 
-                                                 },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
-                                                 {
-                                                     SenderId = x.CreatedBy.Value,
-                                                     SenderEmail = u.Email,
-                                                     SenderHomeAddress = u.HomeAddress,
-                                                     SenderImageUrl = u.VerifyUser.UserImage,
-                                                     SenderRating = (u.RatedUsers.Count() > 0
-                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
-                                                     SenderUsername = u.UserName
-                                                 }).Single()
-                                             }).AsQueryable().AsNoTracking().FirstOrDefaultAsync();
-            return order;
+                                                      }
+                                                  },
+                                                  User=new UserViewModelForRequest
+                                                  {
+                                                      SenderId=x.UserId,
+                                                      SenderEmail=x.User.Email,
+                                                      SenderImageUrl=x.User.ProfileImage,
+                                                      SenderHomeAddress=x.User.HomeAddress,
+                                                      SenderRating= (x.User.RatedUsers.Count() > 0
+                                                                  ? x.User.RatedUsers.Sum(r => r.RatingPoint) / (x.User.RatedUsers.Count()) : 0),
+                                                      SenderUsername=x.User.UserName
+                                                  }
+                                              }).SingleAsync();
+            return detail;
         }
 
         public async Task<List<Order>> GetRequestByPostId(Guid postId)

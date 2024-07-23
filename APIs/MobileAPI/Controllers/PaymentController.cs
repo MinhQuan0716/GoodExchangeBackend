@@ -16,10 +16,10 @@ namespace MobileAPI.Controllers
             _paymentService = paymentService;
         }
         [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetPaymentUrl()
+        [HttpGet("{choice}")]
+        public async Task<IActionResult> GetPaymentUrl(int choice)
         {
-            var payemntUrl = _paymentService.GetPayemntUrl();
+            var payemntUrl = _paymentService.GetPayemntUrl(choice);
             if (payemntUrl == null || payemntUrl.Equals(""))
             {
                 return BadRequest(payemntUrl);

@@ -72,9 +72,12 @@ namespace Application.Service
           return await _unitOfWork.SaveChangeAsync()>0;
         }
 
-        public string GetPayemntUrl()
+        public string GetPayemntUrl(int choice)
         {
-            string paymentUrl = "";
+            switch (choice)
+            {
+                case 1:
+                 string paymentUrl = "";
             decimal amount = 50000;
             string key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
             string keyForCount = _claimsService.GetCurrentUserId.ToString() + "_" + "Count";
@@ -86,13 +89,57 @@ namespace Application.Service
             string orderId = key + "_" + count;
             var vnpayRequest = new VnPayRequest(vnPayConfig.Version,
                 vnPayConfig.TmnCode, DateTime.UtcNow,
-                _currentUserIp.UserIp, amount, "VND", "other", "Nap tien vao vi", vnPayConfig.ReturnUrl,orderId);
+                _currentUserIp.UserIp, amount, "VND", "other", "Nap tien vao vi", vnPayConfig.ReturnUrl, orderId);
             paymentUrl = vnpayRequest.GetLink(vnPayConfig.PaymentUrl, vnPayConfig.HashSecret);
             if (paymentUrl != null)
             {
                 _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(24));
             }
             return paymentUrl;
+                case 2:
+                     paymentUrl = "";
+                    amount = 100000;
+                    key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
+                    keyForCount = _claimsService.GetCurrentUserId.ToString() + "_" + "Count";
+                     count = _cacheService.GetData<int>(keyForCount);
+                    if (count != null)
+                    {
+                        count++;
+                    }
+                    orderId = key + "_" + count;
+                     vnpayRequest = new VnPayRequest(vnPayConfig.Version,
+                        vnPayConfig.TmnCode, DateTime.UtcNow,
+                        _currentUserIp.UserIp, amount, "VND", "other", "Nap tien vao vi", vnPayConfig.ReturnUrl, orderId);
+                    paymentUrl = vnpayRequest.GetLink(vnPayConfig.PaymentUrl, vnPayConfig.HashSecret);
+                    if (paymentUrl != null)
+                    {
+                        _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(24));
+                    }
+                    return paymentUrl;
+                   case 3:
+                    paymentUrl = "";
+                    amount = 200000;
+                    key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
+                    keyForCount = _claimsService.GetCurrentUserId.ToString() + "_" + "Count";
+                    count = _cacheService.GetData<int>(keyForCount);
+                    if (count != null)
+                    {
+                        count++;
+                    }
+                    orderId = key + "_" + count;
+                    vnpayRequest = new VnPayRequest(vnPayConfig.Version,
+                       vnPayConfig.TmnCode, DateTime.UtcNow,
+                       _currentUserIp.UserIp, amount, "VND", "other", "Nap tien vao vi", vnPayConfig.ReturnUrl, orderId);
+                    paymentUrl = vnpayRequest.GetLink(vnPayConfig.PaymentUrl, vnPayConfig.HashSecret);
+                    if (paymentUrl != null)
+                    {
+                        _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(24));
+                    }
+                    return paymentUrl;
+                default:
+                    return null;
+            }
+           
         }
 
         public async Task<VnPayIpnResponse> HandleIpn(VnPayResponse vnPayResponse)
