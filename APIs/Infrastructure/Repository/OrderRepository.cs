@@ -97,12 +97,13 @@ namespace Infrastructure.Repository
              );
 
              return result.ToList();*/
-            var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.UserId == userId)
+            var listRequest = await _dbContext.Orders
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p=>p.Product).ThenInclude(p=>p.Category).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
                                              .Include(x => x.Status).AsSplitQuery()
+                                             .Where(x => x.IsDelete == false && x.Post.CreatedBy == userId)
                                              .Select(x => new ReceiveOrderViewModel
                                              {
                                                  OrderId = x.Id,
