@@ -4,6 +4,7 @@ using Application.ViewModel.ChatRoomModel;
 using Application.ViewModel.UserModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Infrastructure.Repository
                 {
                     OrderId = u.Id,
                     OrderStatusId = u.OrderStatusId
-                }).Single()
+                }).ToList()
             }).ToList();
             return roomDtos;
         }
@@ -85,9 +86,9 @@ namespace Infrastructure.Repository
             var users = await _appDbContext.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
-            var Order = await _appDbContext.Orders
+            var orders = await _appDbContext.Orders
                 .Where(o => o.Post.CreatedBy == chatRoom.ReceiverId)
-                .Where(o => o.UserId == chatRoom.SenderId).FirstOrDefaultAsync();
+                .Where(o => o.UserId == chatRoom.SenderId).ToListAsync();
             var roomDto = new ChatRoomWithOrder
             {
                 roomId = chatRoom.Id,
@@ -111,11 +112,11 @@ namespace Infrastructure.Repository
                     CreatedDate = message.CreationDate.Value.ToShortDateString(),
                     CreatedTime = message.CreationDate.Value.ToShortTimeString()
                 }).OrderBy(m => m.CreatedDate).ToList(),
-                Order = new OrderDto
+                Order = orders.Select(order => new OrderDto
                 {
-                    OrderId = Order.Id,
-                    OrderStatusId = Order.OrderStatusId
-                }
+                    OrderId = order.Id,
+                    OrderStatusId = order.OrderStatusId
+                }).ToList()
             };
             return roomDto;
         }
@@ -142,9 +143,9 @@ namespace Infrastructure.Repository
             var users = await _appDbContext.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => new { u.UserName, u.ProfileImage });
-            var Order = await _appDbContext.Orders
+            var orders = await _appDbContext.Orders
                 .Where(o => o.Post.CreatedBy == chatRoom.ReceiverId)
-                .Where(o => o.UserId == chatRoom.SenderId).FirstOrDefaultAsync();
+                .Where(o => o.UserId == chatRoom.SenderId).ToListAsync();
             var roomDto = new ChatRoomWithOrder
             {
                 roomId = chatRoom.Id,
@@ -168,11 +169,11 @@ namespace Infrastructure.Repository
                     CreatedDate = message.CreationDate.Value.ToShortDateString(),
                     CreatedTime = message.CreationDate.Value.ToShortTimeString()
                 }).OrderBy(m => m.CreatedDate).ToList(),
-                Order = new OrderDto
+                Order = orders.Select(order => new OrderDto
                 {
-                    OrderId = Order.Id,
-                    OrderStatusId = Order.OrderStatusId
-                }
+                    OrderId = order.Id,
+                    OrderStatusId = order.OrderStatusId
+                }).ToList()
             };
             return roomDto;
         }
