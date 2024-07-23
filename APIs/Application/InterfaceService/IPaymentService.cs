@@ -9,7 +9,7 @@ namespace Application.InterfaceService
 {
     public interface IPaymentService
     {
-        public string GetPayemntUrl();
+        public string GetPayemntUrl(int choice);
         public Task<VnPayIpnResponse> HandleIpn(VnPayResponse vnPayResponse);
         public Task<bool> BuySubscription(Guid subscriptionId);
     }
