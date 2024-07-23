@@ -58,31 +58,6 @@ namespace Infrastructure.Repository
                                                    RequestedProduct = x.Product.RequestedProduct
                                                }
                                            }).AsQueryable().AsNoTracking().ToListAsync();
-            /*return await (from post in _appDbContext.Posts
-                          join product in _appDbContext.Products on post.ProductId equals product.Id
-                          join category in _appDbContext.Categories on product.CategoryId equals category.CategoryId
-                          join conditionType in _appDbContext.ExchangeConditions on product.ConditionId equals conditionType.ConditionId
-                          where !post.IsDelete.Value
-                          select new PostViewModel
-                          {
-                              PostId = post.Id,
-                              PostContent = post.PostContent,
-                              PostTitle = post.PostTitle,
-                              CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
-                              Product = new ProductModel
-                              {
-                                  ProductId = product.Id,
-                                  CategoryId = product.CategoryId,
-                                  CategoryName = category.CategoryName,
-                                  ConditionId = product.ConditionId,
-                                  ConditionName = conditionType.ConditionType,
-                                  ProductImageUrl = product.ProductImageUrl,
-                                  ProductPrice = product.ProductPrice,
-                                  ProductStatus = product.ProductStatus,
-                                  RequestedProduct = product.RequestedProduct
-                              }
-                          }).AsNoTracking().ToListAsync();*/
-
         }
 
         public async Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id)
@@ -104,11 +79,6 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            /*var post = _appDbContext.Posts.Include(p => p.Product)
-                                           .Include(p=>p.Product.Category)
-                                           .Include(p=>p.Product.ConditionType)
-                                           .AsQueryable();
-            var paginationPost=await ToPagination(post,x=>x.IsDelete==false,pageSize,pageIndex);*/
             return posts;
         }
 
@@ -169,55 +139,6 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
-            /*   string sql = @"
-                        SELECT p.Id,
-                       p.PostTitle,
-                       p.PostContent,
-            p.CreationDate,
-            prod.Id AS ProductId,
-            prod.CategoryId,
-            cat.CategoryName,
-            prod.ConditionId,
-            ec.ConditionType ,
-            prod.ProductImageUrl,
-            prod.ProductPrice,
-            prod.ProductStatus,
-            prod.RequestedProduct
-     FROM Posts p
-     INNER JOIN Products prod ON p.ProductId = prod.Id
-     INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
-     INNER JOIN ExchangeConditions ec  ON prod.ConditionId=ec.ConditionId
-     WHERE p.IsDelete = 0 AND p.PostTitle LIKE @SearchTerm;";
-               var parameters = new { SearchTerm = "%" + productName + "%" };
-               var queryResult = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>
-                   (
-                   sql,
-                   (post, productViewModel) =>
-                   {
-                       var postViewModel = new PostViewModel();
-                       postViewModel.PostId = post.Id;
-                       postViewModel.PostContent = post.PostContent;
-                       postViewModel.PostTitle = post.PostTitle;
-                       postViewModel.CreationDate = DateOnly.FromDateTime(post.CreationDate.Value);
-                       postViewModel.Product = new ProductModel
-                       {
-                           CategoryId = productViewModel.CategoryId,
-                           ProductPrice = productViewModel.ProductPrice,
-                           CategoryName = productViewModel.CategoryName,
-                           ConditionId = productViewModel.ConditionId,
-                           ConditionName = productViewModel.ConditionName,
-                           ProductId = productViewModel.ProductId,
-                           ProductImageUrl = productViewModel.ProductImageUrl,
-                           ProductStatus = productViewModel.ProductStatus,
-                           RequestedProduct = productViewModel.RequestedProduct,
-                       };
-
-                       return postViewModel;
-                   },
-                   parameters,
-                   splitOn: "ProductId"
-                   );
-               return queryResult.ToList();*/
             return await _appDbContext.Posts.Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false).AsSplitQuery()
                                             .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
                                             .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
@@ -251,59 +172,7 @@ namespace Infrastructure.Repository
             var sortedListPost = listPost.Where(p => p.Product.Category.CategoryId == categoryId).ToList();
             return sortedListPost;
         }
-        public async Task<List<PostViewModel>> GetAllPostWithDapper()
-        {
-            string sql = @"
-        SELECT 
-            p.Id ,
-            p.PostTitle,
-            p.PostContent,
-            p.CreationDate,
-            prod.Id AS ProductId,
-            prod.CategoryId AS CategoryId,
-            cat.CategoryName ,
-            prod.ConditionId AS ConditionId,
-            ec.ConditionType AS ConditionName,
-            prod.ProductImageUrl,
-            prod.ProductPrice,
-            prod.ProductStatus,
-            prod.RequestedProduct
-        FROM Posts p
-        INNER JOIN Products prod ON p.ProductId = prod.Id
-        INNER JOIN Categories cat ON prod.CategoryId = cat.CategoryId 
-        INNER JOIN ExchangeConditions ec ON prod.ConditionId = ec.ConditionId
-        WHERE p.IsDelete = 0;";
-
-            var postVm = await _dbConnection.QueryAsync<Post, ProductModel, PostViewModel>(
-                sql,
-                (post, product) =>
-                {
-                    var postViewModel = new PostViewModel();
-                    postViewModel.PostId = post.Id;
-                    postViewModel.PostContent = post.PostContent;
-                    postViewModel.PostTitle = post.PostTitle;
-                    postViewModel.CreationDate = DateOnly.FromDateTime(post.CreationDate.Value);
-
-                    postViewModel.Product = new ProductModel
-                    {
-                        ProductId = product.ProductId,
-                        ProductPrice = product.ProductPrice,
-                        CategoryId = product.CategoryId,
-                        CategoryName = product.CategoryName,
-                        ConditionId = product.ConditionId,
-                        ConditionName = product.ConditionName,
-                        ProductImageUrl = product.ProductImageUrl,
-                        ProductStatus = product.ProductStatus,
-                        RequestedProduct = product.RequestedProduct
-                    };
-
-                    return postViewModel;
-                },
-                splitOn: "ProductId"  // Split results on these keys
-            );
-
-            return postVm.ToList();
-        }
+       
 
         public async Task<Guid> GetProductIdFromPostId(Guid postId)
         {
@@ -311,6 +180,42 @@ namespace Infrastructure.Repository
             .Where(p => p.Id == postId)
             .Select(p => p.Product.Id)
             .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<PostViewModel>> GetAllPostForWebAsync()
+        {
+            return await _appDbContext.Posts.Include(x => x.Product)
+                                           .ThenInclude(p => p.Category)
+                                           .AsSplitQuery()
+                                           .Include(x => x.Product)
+                                           .ThenInclude(p => p.ConditionType)
+                                           .AsSplitQuery()
+                                           .Select(x => new PostViewModel
+                                           {
+                                               PostId = x.Id,
+                                               PostContent = x.PostContent,
+                                               PostTitle = x.PostTitle,
+                                               CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                               Location = _appDbContext.Users.Where(u => u.Id == x.CreatedBy).Select(u => u.HomeAddress).AsSplitQuery().Single(),
+                                               AuthorId = x.CreatedBy.Value,
+                                               Product = new ProductModel
+                                               {
+                                                   ProductId = x.ProductId,
+                                                   CategoryId = x.Product.CategoryId,
+                                                   CategoryName = x.Product.Category.CategoryName,
+                                                   ConditionId = x.Product.ConditionId,
+                                                   ConditionName = x.Product.ConditionType.ConditionType,
+                                                   ProductImageUrl = x.Product.ProductImageUrl,
+                                                   ProductPrice = x.Product.ProductPrice,
+                                                   ProductStatus = x.Product.ProductStatus,
+                                                   RequestedProduct = x.Product.RequestedProduct
+                                               }
+                                           }).AsQueryable().AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Post> GetBannedPostById(Guid postId)
+        {
+            return await _appDbContext.Posts.Where(x => x.IsDelete == true && x.Id == postId).SingleAsync();
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Application.InterfaceService
         Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle,int pageIndex,int pageSize);
         Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition,int pageIndex,int pageSize);
         Task<bool> CheckIfPostInWishList(Guid postId);
-        Task<List<PostViewModel>> GetAllPostWithDapper();
+        Task<bool>UnbanPost(Guid postId);
+        Task<Pagination<PostViewModel>> GetAllPostForWeb(int pageIndex,int pageSize);
     }
 }

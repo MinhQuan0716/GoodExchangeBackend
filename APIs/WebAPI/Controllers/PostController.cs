@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
         {
             _postService = postService;
         }
-        [Authorize(Roles ="Admin,Moderator")]
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpDelete("{postId}")]
         public async Task<IActionResult> BanPost(Guid postId)
         {
@@ -25,12 +25,23 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize(Roles ="Admin,Moderator")]
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllPost(int pageIndex, int pageSize)
         {
-            var post= await _postService.GetAllPost(pageIndex,pageSize);
+            var post= await _postService.GetAllPostForWeb(pageIndex,pageSize);
             return Ok(post);
+        }
+        [Authorize(Roles ="Admin,Moderator")]
+        [HttpPatch("{postId}")]
+        public async Task<IActionResult> UnbanPost(Guid postId)
+        {
+            var isUnbanned = await _postService.UnbanPost(postId);
+            if (isUnbanned)
+            {
+                return NoContent();
+            }
+            return BadRequest();
         }
     }
 }

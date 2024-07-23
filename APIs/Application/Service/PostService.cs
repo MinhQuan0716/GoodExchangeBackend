@@ -133,11 +133,11 @@ namespace Application.Service
             return pagination;
         }
 
-        public async Task<List<PostViewModel>> GetAllPostWithDapper()
+        public async Task<Pagination<PostViewModel>> GetAllPostForWeb(int pageIndex,int pageSize)
         {
-            var listPostWitDapper = await _unitOfWork.PostRepository.GetAllPostWithDapper();
-            //var listPostViewModel = _mapper.Map<List<PostViewModel>>(listPostWitDapper);
-            return listPostWitDapper;
+          var listPost= await _unitOfWork.PostRepository.GetAllPostForWebAsync();
+            var paginatedListPost=PaginationUtil<PostViewModel>.ToPagination(listPost, pageIndex, pageSize);
+            return paginatedListPost;
         }
 
         public async Task<List<PostViewModel>> GetPostByCreatedById()
@@ -202,6 +202,18 @@ namespace Application.Service
             var sortPostViewModel= _mapper.Map<List<PostViewModel>>(sortPost);
             var paginationSortListPost = PaginationUtil<PostViewModel>.ToPagination(sortPostViewModel, pageIndex, pageSize);
             return paginationSortListPost;
+        }
+
+        public async Task<bool> UnbanPost(Guid postId)
+        {
+            var post = await _unitOfWork.PostRepository.GetBannedPostById(postId);
+            if (post == null)
+            {
+                throw new Exception("The post is active");
+            }
+            post.IsDelete = false;
+            _unitOfWork.PostRepository.Update(post);
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
         public async Task<bool> UpdatePost(UpdatePostModel postModel)
