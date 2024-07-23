@@ -17,7 +17,7 @@ namespace Application.ViewModel.ChatRoomModel
         public string ReceiverAvatar { get; set; }
         // Other necessary properties
         public List<MessageDto> Messages { get; set; }
-        public OrderDto Order { get; set; }
+        public List<OrderDto> Order { get; set; }
     }
     public class OrderDto
     {

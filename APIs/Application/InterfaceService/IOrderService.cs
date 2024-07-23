@@ -14,7 +14,7 @@ namespace Application.InterfaceService
         Task<List<SentOrderViewModel>> GetAllRequestsOfCreatebByUserAsync();
         Task<bool> AcceptRequest(Guid requestId);
         Task<bool> RejectRequest(Guid requestId);
-        Task<bool> CheckOrderStatusByPostId(Guid postId);
-        Task<ReceiveOrderViewModel> GetOrderDetailAsync(Guid orderId);
+        Task<bool> CheckOrderStatusByPostId(Guid postId); 
+        Task<ReceiveOrderViewModel> GetOrderDetailAsync(Guid postId);
     }
 }

@@ -4,6 +4,7 @@ using Application.ViewModel.ChatRoomModel;
 using Application.ViewModel.MessageModel;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,32 @@ namespace Application.Service
             var chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
             if (chatRoom != null)
             {
+                var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
+                if (!post.Where(x => x.Id == postId).Any())
+                {
+
+                }
+                else
+                {
+                    var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
+                    if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
+                    {
+
+                    }
+                    else
+                    {
+                        Order request = new Order
+                        {
+                            PostId = postId,
+                            OrderStatusId = 1,
+                            OrderMessage = "",
+                            UserId = user2,
+                            CreatedBy = user2,
+                        };
+                        await _unitOfWork.OrderRepository.AddAsync(request);
+                    }
+                }
+                await _unitOfWork.SaveChangeAsync();
                 return chatRoom;
             }
             var newRoom = new ChatRoom
@@ -100,22 +127,29 @@ namespace Application.Service
                 var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
                 if (!post.Where(x => x.Id == postId).Any())
                 {
-                    throw new Exception("This user do not create this post");
+
                 }
-                var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
-                if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
+                else
                 {
-                    throw new Exception("You already send the request");
+                    var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
+                    if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
+                    {
+
+                    }
+                    else
+                    {
+                        Order request = new Order
+                        {
+                            PostId = postId,
+                            OrderStatusId = 1,
+                            OrderMessage = "",
+                            UserId = user2,
+                            CreatedBy = user2,
+                        };
+                        await _unitOfWork.OrderRepository.AddAsync(request);
+                    }
                 }
-                Order request = new Order
-                {
-                    PostId = postId,
-                    OrderStatusId = 1,
-                    OrderMessage = "",
-                    UserId = user2,
-                    CreatedBy = user2,
-                };
-                await _unitOfWork.OrderRepository.AddAsync(request);
+                
                 await _unitOfWork.SaveChangeAsync();
             }
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(newRoom.Id);
