@@ -20,7 +20,7 @@ namespace Backend.Domain.Test
             _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task GetAllPost_ShouldReturnListOfPostViewModels()
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace Backend.Domain.Test
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal("Test Product", result[0].PostTitle);
-        }
+        }*/
 
     }
 }

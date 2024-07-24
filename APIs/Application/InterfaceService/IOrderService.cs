@@ -13,7 +13,6 @@ namespace Application.InterfaceService
         Task<List<ReceiveOrderViewModel>> GetAllRequestsOfCurrentUserAsync();
         Task<List<SentOrderViewModel>> GetAllRequestsOfCreatebByUserAsync();
         Task<bool> AcceptRequest(Guid requestId);
-        Task<bool> RejectRequest(Guid requestId);
         Task<bool> CheckOrderStatusByPostId(Guid postId); 
         Task<ReceiveOrderViewModel> GetOrderDetailAsync(Guid postId);
         Task<bool> DeliveredOrder(Guid orderId);
