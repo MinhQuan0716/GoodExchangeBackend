@@ -11,6 +11,9 @@ namespace Application.InterfaceService
     public interface ICategoryService
     {
         Task<List<CategoryViewModel>> GetAllCategory();
+        Task<bool> CreateCategory(CreateCategoryModel category);
+        Task<bool> UpdateCategory(UpdateCategoryModel category);
+        Task<bool> DeleteCategory(int id);  
     }
 }
 

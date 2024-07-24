@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceRepository;
+using Application.InterfaceService;
 using Application.ViewModel.CategoryModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,13 @@ namespace Infrastructure.Repository
         {
             _dbContext = appDbContext;
         }
+
+        public async Task CreateCategory(Category category)
+        {
+           await _dbContext.Categories.AddAsync(category);
+
+        }
+
         public async Task<List<CategoryViewModel>> GetAllCategoryAsync()
         {
             var categories = await _dbContext.Categories.Select(x=>new CategoryViewModel
@@ -25,6 +33,22 @@ namespace Infrastructure.Repository
                 CategoryName = x.CategoryName,
             }).ToListAsync();
             return categories;
+        }
+
+        public async Task<Category> GetById(int id)
+        {
+            return await _dbContext.Categories.Where(x => x.CategoryId == id)
+                                              .SingleAsync();
+        }
+
+        public void Remove(Category category)
+        {
+           _dbContext.Categories.Remove(category);
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            _dbContext.Categories.Update(category);
         }
     }
 }

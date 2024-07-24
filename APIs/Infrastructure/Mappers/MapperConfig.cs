@@ -1,4 +1,5 @@
-﻿using Application.ViewModel.MessageModel;
+﻿using Application.ViewModel.CategoryModel;
+using Application.ViewModel.MessageModel;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Application.ViewModel.RatingModel;
@@ -32,6 +33,7 @@ namespace Infrastructure.Mappers
             RatingMap();
             MessageMap();
             OrderMap();
+            CategoryMap();
         }
         internal void CreateUserMap()
         {
@@ -111,6 +113,11 @@ namespace Infrastructure.Mappers
                 .ForMember(dest=>dest.PostId,opt=>opt.MapFrom(model=>model.PostId))
                 .ForMember(dest=>dest.UserId,opt=>opt.MapFrom(model=>model.AuthorId))
                 .ReverseMap();
+        }
+        internal void CategoryMap()
+        {
+            CreateMap<CreateCategoryModel,Category>().ReverseMap();
+            CreateMap<UpdateCategoryModel, Category>().ReverseMap();
         }
     }
 }

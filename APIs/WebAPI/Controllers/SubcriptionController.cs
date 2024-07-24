@@ -26,12 +26,34 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllSubscription()
         {
             var subscriptionList = await _subcriptionService.GetAllSubscriptionAsync();
             return Ok(subscriptionList);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{susbcriptionId}")]
+        public async Task<IActionResult> DeactiveSubscription(Guid susbcriptionId)
+        {
+            var isDeactived=await _subcriptionService.DeactiveSubscriptionAsync(susbcriptionId);
+            if(isDeactived)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{susbcriptionId}")]
+        public async Task<IActionResult> RevokeSubscription(Guid susbcriptionId)
+        {
+            var isRevoked = await _subcriptionService.RevokeSubscriptionAsync(susbcriptionId);
+            if (isRevoked)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }
