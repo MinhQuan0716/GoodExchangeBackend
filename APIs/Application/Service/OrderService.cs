@@ -58,6 +58,25 @@ namespace Application.Service
             // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+        public async Task<bool> DeliveredOrder(Guid orderId)
+        {
+            var request = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
+            if (request == null)
+            {
+                throw new Exception("Order not found");
+            }
+
+            if (request.OrderStatusId != 2)
+            {
+                throw new Exception("Order not accepted");
+            }
+
+            // Update the request status
+            request.OrderStatusId = 4;
+            _unitOfWork.OrderRepository.Update(request);
+            // Save all changes
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
 
         public async Task<List<SentOrderViewModel>> GetAllRequestsOfCreatebByUserAsync()
         {
