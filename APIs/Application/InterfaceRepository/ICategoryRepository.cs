@@ -11,5 +11,9 @@ namespace Application.InterfaceRepository
     public interface ICategoryRepository
     {
         Task<List<CategoryViewModel>> GetAllCategoryAsync();
+        Task CreateCategory(Category category);
+        void UpdateCategory(Category category); 
+        void Remove(Category category);
+        Task<Category> GetById(int id);
     }
 }

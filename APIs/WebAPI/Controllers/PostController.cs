@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
             var isUnbanned = await _postService.UnbanPost(postId);
             if (isUnbanned)
             {
-                return NoContent();
+                return Ok();
             }
             return BadRequest();
         }

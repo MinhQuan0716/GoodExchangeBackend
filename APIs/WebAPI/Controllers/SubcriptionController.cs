@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
             var isRevoked = await _subcriptionService.RevokeSubscriptionAsync(susbcriptionId);
             if (isRevoked)
             {
-                return NoContent();
+                return Ok();
             }
             return BadRequest();
         }
