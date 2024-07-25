@@ -43,6 +43,8 @@ namespace Application.Service
 
         public async Task<bool> ApproveImageAsync(Guid verifyId)
         {
+            string tokenDevice1 = "ExponentPushToken[jFQjSOOFhKJScFOKZIm95C]";
+            string tokenDevice2 = "ExponentPushToken[RNG5q5H4mFj9-ufnKlpckw]";
             var findVerified=await _unitOfWork.VerifyUsersRepository.GetByIdAsync(verifyId);
             if(findVerified == null)
             {
@@ -54,10 +56,13 @@ namespace Application.Service
             }
             findVerified.VerifyStatusId = 2;
             _unitOfWork.VerifyUsersRepository.Update(findVerified);
+            List<string> newList=new List<string>();
+            newList.Add(tokenDevice2);
+            newList.Add(tokenDevice1);
             var expoSDKClient = new PushApiClient();
             var pushTicketReq = new PushTicketRequest()
             {
-                PushTo = new List<string>() { "ExponentPushToken[aF6X3KPblX-eRjGy7cRh7c]" }, // Target device token
+                PushTo =newList, // Target device token
                 PushBadgeCount = 1, // Badge count to be displayed on the app icon
                 PushBody = "Your verification has been approved" // Message content of the push notification
             };
@@ -75,6 +80,11 @@ namespace Application.Service
 
         public async Task<bool> DenyImageAsync(Guid verifyId)
         {
+            string tokenDevice1 = "ExponentPushToken[jFQjSOOFhKJScFOKZIm95C]";
+            string tokenDevice2 = "ExponentPushToken[RNG5q5H4mFj9-ufnKlpckw]";
+            List<string> newList = new List<string>();
+            newList.Add(tokenDevice2);
+            newList.Add(tokenDevice1);
             var findVerified = await _unitOfWork.VerifyUsersRepository.GetByIdAsync(verifyId);
             if (findVerified == null)
             {
@@ -86,6 +96,13 @@ namespace Application.Service
             }
             findVerified.VerifyStatusId = 3;
             _unitOfWork.VerifyUsersRepository.Update(findVerified);
+            var expoSDKClient = new PushApiClient();
+            var pushTicketReq = new PushTicketRequest()
+            {
+                PushTo = newList, // Target device token
+                PushBadgeCount = 1, // Badge count to be displayed on the app icon
+                PushBody = "Your verification has been denied" // Message content of the push notification
+            };
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
