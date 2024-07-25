@@ -36,10 +36,10 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();  
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderDetail(Guid id)
+        [HttpGet("{orderId}")]
+        public async Task<IActionResult> GetOrderDetail(Guid orderId)
         {
-            var orderDetail=await _requestService.GetOrderDetailAsync(id);
+            var orderDetail=await _requestService.GetOrderDetailAsync(orderId);
             if(orderDetail == null)
             {
                 return NotFound();
@@ -47,10 +47,10 @@ namespace MobileAPI.Controllers
             return Ok(orderDetail);
         }
         [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UpdateDeliveredOrder(Guid OrderId)
+        [HttpPut()]
+        public async Task<IActionResult> UpdateDeliveredOrder(Guid orderId)
         {
-            var isAccepted = await _requestService.DeliveredOrder(OrderId);
+            var isAccepted = await _requestService.DeliveredOrder(orderId);
             if (isAccepted)
             {
                 return Ok();
