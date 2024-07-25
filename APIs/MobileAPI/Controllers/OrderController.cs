@@ -46,5 +46,16 @@ namespace MobileAPI.Controllers
             }
             return Ok(orderDetail);
         }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateDeliveredOrder(Guid OrderId)
+        {
+            var isAccepted = await _requestService.DeliveredOrder(OrderId);
+            if (isAccepted)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }
