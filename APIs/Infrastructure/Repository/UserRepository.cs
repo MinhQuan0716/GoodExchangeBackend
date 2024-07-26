@@ -85,13 +85,14 @@ namespace Infrastructure.Repository
 
         public async Task<List<UserViewModelForWeb>> GetAllUserForWeb()
         {
-            var listUser = await _dbContext.Users.Select(x => new UserViewModelForWeb
+            var listUser = await _dbContext.Users.Include(x=>x.Role).AsSplitQuery().Select(x => new UserViewModelForWeb
             {
                 UserId=x.Id,
                 Username=x.UserName,
                 Email=x.Email,
                 Fullname=x.FirstName+""+x.LastName,
-                Status=x.IsDelete.Value?"Ban":"Not ban"
+                Status=x.IsDelete.Value?"Ban":"Not ban",
+                Role=x.Role.RoleName
             }).ToListAsync();
             return listUser;
         }

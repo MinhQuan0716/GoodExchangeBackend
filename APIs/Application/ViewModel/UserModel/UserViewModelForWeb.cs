@@ -13,5 +13,6 @@ namespace Application.ViewModel.UserModel
         public string Email { get; set; }
         public string Fullname { get; set; }
         public string Status { get; set; }
+        public string Role { get; set; }
     }
 }
