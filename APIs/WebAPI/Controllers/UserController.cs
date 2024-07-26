@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize(Roles ="Admin,Moderator")]
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
