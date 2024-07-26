@@ -61,6 +61,7 @@ namespace Backend.Domain.Test
         }
         public void Dispose()
         {
+            _dbContext.Database.EnsureDeleted();
             _dbContext.Dispose();
         }
         public bool IsSorted<T>(IList<T> list) where T : IComparable<T>

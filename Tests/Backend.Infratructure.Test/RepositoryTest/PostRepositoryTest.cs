@@ -3,27 +3,32 @@ using AutoFixture;
 using Domain.Entities;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Backend.Domain.Test
 {
     public class PostRepositoryTests : SetupTest
     {
         private readonly PostRepository _postRepository;
-
-        public PostRepositoryTests()
+        private readonly Guid _guid = Guid.Parse("be8844bc-fc8e-4f66-9c28-1b7254cf8b88");
+        private readonly ITestOutputHelper _output;
+        public PostRepositoryTests(ITestOutputHelper output)
         {
+            _output = output;
             _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
         }
         [Fact]
         public async Task GetAllPostWithDetail_ShouldReturnTrue()
         {
-            var product = _fixture.Build<Product>().With(x=>x.Id, Guid.Parse("be8844bc-fc8e-4f66-9c28-1b7254cf8b88")).Create();
+            var product = _fixture.Build<Product>().With(x=>x.Id, _guid).Create();
             var listPost = _fixture.Build<Post>().CreateMany(5).ToList();
             var newPostWithProductId=_fixture.Build<Post>().With(x=>x.ProductId,product.Id).Create();
             listPost.Add(newPostWithProductId);
@@ -55,98 +60,77 @@ namespace Backend.Domain.Test
             // Compare the CreationDate of the posts to ensure sorting is correct
             Assert.Equal(expectedSortedDates.Last(), actualSortedDates.Last());
         }
-
-        /*[Fact]
-        public async Task GetAllPost_ShouldReturnListOfPostViewModels()
-        {
-            // Arrange
-            var userId = Guid.NewGuid();
-            var product1 = new Product
-            {
-                Id = Guid.NewGuid(),
-                ProductImageUrl = "url1",
-                ProductPrice = 100,
-                Category = new Category { CategoryId = 1, CategoryName = "Category 1" },
-                ConditionType = new ExchangeCondition { ConditionId = 1, ConditionType = "New" }
-            };
-            var product2 = new Product
-            {
-                Id = Guid.NewGuid(),
-                ProductImageUrl = "url2",
-                ProductPrice = 200,
-                Category = new Category { CategoryId = 2, CategoryName = "Category 2" },
-                ConditionType = new ExchangeCondition { ConditionId = 2, ConditionType = "Used" }
-            };
-            var posts = new List<Post>
-            {
-                new Post { Id = Guid.NewGuid(), PostTitle = "Post 1", PostContent = "Content 1", CreatedBy = Guid.NewGuid(), IsDelete = false, Product = product1 },
-                new Post { Id = Guid.NewGuid(), PostTitle = "Post 2", PostContent = "Content 2", CreatedBy = userId, IsDelete = false, Product = product2 }
-            };
-
-            _dbContext.Posts.AddRange(posts);
-            await _dbContext.SaveChangesAsync();
-
-            // Act
-            var result = await _postRepository.GetAllPost(userId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Single(result);
-            Assert.Equal("Post 1", result[0].PostTitle);
-        }
-        [Fact]
-        public async Task GetPostDetail_ShouldReturnPostDetailViewModel()
-        {
-            // Arrange
-            var postId = Guid.NewGuid();
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                ProductImageUrl = "url1",
-                ProductPrice = 100,
-                Category = new Category { CategoryId = 1, CategoryName = "Category 1" },
-                ConditionType = new ExchangeCondition { ConditionId = 1, ConditionType = "New" }
-            };
-            var post = new Post { Id = postId, PostTitle = "Post 1", PostContent = "Content 1", CreatedBy = Guid.NewGuid(), IsDelete = false, Product = product };
-
-            _dbContext.Posts.Add(post);
-            await _dbContext.SaveChangesAsync();
-
-            // Act
-            var result = await _postRepository.GetPostDetail(postId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(postId, result.PostId);
-            Assert.Equal("Post 1", result.PostTitle);
-        }
         [Fact]
         public async Task SearchPostByProductName_ShouldReturnListOfPostViewModels()
         {
-            // Arrange
-            var productName = "Post 1";
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                ProductImageUrl = "url1",
-                ProductPrice = 100,
-                ProductStatus = "Test Product",
-                Category = new Category { CategoryId = 1, CategoryName = "Category 1" },
-                ConditionType = new ExchangeCondition { ConditionId = 1, ConditionType = "New" }
-            };
-            var post = new Post { Id = Guid.NewGuid(), PostTitle = "Post 1", PostContent = "Content 1", CreatedBy = Guid.NewGuid(), IsDelete = false, Product = product };
+            var postTitle = "Test Title";
+            var product = _fixture.Build<Product>()
+                                  .With(x => x.Id, _guid)
+                                  .Create();
 
-            _dbContext.Posts.Add(post);
+            var post = _fixture.Build<Post>()
+                               .With(p => p.PostTitle, postTitle)
+                               .With(x => x.ProductId, product.Id)
+                               .Create();
+
+            await _dbContext.Posts.AddAsync(post);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _postRepository.SearchPostByProductName(productName);
+            var result = await _postRepository.SearchPostByProductName(postTitle);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Single(result);
-            Assert.Equal("Test Product", result[0].PostTitle);
-        }*/
+            Assert.Equal(postTitle, result.First().PostTitle);
+        }
+        [Fact]
+        public async Task SortPostByProductCategoryAsync_ShouldReturnCorrectlySortedPosts()
+        {
+            var categoryId = 1;
+            var category1 = _fixture.Build<Category>().With(c => c.CategoryId, categoryId).With(c => c.CategoryName, "Category 1").Create();
+            var category2 = _fixture.Build<Category>().With(c => c.CategoryId, 2).With(c => c.CategoryName, "Category 2").Create();
+            var conditionType = _fixture.Build<ExchangeCondition>().With(c => c.ConditionId, 1).With(c => c.ConditionType, "New").Create();
+
+            var postsWithCategory1 = _fixture.Build<Post>()
+                                             .With(p => p.Product, _fixture.Build<Product>()
+                                                                           .With(pr => pr.CategoryId, 1)
+                                                                           .With(pr => pr.ConditionType, conditionType)
+                                                                           .Create())
+                                             .CreateMany(5).ToList();
+
+            var postsWithCategory2 = _fixture.Build<Post>()
+                                             .With(p => p.Product, _fixture.Build<Product>()
+                                                                           .With(pr => pr.CategoryId, 2)
+                                                                           .With(pr => pr.ConditionType, conditionType)
+                                                                           .Create())
+                                             .CreateMany(5).ToList();
+            await _dbContext.Posts.AddRangeAsync(postsWithCategory1);
+            await _dbContext.Posts.AddRangeAsync(postsWithCategory2);
+            await _dbContext.SaveChangesAsync();
+
+            // Verify setup
+            var allPosts = await _dbContext.Posts.Include(p => p.Product).ThenInclude(pr => pr.Category).ToListAsync();
+            _output.WriteLine($"Total Posts: {allPosts.Count}");
+            foreach (var post in allPosts)
+            {
+                _output.WriteLine($"Post ID: {post.Id}, Category ID: {post.Product.Category.CategoryId}");
+            }
+
+            Assert.Equal(15, allPosts.Count);
+
+            // Act
+            var result = await _postRepository.SortPostByProductCategoryAsync(categoryId);
+            _output.WriteLine($"Filtered Posts Count: {result.Count}");
+            foreach (var post in result)
+            {
+                _output.WriteLine($"Filtered Post ID: {post.Id}, Category ID: {post.Product.Category.CategoryId}");
+            }
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Count);
+            Assert.All(result, p => Assert.Equal(categoryId, p.Product.Category.CategoryId));
+        }
     }
 }
 
