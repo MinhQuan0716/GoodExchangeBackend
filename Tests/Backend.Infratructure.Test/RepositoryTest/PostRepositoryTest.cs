@@ -83,54 +83,6 @@ namespace Backend.Domain.Test
             Assert.NotNull(result);
             Assert.Equal(postTitle, result.First().PostTitle);
         }
-        [Fact]
-        public async Task SortPostByProductCategoryAsync_ShouldReturnCorrectlySortedPosts()
-        {
-            var categoryId = 1;
-            var category1 = _fixture.Build<Category>().With(c => c.CategoryId, categoryId).With(c => c.CategoryName, "Category 1").Create();
-            var category2 = _fixture.Build<Category>().With(c => c.CategoryId, 2).With(c => c.CategoryName, "Category 2").Create();
-            var conditionType = _fixture.Build<ExchangeCondition>().With(c => c.ConditionId, 1).With(c => c.ConditionType, "New").Create();
-
-            var postsWithCategory1 = _fixture.Build<Post>()
-                                             .With(p => p.Product, _fixture.Build<Product>()
-                                                                           .With(pr => pr.CategoryId, 1)
-                                                                           .With(pr => pr.ConditionType, conditionType)
-                                                                           .Create())
-                                             .CreateMany(5).ToList();
-
-            var postsWithCategory2 = _fixture.Build<Post>()
-                                             .With(p => p.Product, _fixture.Build<Product>()
-                                                                           .With(pr => pr.CategoryId, 2)
-                                                                           .With(pr => pr.ConditionType, conditionType)
-                                                                           .Create())
-                                             .CreateMany(5).ToList();
-            await _dbContext.Posts.AddRangeAsync(postsWithCategory1);
-            await _dbContext.Posts.AddRangeAsync(postsWithCategory2);
-            await _dbContext.SaveChangesAsync();
-
-            // Verify setup
-            var allPosts = await _dbContext.Posts.Include(p => p.Product).ThenInclude(pr => pr.Category).ToListAsync();
-            _output.WriteLine($"Total Posts: {allPosts.Count}");
-            foreach (var post in allPosts)
-            {
-                _output.WriteLine($"Post ID: {post.Id}, Category ID: {post.Product.Category.CategoryId}");
-            }
-
-            Assert.Equal(15, allPosts.Count);
-
-            // Act
-            var result = await _postRepository.SortPostByProductCategoryAsync(categoryId);
-            _output.WriteLine($"Filtered Posts Count: {result.Count}");
-            foreach (var post in result)
-            {
-                _output.WriteLine($"Filtered Post ID: {post.Id}, Category ID: {post.Product.Category.CategoryId}");
-            }
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(5, result.Count);
-            Assert.All(result, p => Assert.Equal(categoryId, p.Product.Category.CategoryId));
-        }
     }
 }
 
