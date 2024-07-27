@@ -182,7 +182,7 @@ namespace Infrastructure.Repository
             .FirstOrDefaultAsync();
         }
 
-        public async Task<List<PostViewModel>> GetAllPostForWebAsync()
+        public async Task<List<PostViewModelForWeb>> GetAllPostForWebAsync()
         {
             return await _appDbContext.Posts.Include(x => x.Product)
                                            .ThenInclude(p => p.Category)
@@ -190,9 +190,9 @@ namespace Infrastructure.Repository
                                            .Include(x => x.Product)
                                            .ThenInclude(p => p.ConditionType)
                                            .AsSplitQuery()
-                                           .Select(x => new PostViewModel
+                                           .Select(x => new PostViewModelForWeb
                                            {
-                                               PostId = x.Id,
+                                               Id = x.Id,
                                                PostContent = x.PostContent,
                                                PostTitle = x.PostTitle,
                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
