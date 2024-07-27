@@ -30,6 +30,6 @@ namespace Application.InterfaceService
         Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition,int pageIndex,int pageSize);
         Task<bool> CheckIfPostInWishList(Guid postId);
         Task<bool>UnbanPost(Guid postId);
-        Task<Pagination<PostViewModel>> GetAllPostForWeb(int pageIndex,int pageSize);
+        Task<Pagination<PostViewModelForWeb>> GetAllPostForWeb(int pageIndex,int pageSize);
     }
 }

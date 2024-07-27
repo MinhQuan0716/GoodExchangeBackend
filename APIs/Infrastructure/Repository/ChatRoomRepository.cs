@@ -30,6 +30,7 @@ namespace Infrastructure.Repository
                                     .Include(c => c.Messages) 
                                     .Include(c => c.Receiver) 
                                     .Include(c => c.Sender)
+                                    .OrderBy(c => c.CreationDate)
                                     .ToListAsync();
 
             // Map entities to DTOs

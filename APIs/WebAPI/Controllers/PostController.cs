@@ -15,10 +15,10 @@ namespace WebAPI.Controllers
             _postService = postService;
         }
         [Authorize(Roles = "Admin,Moderator")]
-        [HttpDelete("{postId}")]
-        public async Task<IActionResult> BanPost(Guid postId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> BanPost(Guid Id)
         {
-            bool isDelete= await _postService.BanPost(postId);
+            bool isDelete= await _postService.BanPost(Id);
             if (isDelete)
             {
                 return NoContent();
@@ -33,10 +33,10 @@ namespace WebAPI.Controllers
             return Ok(post);
         }
         [Authorize(Roles ="Admin,Moderator")]
-        [HttpPatch("{postId}")]
-        public async Task<IActionResult> UnbanPost(Guid postId)
+        [HttpPatch("{Id}")]
+        public async Task<IActionResult> UnbanPost(Guid Id)
         {
-            var isUnbanned = await _postService.UnbanPost(postId);
+            var isUnbanned = await _postService.UnbanPost(Id);
             if (isUnbanned)
             {
                 return Ok();
@@ -44,10 +44,10 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
         [Authorize(Roles ="Admin,Moderator")]
-        [HttpGet("{postId}")]
-        public async Task<IActionResult> PostDetail(Guid postId)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> PostDetail(Guid Id)
         {
-            var postDetail=await _postService.GetPostDetailAsync(postId);
+            var postDetail=await _postService.GetPostDetailAsync(Id);
             return Ok(postDetail);
         }
     }

@@ -17,7 +17,17 @@ namespace Application.ViewModel.PostModel
         public Guid AuthorId { get; set; }
        
     }
+    public class PostViewModelForWeb
+    {
+        public Guid Id { get; set; }
+        public string PostTitle { get; set; }
+        public string PostContent { get; set; }
+        public DateOnly CreationDate { get; set; }
+        public ProductModel Product { get; set; }
+        public string Location { get; set; }
+        public Guid AuthorId { get; set; }
 
+    }
     public class ProductModel
     {
         public Guid ProductId { get; set; }

@@ -87,7 +87,7 @@ namespace Infrastructure.Repository
         {
             var listUser = await _dbContext.Users.Include(x=>x.Role).AsSplitQuery().Where(x=>x.RoleId!=1).Select(x => new UserViewModelForWeb
             {
-                UserId=x.Id,
+                Id=x.Id,
                 Username=x.UserName,
                 Email=x.Email,
                 Fullname=x.FirstName+""+x.LastName,
