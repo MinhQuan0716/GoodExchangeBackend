@@ -192,24 +192,11 @@ namespace Infrastructure.Repository
                                            .AsSplitQuery()
                                            .Select(x => new PostViewModelForWeb
                                            {
-                                               Id = x.Id,
-                                               PostContent = x.PostContent,
-                                               PostTitle = x.PostTitle,
-                                               CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                               Location = _appDbContext.Users.Where(u => u.Id == x.CreatedBy).Select(u => u.HomeAddress).AsSplitQuery().Single(),
-                                               AuthorId = x.CreatedBy.Value,
-                                               Product = new ProductModel
-                                               {
-                                                   ProductId = x.ProductId,
-                                                   CategoryId = x.Product.CategoryId,
-                                                   CategoryName = x.Product.Category.CategoryName,
-                                                   ConditionId = x.Product.ConditionId,
-                                                   ConditionName = x.Product.ConditionType.ConditionType,
-                                                   ProductImageUrl = x.Product.ProductImageUrl,
-                                                   ProductPrice = x.Product.ProductPrice,
-                                                   ProductStatus = x.Product.ProductStatus,
-                                                   RequestedProduct = x.Product.RequestedProduct
-                                               }
+                                               PostId=x.Id,
+                                               PostContent=x.PostContent,
+                                               PostTitle=x.PostTitle,
+                                               CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                               Status= x.IsDelete.Value? "Ban":"Unban"
                                            }).AsQueryable().AsNoTracking().ToListAsync();
         }
 
