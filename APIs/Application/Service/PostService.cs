@@ -81,27 +81,58 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
-            if (listSubscription.Count() == 0)
+            if (postModel.PaymentType == "Subscription")
             {
-                throw new Exception("You must subscribe to  create post");
+                var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
+                if (listSubscription.Count() == 0)
+                {
+                    throw new Exception("You must subscribe to  create post");
+                }
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                var newProduct = _mapper.Map<Product>(postModel.productModel);
+                newProduct.ProductImageUrl = imageUrl;
+                if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                {
+                    newProduct.ProductPrice = 0;
+                }
+                await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                await _unitOfWork.SaveChangeAsync();
+                var createPost = new Post
+                {
+                    PostTitle = postModel.PostTitle,
+                    PostContent = postModel.PostContent,
+                    Product = newProduct
+                };
+                await _unitOfWork.PostRepository.AddAsync(createPost);
             }
-            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
-            var newProduct = _mapper.Map<Product>(postModel.productModel);
-            newProduct.ProductImageUrl = imageUrl;
-            if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+            if(postModel.PaymentType == "Wallet")
             {
-                newProduct.ProductPrice = 0;
+                var userWallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
+                if(userWallet.UserBalance<15000) 
+                {
+                    throw new Exception("Your user balance is not enough to purchase this post");
+                }
+                userWallet.UserBalance -= 15000;
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                var newProduct = _mapper.Map<Product>(postModel.productModel);
+                newProduct.ProductImageUrl = imageUrl;
+                if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                {
+                    newProduct.ProductPrice = 0;
+                }
+                await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                await _unitOfWork.SaveChangeAsync();
+                var createPost = new Post
+                {
+                    PostTitle = postModel.PostTitle,
+                    PostContent = postModel.PostContent,
+                    Product = newProduct
+                };
+                await _unitOfWork.PostRepository.AddAsync(createPost);
+                _unitOfWork.WalletRepository.Update(userWallet);
             }
-            await _unitOfWork.ProductRepository.AddAsync(newProduct);
-            await _unitOfWork.SaveChangeAsync();
-            var createPost = new Post
-            {
-                PostTitle = postModel.PostTitle,
-                PostContent = postModel.PostContent,
-                Product = newProduct
-            };
-            await _unitOfWork.PostRepository.AddAsync(createPost);
+            
+          
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 

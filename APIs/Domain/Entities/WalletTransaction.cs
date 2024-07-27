@@ -13,8 +13,8 @@ namespace Domain.Entities
         public Guid WalletId { get; set; }  
         public Wallet Wallet { get; set; }  
         public Guid? SubscriptionId { get; set; }
-        public Subscription Subcription { get; set; }
+        public Subscription? Subcription { get; set; }
         public Guid? OrderId { get; set; }
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
     }
 }
