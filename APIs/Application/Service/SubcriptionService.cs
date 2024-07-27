@@ -25,7 +25,7 @@ namespace Application.Service
 
         public async Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel)
         {
-            var subcription = _mapper.Map<Subcription>(createSubcriptionModel);
+            var subcription = _mapper.Map<Subscription>(createSubcriptionModel);
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -69,7 +69,7 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync()>0;
         }
 
-        public async Task<List<Subcription>> GetAllSubscriptionAsync()
+        public async Task<List<Subscription>> GetAllSubscriptionAsync()
         {
           return await _unitOfWork.SubcriptionRepository.GetAllAsync();
         }
@@ -104,7 +104,7 @@ namespace Application.Service
             {
                 return false;
             }
-            _mapper.Map(updateSubcriptionModel,foundSubscription,typeof(UpdateSubscriptionModel),typeof(Subcription));
+            _mapper.Map(updateSubcriptionModel,foundSubscription,typeof(UpdateSubscriptionModel),typeof(Subscription));
             _unitOfWork.SubcriptionRepository.Update(foundSubscription);
             return await _unitOfWork.SaveChangeAsync()>0;
         }

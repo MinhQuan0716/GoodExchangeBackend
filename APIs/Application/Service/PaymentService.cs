@@ -58,7 +58,7 @@ namespace Application.Service
                 SubscriptionId=subscriptionId,
                 TransactionType=$"Purchase subscription {subscription.Description}"
             };
-            SubcriptionHistory subcriptionHistory = new SubcriptionHistory()
+            SubscriptionHistory subcriptionHistory = new SubscriptionHistory()
             {
                 SubcriptionId=subscriptionId,
                 UserId=_claimsService.GetCurrentUserId,

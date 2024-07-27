@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class SubcriptionHistory:BaseEntity
+    public class SubscriptionHistory:BaseEntity
     {
         public long Rate { get; set; }
         public DateTime StartDate { get; set; }
@@ -15,6 +15,6 @@ namespace Domain.Entities
         public Guid UserId { get; set; }
         public User User { get; set; }
         public Guid SubcriptionId { get; set; }
-        public Subcription Subcription { get; set; }
+        public Subscription Subcription { get; set; }
     }
 }

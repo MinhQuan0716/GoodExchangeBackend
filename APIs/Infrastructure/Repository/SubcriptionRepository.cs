@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public class SubcriptionRepository : GenericRepository<Subcription>, ISubcriptionRepository
+    public class SubcriptionRepository : GenericRepository<Subscription>, ISubcriptionRepository
     {
         private readonly AppDbContext _appDbContext;
         public SubcriptionRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime) : base(appDbContext, claimService, currentTime)
@@ -18,15 +18,15 @@ namespace Infrastructure.Repository
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<Subcription>> GetAllDeactiveSubscription()
+        public async Task<List<Subscription>> GetAllDeactiveSubscription()
         {
-            var listSubscription = await _appDbContext.Subcriptions.ToListAsync();
+            var listSubscription = await _appDbContext.Subscriptions.ToListAsync();
             return listSubscription;
         }
 
-        public async Task<Subcription> GetSubscriptionForRevokeAsync(Guid subscriptionId)
+        public async Task<Subscription> GetSubscriptionForRevokeAsync(Guid subscriptionId)
         {
-            return await _appDbContext.Subcriptions.Where(x=>x.Id==subscriptionId).SingleAsync();
+            return await _appDbContext.Subscriptions.Where(x=>x.Id==subscriptionId).SingleAsync();
         }
     }
 }

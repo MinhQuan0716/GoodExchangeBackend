@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface ISubcriptionRepository:IGenericRepository<Subcription>
+    public interface ISubcriptionRepository:IGenericRepository<Subscription>
     {
-        Task<List<Subcription>> GetAllDeactiveSubscription();
-        Task<Subcription> GetSubscriptionForRevokeAsync(Guid subscriptionId);
+        Task<List<Subscription>> GetAllDeactiveSubscription();
+        Task<Subscription> GetSubscriptionForRevokeAsync(Guid subscriptionId);
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public class SubscriptionHistoryRepository : GenericRepository<SubcriptionHistory>, ISubscriptionHistoryRepository
+    public class SubscriptionHistoryRepository : GenericRepository<SubscriptionHistory>, ISubscriptionHistoryRepository
     {
         private readonly AppDbContext _appDbContext;
         public SubscriptionHistoryRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime) : base(appDbContext, claimService, currentTime)
@@ -21,7 +21,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistory()
         {
-           var subscriptionHistoryList=await _appDbContext.SubcriptionHistories.Where(x=>x.IsDelete==false)
+           var subscriptionHistoryList=await _appDbContext.SubscriptionHistories.Where(x=>x.IsDelete==false)
                                                                                .Include(x=>x.User).AsSplitQuery()
                                                                                .Include(x=>x.Subcription).AsSplitQuery()
                                                                                .Select(x=>new SubscriptionHistoryViewModel
@@ -37,7 +37,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUserAvailableSubscripion(Guid userId)
         {
-            var listUserSubscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false&&x.Status==true)
+            var listUserSubscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false&&x.Status==true)
                                                                                .Include(x=>x.Subcription).AsSplitQuery()
                                                                               .Select(x => new SubscriptionHistoryDetailViewModel
                                                                               {
@@ -50,16 +50,16 @@ namespace Infrastructure.Repository
             return listUserSubscription;
         }
 
-        public async Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId)
+        public async Task<List<SubscriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId)
         {
-            var subscription = await _appDbContext.SubcriptionHistories.Where(x => x.UserId == userId&&x.IsDelete==false)
+            var subscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId&&x.IsDelete==false)
                                                                        .ToListAsync();
             return subscription;
         }
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId)
         {
-           var listUserSubscription=await _appDbContext.SubcriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
+           var listUserSubscription=await _appDbContext.SubscriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
                                                                             .Include(x=>x.Subcription).AsSplitQuery()
                                                                             .Select(x=>new SubscriptionHistoryDetailViewModel
                                                                             {
