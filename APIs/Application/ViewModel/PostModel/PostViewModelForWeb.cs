@@ -8,7 +8,7 @@ namespace Application.ViewModel.PostModel
 {
     public class PostViewModelForWeb
     {
-        public Guid PostId { get; set; }
+        public Guid Id { get; set; }
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
         public DateOnly CreationDate { get; set; }

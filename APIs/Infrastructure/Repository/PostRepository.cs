@@ -192,7 +192,7 @@ namespace Infrastructure.Repository
                                            .AsSplitQuery()
                                            .Select(x => new PostViewModelForWeb
                                            {
-                                               PostId=x.Id,
+                                               Id=x.Id,
                                                PostContent=x.PostContent,
                                                PostTitle=x.PostTitle,
                                                CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
