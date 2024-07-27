@@ -93,6 +93,8 @@ namespace Infrastructure.Mappers
         {
             CreateMap<CreateSubcriptionModel, Subcription>()
                 .ReverseMap();
+            CreateMap<UpdateSubscriptionModel, Subcription>()
+                .ReverseMap();
         }
         internal void RatingMap()
         {

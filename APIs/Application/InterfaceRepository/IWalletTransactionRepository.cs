@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceRepository
     public interface IWalletTransactionRepository:IGenericRepository<WalletTransaction>
     {
         Task<Guid> GetLastSaveWalletTransactionId();
+        Task<List<TransactionViewModel>> GetAllTransaction();
     }
 }

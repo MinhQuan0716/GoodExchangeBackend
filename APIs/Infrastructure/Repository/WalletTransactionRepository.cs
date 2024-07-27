@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,6 +18,19 @@ namespace Infrastructure.Repository
         {
             _appDbContext = appDbContext;
         }
+
+        public async Task<List<TransactionViewModel>> GetAllTransaction()
+        {
+            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
+                                                                       .Include(x => x.Wallet).ThenInclude(wallet => wallet.Owner).AsSplitQuery()
+                                                                       .Select(x => new TransactionViewModel
+                                                                       {
+                                                                           Username=x.Wallet.Owner.UserName,
+                                                                           Email=x.Wallet.Owner.Email,
+                                                                           Action=x.TransactionType
+                                                                       }).ToListAsync();
+            return listTransaction;
+        }                        
 
         public async Task<Guid> GetLastSaveWalletTransactionId()
         {

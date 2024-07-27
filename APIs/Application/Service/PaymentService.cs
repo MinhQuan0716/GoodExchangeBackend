@@ -56,7 +56,7 @@ namespace Application.Service
                 WalletId=wallet.Id,
                 CreatedBy=userWallet.Id,
                 SubscriptionId=subscriptionId,
-                TransactionType="Wallet"
+                TransactionType=$"Purchase subscription {subscription.Description}"
             };
             SubcriptionHistory subcriptionHistory = new SubcriptionHistory()
             {
@@ -95,6 +95,7 @@ namespace Application.Service
             {
                 _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(24));
             }
+                  
             return paymentUrl;
                 case 2:
                      paymentUrl = "";
