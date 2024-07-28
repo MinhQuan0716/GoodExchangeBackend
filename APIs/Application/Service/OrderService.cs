@@ -54,6 +54,27 @@ namespace Application.Service
                     }
                 }
             }
+            var post = await _unitOfWork.PostRepository.GetPostDetail(request.PostId);
+            if (post != null)
+            {
+                if (post.ConditionTypeId == 1)
+                {
+                    var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(request.UserId);
+                    var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllAsync();
+                    if (wallletTransaction != null)
+                    {
+                        var pendingTransaction = 0;
+                        foreach(var item in wallletTransaction)
+                        {
+                            //pendingTransaction += item.price;
+                        }
+                    }
+                    
+                    wallet.UserBalance -= post.ProductPrice;
+                    _unitOfWork.WalletRepository.Update(wallet);
+                    await _unitOfWork.SaveChangeAsync();
+                }
+            }
 
             // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
