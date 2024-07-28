@@ -24,6 +24,11 @@ namespace Infrastructure.Repository
             return await _appDbContext.Wallets.Where(x => x.OwnerId == userId).SingleOrDefaultAsync();
         }
 
+        public async Task<Wallet> GetUserWalletByUserId(Guid userId)
+        {
+            return await _appDbContext.Wallets.Where(x => x.OwnerId == userId&&x.IsDelete==false).SingleAsync();
+        }
+
         public async Task<WalletViewModel> GetWalletByUserId(Guid userId)
         {
            var userWallet= await _appDbContext.Wallets.Where(x=>x.OwnerId==userId)

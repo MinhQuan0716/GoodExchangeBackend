@@ -11,7 +11,8 @@ namespace Application.InterfaceService
     public interface ISubcriptionService
     {
         Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel);
-        Task<List<Subcription>> GetAllSubscriptionAsync();
+        Task<bool> UpdateSubcription(UpdateSubscriptionModel updateSubcriptionModel);
+        Task<List<Subscription>> GetAllSubscriptionAsync();
         Task<bool> ExtendSubscription();
         Task<bool> DeactiveSubscriptionAsync(Guid subscriptionId);
         Task<bool> RevokeSubscriptionAsync(Guid subscriptionId);

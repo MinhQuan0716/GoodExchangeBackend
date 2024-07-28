@@ -30,6 +30,7 @@ namespace WebAPI
             services.AddScoped<IVerifyUserService, VerifyUserService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IWalletTransactionService, WalletTransactionService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...

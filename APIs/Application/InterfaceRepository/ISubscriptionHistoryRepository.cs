@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface ISubscriptionHistoryRepository:IGenericRepository<SubcriptionHistory>
+    public interface ISubscriptionHistoryRepository:IGenericRepository<SubscriptionHistory>
     {
-        Task<List<SubcriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId);
+        Task<List<SubscriptionHistory>> GetLastSubscriptionByUserIdAsync(Guid userId);
         Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistory();
         Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId);
         Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUserAvailableSubscripion(Guid userId);

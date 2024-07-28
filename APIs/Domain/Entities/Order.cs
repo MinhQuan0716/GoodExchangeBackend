@@ -15,5 +15,6 @@ namespace Domain.Entities
         public User User { get; set; }
         public Guid PostId { get; set; }
         public Post Post { get; set; }
+        public ICollection<WalletTransaction > Transactions { get; set; }    
     }
 }

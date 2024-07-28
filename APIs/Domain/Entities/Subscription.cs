@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class Subcription:BaseEntity
+    public  class Subscription:BaseEntity
     {
         public long Price { get; set; }
         public string Description { get; set; }
         public string SubcriptionType { get; set; }
         public float ExpiryMonth { get; set; }
         public ICollection<WalletTransaction> WalletTransactions { get; set; }
-        public ICollection<SubcriptionHistory> SubcriptionHistories { get; set; }
+        public ICollection<SubscriptionHistory> SubcriptionHistories { get; set; }
     }
 }

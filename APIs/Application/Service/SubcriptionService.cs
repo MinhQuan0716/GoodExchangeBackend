@@ -25,7 +25,7 @@ namespace Application.Service
 
         public async Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel)
         {
-            var subcription = _mapper.Map<Subcription>(createSubcriptionModel);
+            var subcription = _mapper.Map<Subscription>(createSubcriptionModel);
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -55,6 +55,13 @@ namespace Application.Service
                             subscriptionHistory.EndDate = DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth);
                             _unitOfWork.WalletRepository.Update(wallet);
                             _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                            WalletTransaction newTransaction = new WalletTransaction()
+                            {
+                                WalletId= wallet.Id,    
+                                TransactionType=$"Extend subscription for {subscription.Description}",
+                                SubscriptionId =subscription.Id,
+                            };
+                            _unitOfWork.WalletTransactionRepository.AddAsync(newTransaction);
                         }
                     }
                 }
@@ -62,7 +69,7 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync()>0;
         }
 
-        public async Task<List<Subcription>> GetAllSubscriptionAsync()
+        public async Task<List<Subscription>> GetAllSubscriptionAsync()
         {
           return await _unitOfWork.SubcriptionRepository.GetAllAsync();
         }
@@ -88,6 +95,18 @@ namespace Application.Service
             subscription.IsDelete = false;
             _unitOfWork.SubcriptionRepository.Update(subscription);
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> UpdateSubcription(UpdateSubscriptionModel updateSubcriptionModel)
+        {
+            var foundSubscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(updateSubcriptionModel.Id);
+            if(foundSubscription == null)
+            {
+                return false;
+            }
+            _mapper.Map(updateSubcriptionModel,foundSubscription,typeof(UpdateSubscriptionModel),typeof(Subscription));
+            _unitOfWork.SubcriptionRepository.Update(foundSubscription);
+            return await _unitOfWork.SaveChangeAsync()>0;
         }
     }
 }

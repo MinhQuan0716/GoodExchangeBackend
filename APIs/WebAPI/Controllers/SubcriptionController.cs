@@ -27,6 +27,17 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
         [Authorize(Roles = "Admin,Moderator")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateSubscription(UpdateSubscriptionModel updateSubscriptionModel)
+        {
+            bool isUpdated=await _subcriptionService.UpdateSubcription(updateSubscriptionModel);
+            if(isUpdated)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllSubscription()
         {

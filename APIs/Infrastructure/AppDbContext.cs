@@ -22,8 +22,8 @@ namespace Infrastructure
         public DbSet<Product> Products { get; set; }
         public DbSet<ExchangeCondition> ExchangeConditions { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Subcription> Subcriptions { get; set; }
-        public DbSet<SubcriptionHistory> SubcriptionHistories { get; set; } 
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<SubscriptionHistory> SubscriptionHistories { get; set; } 
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChatRoom> ChatRooms { get; set; }
         public DbSet<Report> Reports { get; set; }

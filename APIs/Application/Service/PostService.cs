@@ -8,6 +8,7 @@ using Application.ViewModel.PostModel;
 using Application.ViewModel.WishListModel;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,27 +82,58 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
-            if (listSubscription.Count() == 0)
+            if (postModel.PaymentType == "Subscription")
             {
-                throw new Exception("You must subscribe to  create post");
+                var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
+                if (listSubscription.Count() == 0)
+                {
+                    throw new Exception("You must subscribe to  create post");
+                }
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                var newProduct = _mapper.Map<Product>(postModel.productModel);
+                newProduct.ProductImageUrl = imageUrl;
+                if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                {
+                    newProduct.ProductPrice = 0;
+                }
+                await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                await _unitOfWork.SaveChangeAsync();
+                var createPost = new Post
+                {
+                    PostTitle = postModel.PostTitle,
+                    PostContent = postModel.PostContent,
+                    Product = newProduct
+                };
+                await _unitOfWork.PostRepository.AddAsync(createPost);
             }
-            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
-            var newProduct = _mapper.Map<Product>(postModel.productModel);
-            newProduct.ProductImageUrl = imageUrl;
-            if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+            if(postModel.PaymentType == "Wallet")
             {
-                newProduct.ProductPrice = 0;
+                var userWallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
+                if(userWallet.UserBalance<15000) 
+                {
+                    throw new Exception("Your user balance is not enough to purchase this post");
+                }
+                userWallet.UserBalance -= 15000;
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                var newProduct = _mapper.Map<Product>(postModel.productModel);
+                newProduct.ProductImageUrl = imageUrl;
+                if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                {
+                    newProduct.ProductPrice = 0;
+                }
+                await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                await _unitOfWork.SaveChangeAsync();
+                var createPost = new Post
+                {
+                    PostTitle = postModel.PostTitle,
+                    PostContent = postModel.PostContent,
+                    Product = newProduct
+                };
+                await _unitOfWork.PostRepository.AddAsync(createPost);
+                _unitOfWork.WalletRepository.Update(userWallet);
             }
-            await _unitOfWork.ProductRepository.AddAsync(newProduct);
-            await _unitOfWork.SaveChangeAsync();
-            var createPost = new Post
-            {
-                PostTitle = postModel.PostTitle,
-                PostContent = postModel.PostContent,
-                Product = newProduct
-            };
-            await _unitOfWork.PostRepository.AddAsync(createPost);
+            
+          
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -115,15 +147,35 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<Pagination<PostViewModel>> FilterPostByProductStatusAndPrice(string producttStatus,string exchangeCondition, int pageIndex, int pageSize)
+        public async Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitle,string producttStatus,string exchangeCondition)
         {
-            var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-            ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
-            ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
-            ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
-            var filterPostList = andCriteria.MeetCriteria(listPostModel);
-            var paginationFilterList=PaginationUtil<PostViewModel>.ToPagination(filterPostList, pageIndex, pageSize);
-            return paginationFilterList;
+            if (producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty()&&!postTitle.IsNullOrEmpty())
+            {
+                var allPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle,postTitle)).ToList();
+                return searchPost;
+            }
+           else if (postTitle.IsNullOrEmpty())
+            {
+                var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
+                ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
+                ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
+                var filterPostList = andCriteria.MeetCriteria(listPostModel);
+                return filterPostList;
+            }
+           else if(producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty() && postTitle.IsNullOrEmpty())
+            {
+                var listAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                return listAllPost;
+            }
+             var listGetAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+            var searchListPost = listGetAllPost.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle, postTitle)).ToList();
+            ICriteria matchProductStatusCriteria = new CriteriaProductStatus(producttStatus);
+            ICriteria matchProductPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
+            ICriteria matchBothCriteria = new AndCriteria(matchProductStatusCriteria, matchProductPriceCriteria);
+            var matchListPost = matchBothCriteria.MeetCriteria(searchListPost);
+            return matchListPost;
         }
 
         public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
@@ -183,12 +235,12 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle, int pageIndex, int pageSize)
+       /* public async Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle, int pageIndex, int pageSize)
         {
             var listSearchPost = await _unitOfWork.PostRepository.SearchPostByProductName(postTitle);
             var paginationList = PaginationUtil<PostViewModel>.ToPagination(listSearchPost, pageIndex, pageSize);
             return paginationList;
-        }
+        }*/
 
         public async Task<List<WishListViewModel>> SeeAllFavoritePost()
         {

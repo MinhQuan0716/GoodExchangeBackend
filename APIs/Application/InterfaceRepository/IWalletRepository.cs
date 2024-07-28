@@ -12,5 +12,6 @@ namespace Application.InterfaceRepository
     {
         Task<Wallet> FindWalletByUserId(Guid userId);
         Task<WalletViewModel> GetWalletByUserId (Guid userId);
+        Task<Wallet> GetUserWalletByUserId(Guid userId);
     }
 }

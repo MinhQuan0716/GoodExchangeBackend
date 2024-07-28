@@ -187,21 +187,13 @@ namespace MobileAPI.Controllers
             }
             return Ok(postDetail);
         }
-        [HttpGet]   
-        public async Task<IActionResult> SearchPostByPostTitle(string postTitle,int pageIndex,int pageSize)
-        {
-            var listPost=await _postService.SearchPostByPostTitle(postTitle,pageIndex,pageSize);
-            if (listPost.Items.Count() == 0)
-            {
-                return NotFound();
-            }
-            return Ok(listPost);
-        }
+
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> FilterPostByProductStatusAndProductExchangeCondition(string? productStatus,string? exchangeCondition,int pageIndex,int pageSize)
+        public async Task<IActionResult> SearchAndFilterPost(string? postTitle,string? productStatus,string? exchangeCondition)
         {
-            var filterListPost=await _postService.FilterPostByProductStatusAndPrice(productStatus,exchangeCondition,pageIndex,pageSize);
-            if(filterListPost.Items.Count() == 0)
+            var filterListPost=await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(postTitle,productStatus,exchangeCondition);
+            if(filterListPost.Count() == 0)
             {
                 return NotFound();
             }
