@@ -56,7 +56,8 @@ namespace Application.Service
                 WalletId=wallet.Id,
                 CreatedBy=userWallet.Id,
                 SubscriptionId=subscriptionId,
-                TransactionType=$"Purchase subscription {subscription.Description}"
+                TransactionType=$"Purchase subscription {subscription.Description}",
+                Amount=subscription.Price,
             };
             SubscriptionHistory subcriptionHistory = new SubscriptionHistory()
             {
