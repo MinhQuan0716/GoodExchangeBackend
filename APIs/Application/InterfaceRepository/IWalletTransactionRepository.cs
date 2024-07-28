@@ -12,5 +12,7 @@ namespace Application.InterfaceRepository
     {
         Task<Guid> GetLastSaveWalletTransactionId();
         Task<List<TransactionViewModel>> GetAllTransaction();
+        Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId);
+        Task<WalletTransaction> GetByOrderIdAsync(Guid orderId);
     }
 }

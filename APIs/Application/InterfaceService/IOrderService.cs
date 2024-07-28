@@ -16,5 +16,9 @@ namespace Application.InterfaceService
         Task<bool> CheckOrderStatusByPostId(Guid postId); 
         Task<ReceiveOrderViewModel> GetOrderDetailAsync(Guid postId);
         Task<bool> DeliveredOrder(Guid orderId);
+        Task<bool> CancleOrder(Guid orderId);
+        Task<bool> ConfirmOrder(Guid orderId);
+        Task<bool> CancleOrderForAdmin(Guid orderId);
+        Task<List<ReceiveOrderViewModel>> GetAllOrderAsync();
     }
 }

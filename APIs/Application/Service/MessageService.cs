@@ -83,14 +83,15 @@ namespace Application.Service
                 }
                 else
                 {
+                    // create order
                     var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
                     if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
                     {
-
+                        throw new Exception("You already order this");
                     }
                     else
                     {
-                        Order request = new Order
+                        Order order = new Order
                         {
                             PostId = postId,
                             OrderStatusId = 1,
@@ -98,10 +99,37 @@ namespace Application.Service
                             UserId = user2,
                             CreatedBy = user2,
                         };
-                        await _unitOfWork.OrderRepository.AddAsync(request);
+                        await _unitOfWork.OrderRepository.AddAsync(order);
+                        await _unitOfWork.SaveChangeAsync();
+                        // create pending transaction
+                        var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
+                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
+                        var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
+                        float pendingTransaction = 0;
+                        if (wallletTransaction != null)
+                        {
+                            foreach (var item in wallletTransaction)
+                            {
+                                if (item.Action == "Purchase pending")
+                                {
+                                    pendingTransaction += item.Amount;
+                                }
+                            }
+                        }
+                        if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
+                        {
+                            throw new Exception("You don't have enough money to order this transaction");
+                        }
+                        var newWalletTransaction = new WalletTransaction
+                        {
+                            OrderId = order.Id,
+                            Amount = postForProductPrice.ProductPrice,
+                            TransactionType = "Purchase pending"
+                        };
+                        await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
+                        await _unitOfWork.SaveChangeAsync();
                     }
                 }
-                await _unitOfWork.SaveChangeAsync();
                 return chatRoom;
             }
             var newRoom = new ChatRoom
@@ -115,15 +143,19 @@ namespace Application.Service
             if (postId != Guid.Empty)
             {
                 var postModel = await _unitOfWork.PostRepository.GetPostDetail(postId);
-                var createMessageModel = new CreateMessageModel
+                var duplicateMessage = _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl);
+                if (duplicateMessage!=null)
                 {
-                    MessageContent = "Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl,
-                    RoomId = room.Id
-                };
-                var newMessage = _mapper.Map<Message>(createMessageModel);
-                newMessage.CreationDate = DateTime.UtcNow;
-                newMessage.CreatedBy = user2;
-                await _unitOfWork.MessageRepository.AddAsync(newMessage);
+                    var createMessageModel = new CreateMessageModel
+                    {
+                        MessageContent = "Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl,
+                        RoomId = room.Id
+                    };
+                    var newMessage = _mapper.Map<Message>(createMessageModel);
+                    newMessage.CreationDate = DateTime.UtcNow;
+                    newMessage.CreatedBy = user2;
+                    await _unitOfWork.MessageRepository.AddAsync(newMessage);
+                }
                 var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
                 if (!post.Where(x => x.Id == postId).Any())
                 {
@@ -131,14 +163,16 @@ namespace Application.Service
                 }
                 else
                 {
+                    //check duplicate order
                     var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
                     if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
                     {
-
+                        throw new Exception("You already order this");
                     }
                     else
                     {
-                        Order request = new Order
+                        // create order
+                        Order order = new Order
                         {
                             PostId = postId,
                             OrderStatusId = 1,
@@ -146,11 +180,37 @@ namespace Application.Service
                             UserId = user2,
                             CreatedBy = user2,
                         };
-                        await _unitOfWork.OrderRepository.AddAsync(request);
+                        await _unitOfWork.OrderRepository.AddAsync(order);
+                        await _unitOfWork.SaveChangeAsync();
+                        // create pending transaction
+                        var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
+                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
+                        var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
+                        float pendingTransaction = 0;
+                        if (wallletTransaction != null)
+                        {
+                            foreach (var item in wallletTransaction)
+                            {
+                                if (item.Action == "Purchase pending")
+                                {
+                                    pendingTransaction += item.Amount;
+                                }
+                            }
+                        }
+                        if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
+                        {
+                            throw new Exception("You don't have enough money to order this transaction");
+                        }
+                        var newWalletTransaction = new WalletTransaction
+                        {
+                            OrderId = order.Id,
+                            Amount = postForProductPrice.ProductPrice,
+                            TransactionType = "Purchase pending"
+                        };
+                        await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
+                        await _unitOfWork.SaveChangeAsync();
                     }
                 }
-                
-                await _unitOfWork.SaveChangeAsync();
             }
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(newRoom.Id);
             return messages;

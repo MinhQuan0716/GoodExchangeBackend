@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.Service;
 using Application.ViewModel.RequestModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,16 +10,16 @@ namespace MobileAPI.Controllers
   
     public class OrderController : BaseController
     {
-        private readonly IOrderService _requestService;
-        public OrderController(IOrderService requestService)
+        private readonly IOrderService _orderService;
+        public OrderController(IOrderService orderService)
         {
-            _requestService = requestService;
+            _orderService = orderService;
         }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetReceieveOrder()
         {
-            var requestList = await _requestService.GetAllRequestsOfCurrentUserAsync();
+            var requestList = await _orderService.GetAllRequestsOfCurrentUserAsync();
             if (requestList.Any())
             {
                 return Ok(requestList);
@@ -29,17 +30,24 @@ namespace MobileAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> AcceptOrder(Guid orderId)
         {
-            var isAccepted = await _requestService.AcceptRequest(orderId);
-            if (isAccepted)
+            try
             {
-                return Ok();
+                var isAccepted = await _orderService.AcceptRequest(orderId);
+                if (isAccepted)
+                {
+                    return Ok();
+                }
+                return BadRequest();
             }
-            return BadRequest();  
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderDetail(Guid orderId)
         {
-            var orderDetail=await _requestService.GetOrderDetailAsync(orderId);
+            var orderDetail=await _orderService.GetOrderDetailAsync(orderId);
             if(orderDetail == null)
             {
                 return NotFound();
@@ -50,12 +58,55 @@ namespace MobileAPI.Controllers
         [HttpPut()]
         public async Task<IActionResult> UpdateDeliveredOrder(Guid orderId)
         {
-            var isAccepted = await _requestService.DeliveredOrder(orderId);
-            if (isAccepted)
+            try
             {
-                return Ok();
+                var isAccepted = await _orderService.DeliveredOrder(orderId);
+                if (isAccepted)
+                {
+                    return Ok();
+                }
+                return BadRequest();
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpPut()]
+        public async Task<IActionResult> UpdateCancleOrder(Guid orderId)
+        {
+            try
+            {
+                var isAccepted = await _orderService.CancleOrder(orderId);
+                if (isAccepted)
+                {
+                    return Ok();
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpPut()]
+        public async Task<IActionResult> UpdateConfirmOrder(Guid orderId)
+        {
+            try
+            {
+                var isAccepted = await _orderService.ConfirmOrder(orderId);
+                if (isAccepted)
+                {
+                    return Ok();
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

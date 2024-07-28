@@ -22,15 +22,41 @@ namespace Infrastructure.Repository
         public async Task<List<TransactionViewModel>> GetAllTransaction()
         {
             var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
-                                                                       .Include(x => x.Wallet).ThenInclude(wallet => wallet.Owner).AsSplitQuery()
+                                                                       .Include(x => x.Wallet)
+                                                                       .ThenInclude(wallet => wallet.Owner).AsSplitQuery()
                                                                        .Select(x => new TransactionViewModel
                                                                        {
                                                                            Username=x.Wallet.Owner.UserName,
                                                                            Email=x.Wallet.Owner.Email,
-                                                                           Action=x.TransactionType
+                                                                           Action=x.TransactionType,
+                                                                           Amount=x.Amount
                                                                        }).ToListAsync();
             return listTransaction;
-        }                        
+        }
+
+        public async Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId)
+        {
+            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
+                                                                       .Include(x => x.Wallet).ThenInclude(wallet => wallet.Owner).AsSplitQuery()
+                                                                       .Where(x => x.Wallet.OwnerId == userId)
+                                                                       .Select(x => new TransactionViewModel
+                                                                       {
+                                                                           Username = x.Wallet.Owner.UserName,
+                                                                           Email = x.Wallet.Owner.Email,
+                                                                           Action = x.TransactionType,
+                                                                           Amount = x.Amount
+                                                                       }).ToListAsync();
+            return listTransaction;
+        }
+
+        public async Task<WalletTransaction> GetByOrderIdAsync(Guid orderId)
+        {
+            var Transaction = await _appDbContext.WalletTransactions
+                                    .Where(x => x.IsDelete == false)
+                                    .Where(x => x.OrderId == orderId)
+                                    .FirstOrDefaultAsync();
+            return Transaction;
+        }
 
         public async Task<Guid> GetLastSaveWalletTransactionId()
         {
