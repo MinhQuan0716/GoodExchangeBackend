@@ -27,6 +27,17 @@ namespace MobileAPI.Controllers
             return NotFound();
         }
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetSendOrder()
+        {
+            var requestList = await _orderService.GetAllRequestsOfCurrentUserAsync();
+            if (requestList.Any())
+            {
+                return Ok(requestList);
+            }
+            return NotFound();
+        }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> AcceptOrder(Guid orderId)
         {
