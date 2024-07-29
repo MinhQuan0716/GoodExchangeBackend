@@ -17,7 +17,7 @@ namespace Application.InterfaceService
         Task<bool> CreatePost(CreatePostModel Post);
         Task<bool> UpdatePost(UpdatePostModel Post);
         Task<bool> DeletePost(Guid PostId);
-        Task<Pagination<PostViewModel>> GetAllPost(int pageIndex,int pageSize);
+        Task<List<PostViewModel>> GetAllPost();
         Task<List<PostViewModel>> GetPostSortByCreationDay();
         Task<List<PostViewModel>> GetPostByCreatedById();
         Task<Pagination<PostViewModel>> SortPostByCategory(int categoryId,int pageIndex,int pageSize);

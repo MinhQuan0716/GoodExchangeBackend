@@ -178,11 +178,10 @@ namespace Application.Service
             return matchListPost;
         }
 
-        public async Task<Pagination<PostViewModel>> GetAllPost(int pageIndex, int pageSize)
+        public async Task<List<PostViewModel>> GetAllPost()
         {
             var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-            Pagination<PostViewModel> pagination = PaginationUtil<PostViewModel>.ToPagination(listPostModel, pageIndex, pageSize);
-            return pagination;
+            return listPostModel;
         }
 
         public async Task<Pagination<PostViewModelForWeb>> GetAllPostForWeb(int pageIndex,int pageSize)
