@@ -30,7 +30,7 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSendOrder()
         {
-            var requestList = await _orderService.GetAllRequestsOfCurrentUserAsync();
+            var requestList = await _orderService.GetAllRequestsOfCreatebByUserAsync();
             if (requestList.Any())
             {
                 return Ok(requestList);
