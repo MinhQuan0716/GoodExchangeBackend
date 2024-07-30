@@ -198,6 +198,13 @@ namespace MobileAPI.Controllers
             return Ok(filterListPost);
         }
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult>SearchPostCurrentUser(string postTitle)
+        {
+            var searchPostList=await _postService.SearchPostCreatedByCurrentUserByPostTitle(postTitle);
+            return Ok(searchPostList);
+        }
+        [Authorize]
         [HttpGet]   
         public async Task<IActionResult>CheckPostIfExistInWishList(Guid postId)
         {
