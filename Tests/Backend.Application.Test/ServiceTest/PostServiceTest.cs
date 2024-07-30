@@ -89,14 +89,13 @@ namespace Backend.Application.Test.ServiceTest
             var pagintaedPost = await _postService.GetAllPost();
             Assert.Equal(pagintaedPost.Count(), 2);
         }
-        /*[Fact]
+        [Fact]
         public async Task CreatePost_WithWalletOption_ShouldBeSuceeded()
         {
             //Arrange 
             IFormFile productFile = null;
-            string basePath = AppContext.BaseDirectory; // or Directory.GetCurrentDirectory();
-            string relativePath = Path.Combine("BackendAPIProject", "Tests", "Backend.Application.Test", "ImageFolder", "Class Diagram-Create Post.drawio.png");
-            string filePath = Path.Combine(basePath, relativePath);
+            string exePath = Environment.CurrentDirectory.ToString();
+            string filePath = exePath + "/ImageFolder/Class Diagram-Create Post.drawio.png";
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
@@ -108,21 +107,21 @@ namespace Backend.Application.Test.ServiceTest
             productFile = new FormFile(memoryStream, 0, memoryStream.Length, fileInfo.Name, fileInfo.Name)
             {
                 Headers = new HeaderDictionary(),
-                ContentType = "image/png" ,// Adjust the content type as needed
+                ContentType = "image/png",// Adjust the content type as needed
 
             };
             var productModel = _fixture.Build<CreateProductModel>().With(x => x.ProductImage, productFile).Create();
-            var product= _mapper.Map<Product>(productModel);
+            var product = _mapper.Map<Product>(productModel);
             var wallet = _fixture.Build<Wallet>().With(x => x.UserBalance, 15000)
                                                .With(x => x.OwnerId, Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).Create();
-            var postModel = _fixture.Build<CreatePostModel>().With(x => x.PaymentType, "Wallet").With(x=>x.productModel,productModel).Create();
-            var post=_mapper.Map<Post>(postModel);  
+            var postModel = _fixture.Build<CreatePostModel>().With(x => x.PaymentType, "Wallet").With(x => x.productModel, productModel).Create();
+            var post = _mapper.Map<Post>(postModel);
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
             _unitOfWorkMock.Setup(unit => unit.PostRepository.AddAsync(post)).Verifiable();
-            _unitOfWorkMock.Setup(unit=>unit.ProductRepository.AddAsync(product)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.ProductRepository.AddAsync(product)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit=>unit.WalletRepository.GetUserWalletByUserId(It.IsAny<Guid>())).ReturnsAsync(wallet);
-            _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(),It.IsAny<string>())).ReturnsAsync("Testlink");
+            _unitOfWorkMock.Setup(unit => unit.WalletRepository.GetUserWalletByUserId(It.IsAny<Guid>())).ReturnsAsync(wallet);
+            _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
         }
@@ -131,9 +130,8 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange 
             IFormFile productFile = null;
-            string basePath = AppContext.BaseDirectory; // or Directory.GetCurrentDirectory();
-            string relativePath = Path.Combine("BackendAPIProject", "Tests", "Backend.Application.Test", "ImageFolder", "Class Diagram-Create Post.drawio.png");
-            string filePath = Path.Combine(basePath, relativePath);
+            string exePath = Environment.CurrentDirectory.ToString();
+            string filePath = exePath + "/ImageFolder/Class Diagram-Create Post.drawio.png";
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
@@ -151,8 +149,8 @@ namespace Backend.Application.Test.ServiceTest
             var productModel = _fixture.Build<CreateProductModel>().With(x => x.ProductImage, productFile).Create();
             var product = _mapper.Map<Product>(productModel);
             var subscriptionHistory = _fixture.Build<SubscriptionHistoryDetailViewModel>()
-                .With(x=>x.StartDate,DateOnly.FromDateTime(DateTime.UtcNow))
-                .With(x=>x.EndDate,DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))).CreateMany(2).ToList();
+                .With(x => x.StartDate, DateOnly.FromDateTime(DateTime.UtcNow))
+                .With(x => x.EndDate, DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))).CreateMany(2).ToList();
             var postModel = _fixture.Build<CreatePostModel>().With(x => x.PaymentType, "Subscription").With(x => x.productModel, productModel).Create();
             var post = _mapper.Map<Post>(postModel);
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
@@ -163,6 +161,6 @@ namespace Backend.Application.Test.ServiceTest
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
-        }*/
+        }
     }
 }
