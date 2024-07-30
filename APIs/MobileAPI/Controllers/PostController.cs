@@ -19,8 +19,6 @@ namespace MobileAPI.Controllers
         /// <summary>
         /// Api get all post for main page
         /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
         /// <returns></returns>
         [Authorize]
         [HttpGet]
@@ -59,11 +57,11 @@ namespace MobileAPI.Controllers
         /// </summary>
         /// <param name="categoryId"></param>
         /// <returns></returns>
-        [Authorize]
+        /*[Authorize]*/
         [HttpGet]
-        public async Task<IActionResult> SortPostByCategory(int categoryId,int pageIndex,int pageSize) 
+        public async Task<IActionResult> SortPostByCategory(int categoryId) 
         {
-            var post=await _postService.SortPostByCategory(categoryId,pageIndex,pageSize);
+            var post=await _postService.SortPostByCategory(categoryId);
             return Ok(post);
         }
         /// <summary>

@@ -82,6 +82,7 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
+            string folderName = "Product";
             if (postModel.PaymentType == "Subscription")
             {
                 var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
@@ -152,7 +153,7 @@ namespace Application.Service
             if (producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty()&&!postTitle.IsNullOrEmpty())
             {
                 var allPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle,postTitle)).ToList();
+                var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(),postTitle.ToLower())).ToList();
                 return searchPost;
             }
            else if (postTitle.IsNullOrEmpty())
@@ -234,12 +235,13 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-       /* public async Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle, int pageIndex, int pageSize)
+        public async Task<List<PostViewModel>> SearchPostCreatedByCurrentUserByPostTitle(string postTitle)
         {
-            var listSearchPost = await _unitOfWork.PostRepository.SearchPostByProductName(postTitle);
-            var paginationList = PaginationUtil<PostViewModel>.ToPagination(listSearchPost, pageIndex, pageSize);
-            return paginationList;
-        }*/
+            var userCreatedListPost = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
+            var searchListPost= userCreatedListPost.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(), postTitle.ToLower())).ToList();
+            var searchPostModel=_mapper.Map<List<PostViewModel>>(searchListPost);
+            return searchPostModel;
+        }
 
         public async Task<List<WishListViewModel>> SeeAllFavoritePost()
         {
@@ -247,12 +249,11 @@ namespace Application.Service
             return listFavoritePost;
         }
 
-        public async Task<Pagination<PostViewModel>> SortPostByCategory(int categoryId, int pageIndex, int pageSize)
+        public async Task<List<PostViewModel>> SortPostByCategory(int categoryId)
         {
             var sortPost = await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
             var sortPostViewModel= _mapper.Map<List<PostViewModel>>(sortPost);
-            var paginationSortListPost = PaginationUtil<PostViewModel>.ToPagination(sortPostViewModel, pageIndex, pageSize);
-            return paginationSortListPost;
+            return sortPostViewModel;
         }
 
         public async Task<bool> UnbanPost(Guid postId)
