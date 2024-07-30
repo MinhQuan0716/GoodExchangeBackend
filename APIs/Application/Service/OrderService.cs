@@ -52,15 +52,14 @@ namespace Application.Service
                     {
                         item.OrderStatusId = 3;
                         _unitOfWork.OrderRepository.Update(item);
+                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
+                        if (wallletTransaction != null)
+                        {
+                            wallletTransaction.TransactionType = "Purchase Denied";
+                            _unitOfWork.WalletTransactionRepository.Update(wallletTransaction);
+                            await _unitOfWork.SaveChangeAsync();
+                        }
                     }
-                    var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
-                    if (wallletTransaction != null)
-                    {
-                        wallletTransaction.TransactionType = "Purchase Denied";
-                        _unitOfWork.WalletTransactionRepository.Update(wallletTransaction);
-                        await _unitOfWork.SaveChangeAsync();
-                    }
-                    
                 }
             }
             var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
@@ -186,6 +185,13 @@ namespace Application.Service
             }
             order.OrderStatusId = 5;
             _unitOfWork.OrderRepository.Update(order);
+            var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
+            if (post != null)
+            {
+                var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
+                wallet.UserBalance += post.ProductPrice;
+                _unitOfWork.WalletRepository.Update(wallet);
+            }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
