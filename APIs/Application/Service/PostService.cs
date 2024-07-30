@@ -148,35 +148,61 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitle,string producttStatus,string exchangeCondition)
+        public async Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitle,string productStatus,string exchangeCondition)
         {
-            if (producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty()&&!postTitle.IsNullOrEmpty())
+            /* if (producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty()&&!postTitle.IsNullOrEmpty())
+             {
+                 var allPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                 var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(),postTitle.ToLower())).ToList();
+                 return searchPost;
+             }
+            else if (postTitle.IsNullOrEmpty())
+             {
+                 var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                 ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
+                 ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
+                 ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
+                 var filterPostList = andCriteria.MeetCriteria(listPostModel);
+                 return filterPostList;
+             }
+            else if(producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty() && postTitle.IsNullOrEmpty())
+             {
+                 var listAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+                 return listAllPost;
+             }
+              var listGetAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+             var searchListPost = listGetAllPost.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle, postTitle)).ToList();
+             ICriteria matchProductStatusCriteria = new CriteriaProductStatus(producttStatus);
+             ICriteria matchProductPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
+             ICriteria matchBothCriteria = new AndCriteria(matchProductStatusCriteria, matchProductPriceCriteria);
+             var matchListPost = matchBothCriteria.MeetCriteria(searchListPost);
+             return matchListPost;*/
+            var allPosts = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
+
+            if (string.IsNullOrEmpty(postTitle) && string.IsNullOrEmpty(productStatus) && string.IsNullOrEmpty(exchangeCondition))
             {
-                var allPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(),postTitle.ToLower())).ToList();
-                return searchPost;
+                // Return all posts if no criteria provided
+                return allPosts;
             }
-           else if (postTitle.IsNullOrEmpty())
+
+            var filteredPosts = allPosts.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(postTitle))
             {
-                var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
-                ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
-                ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
-                var filterPostList = andCriteria.MeetCriteria(listPostModel);
-                return filterPostList;
+                filteredPosts = filteredPosts.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(), postTitle.ToLower()));
             }
-           else if(producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty() && postTitle.IsNullOrEmpty())
+
+            if (!string.IsNullOrEmpty(productStatus))
             {
-                var listAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                return listAllPost;
+                filteredPosts = filteredPosts.Where(x => x.Product.ProductStatus == productStatus);
             }
-             var listGetAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-            var searchListPost = listGetAllPost.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle, postTitle)).ToList();
-            ICriteria matchProductStatusCriteria = new CriteriaProductStatus(producttStatus);
-            ICriteria matchProductPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
-            ICriteria matchBothCriteria = new AndCriteria(matchProductStatusCriteria, matchProductPriceCriteria);
-            var matchListPost = matchBothCriteria.MeetCriteria(searchListPost);
-            return matchListPost;
+
+            if (!string.IsNullOrEmpty(exchangeCondition))
+            {
+                filteredPosts = filteredPosts.Where(x => x.Product.ConditionName == exchangeCondition);
+            }
+
+            return filteredPosts.ToList();
         }
 
         public async Task<List<PostViewModel>> GetAllPost()
