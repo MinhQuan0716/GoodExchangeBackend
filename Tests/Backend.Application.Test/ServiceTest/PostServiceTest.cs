@@ -94,7 +94,7 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange 
             IFormFile productFile = null;
-            string filePath = @"./Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
+            string filePath = @"/Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
@@ -129,7 +129,7 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange 
             IFormFile productFile = null;
-            string filePath = @"./Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
+            string filePath = @"/Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
