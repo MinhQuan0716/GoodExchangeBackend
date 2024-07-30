@@ -119,5 +119,16 @@ namespace MobileAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrderByTwoUserId(Guid user1, Guid user2)
+        {
+            var orderList = await _orderService.GetAllOrderByTwoUserId(user1, user2);
+            if (orderList.Any())
+            {
+                return Ok(orderList);
+            }
+            return NotFound();
+        }
     }
 }

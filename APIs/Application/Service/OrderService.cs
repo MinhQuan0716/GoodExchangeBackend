@@ -57,7 +57,6 @@ namespace Application.Service
                         {
                             wallletTransaction.TransactionType = "Purchase Denied";
                             _unitOfWork.WalletTransactionRepository.Update(wallletTransaction);
-                            await _unitOfWork.SaveChangeAsync();
                         }
                     }
                 }
@@ -238,6 +237,22 @@ namespace Application.Service
         public async Task<List<ReceiveOrderViewModel>> GetAllOrderAsync()
         {
             return await _unitOfWork.OrderRepository.GetAllOrder();
+        }
+
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrderByTwoUserId(Guid sendMessageUserId, Guid receiveMessageUserId)
+        {
+            var listOrderSend = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(sendMessageUserId) ?? new List<ReceiveOrderViewModel>();
+
+            // Fetch orders created by receiveMessageUserId
+            var listOrderReceive = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(receiveMessageUserId) ?? new List<ReceiveOrderViewModel>();
+
+            // Combine both lists by mapping SentOrderViewModel to ReceiveOrderViewModel
+            var combinedListOrder = new List<ReceiveOrderViewModel>();
+
+            combinedListOrder.AddRange(listOrderSend);
+            combinedListOrder.AddRange(listOrderReceive);
+
+            return combinedListOrder;
         }
     }
 }

@@ -224,7 +224,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<Order>> GetRequestByPostId(Guid postId)
         {
-            return await _dbContext.Orders.Where(x => x.PostId == postId).AsNoTracking().ToListAsync();
+            return await _dbContext.Orders.Where(x => x.PostId == postId).ToListAsync();
         }
 
         public async Task<List<Order>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
