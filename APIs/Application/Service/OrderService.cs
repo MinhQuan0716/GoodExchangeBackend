@@ -239,20 +239,27 @@ namespace Application.Service
             return await _unitOfWork.OrderRepository.GetAllOrder();
         }
 
-        public async Task<List<ReceiveOrderViewModel>> GetAllOrderByTwoUserId(Guid sendMessageUserId, Guid receiveMessageUserId)
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrderByChatRoomId(Guid chatRoomID)
         {
-            var listOrderSend = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(sendMessageUserId) ?? new List<ReceiveOrderViewModel>();
+            var chatRoom = await _unitOfWork.ChatRoomRepository.GetByIdAsync(chatRoomID);
+            if(chatRoom != null)
+            {
+                var sendMessageUserId = chatRoom.SenderId;
+                var receiveMessageUserId = chatRoom.ReceiverId;
+                var listOrderSend = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(sendMessageUserId) ?? new List<ReceiveOrderViewModel>();
 
-            // Fetch orders created by receiveMessageUserId
-            var listOrderReceive = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(receiveMessageUserId) ?? new List<ReceiveOrderViewModel>();
+                // Fetch orders created by receiveMessageUserId
+                var listOrderReceive = await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(receiveMessageUserId) ?? new List<ReceiveOrderViewModel>();
 
-            // Combine both lists by mapping SentOrderViewModel to ReceiveOrderViewModel
-            var combinedListOrder = new List<ReceiveOrderViewModel>();
+                // Combine both lists by mapping SentOrderViewModel to ReceiveOrderViewModel
+                var combinedListOrder = new List<ReceiveOrderViewModel>();
 
-            combinedListOrder.AddRange(listOrderSend);
-            combinedListOrder.AddRange(listOrderReceive);
+                combinedListOrder.AddRange(listOrderSend);
+                combinedListOrder.AddRange(listOrderReceive);
 
-            return combinedListOrder;
+                return combinedListOrder;
+            }
+            throw new Exception("chatRoom not exist");
         }
     }
 }
