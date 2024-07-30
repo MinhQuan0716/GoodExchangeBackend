@@ -94,7 +94,9 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange 
             IFormFile productFile = null;
-            string filePath = "BackendAPIProject/Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
+            string basePath = AppContext.BaseDirectory; // or Directory.GetCurrentDirectory();
+            string relativePath = Path.Combine("BackendAPIProject", "Tests", "Backend.Application.Test", "ImageFolder", "Class Diagram-Create Post.drawio.png");
+            string filePath = Path.Combine(basePath, relativePath);
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
@@ -129,9 +131,9 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange 
             IFormFile productFile = null;
-           /* string basePath = AppContext.BaseDirectory; // or Directory.GetCurrentDirectory();
-            string relativePath = Path.Combine("BackendAPIProject", "Tests", "Backend.Application.Test", "ImageFolder", "Class Diagram-Create Post.drawio.png");*/
-            string filePath = "BackendAPIProject/Tests/Backend.Application.Test/ImageFolder/Class Diagram-Create Post.drawio.png";
+            string basePath = AppContext.BaseDirectory; // or Directory.GetCurrentDirectory();
+            string relativePath = Path.Combine("BackendAPIProject", "Tests", "Backend.Application.Test", "ImageFolder", "Class Diagram-Create Post.drawio.png");
+            string filePath = Path.Combine(basePath, relativePath);
             var fileInfo = new FileInfo(filePath);
             var memoryStream = new MemoryStream();
 
