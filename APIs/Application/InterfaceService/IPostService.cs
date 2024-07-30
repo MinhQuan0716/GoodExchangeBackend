@@ -20,16 +20,16 @@ namespace Application.InterfaceService
         Task<List<PostViewModel>> GetAllPost();
         Task<List<PostViewModel>> GetPostSortByCreationDay();
         Task<List<PostViewModel>> GetPostByCreatedById();
-        Task<Pagination<PostViewModel>> SortPostByCategory(int categoryId,int pageIndex,int pageSize);
+        Task<List<PostViewModel>> SortPostByCategory(int categoryId);
         Task<bool> AddPostToWishList(Guid postId);
         Task<PostDetailViewModel> GetPostDetailAsync(Guid postId);  
         Task<bool> RemovePostFromFavorite(Guid postId);
         Task<List<WishListViewModel>> SeeAllFavoritePost();
         Task<PostDetailViewModel>GetPostDetailInUserCreatePostList(Guid postId);
-       /* Task<Pagination<PostViewModel>> SearchPostByPostTitle(string postTitle,int pageIndex,int pageSize);*/
-        Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitile,string producttStatus,string exchangeCondition);
+        Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitile,string productStatus,string exchangeCondition);
         Task<bool> CheckIfPostInWishList(Guid postId);
         Task<bool>UnbanPost(Guid postId);
         Task<Pagination<PostViewModelForWeb>> GetAllPostForWeb(int pageIndex,int pageSize);
+        Task<List<PostViewModel>> SearchPostCreatedByCurrentUserByPostTitle(string postTitle);
     }
 }

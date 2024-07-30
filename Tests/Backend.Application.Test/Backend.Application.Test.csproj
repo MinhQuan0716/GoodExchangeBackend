@@ -29,4 +29,10 @@
     <ProjectReference Include="..\Backend.Domain.Test\Backend.Domain.Test.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ImageFolder\Class Diagram-Create Post.drawio.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
