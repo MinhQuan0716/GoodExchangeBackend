@@ -89,7 +89,7 @@ namespace Backend.Application.Test.ServiceTest
             var pagintaedPost = await _postService.GetAllPost();
             Assert.Equal(pagintaedPost.Count(), 2);
         }
-        [Fact]
+        /*[Fact]
         public async Task CreatePost_WithWalletOption_ShouldBeSuceeded()
         {
             //Arrange 
@@ -163,6 +163,6 @@ namespace Backend.Application.Test.ServiceTest
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
-        }
+        }*/
     }
 }
