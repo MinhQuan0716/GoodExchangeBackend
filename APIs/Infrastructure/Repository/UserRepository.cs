@@ -47,7 +47,8 @@ namespace Infrastructure.Repository
                 UserProfileImage=x.ProfileImage,
                 Phonenumber=x.PhoneNumber,
                 Rating=x.RatedUsers.Count()>0?
-                x.RatedUsers.Sum(rate=>rate.RatingPoint)/x.RatedUsers.Count():0
+                x.RatedUsers.Sum(rate=>rate.RatingPoint)/x.RatedUsers.Count():0,
+                VerifyStatus=x.VerifyUser.VerificationStatus.VerificationStatusName
             }).SingleOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
         }

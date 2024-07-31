@@ -16,6 +16,7 @@ namespace Application.ViewModel.UserModel
         public string?Phonenumber { get; set; } 
         public double Rating { get; set; }
         public DateOnly?Birthday { get; set; }
+        public string VerifyStatus { get; set; }
         
     }
 }
