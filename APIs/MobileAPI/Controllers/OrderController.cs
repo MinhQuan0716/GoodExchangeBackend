@@ -137,5 +137,23 @@ namespace MobileAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrder()
+        {
+            try
+            {
+                var orderList = await _orderService.GetAllOrderByCurrentUser();
+                if (orderList.Any())
+                {
+                    return Ok(orderList);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
