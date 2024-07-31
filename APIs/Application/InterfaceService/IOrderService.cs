@@ -21,5 +21,6 @@ namespace Application.InterfaceService
         Task<bool> CancleOrderForAdmin(Guid orderId);
         Task<List<ReceiveOrderViewModel>> GetAllOrderAsync();
         Task<List<ReceiveOrderViewModel>> GetAllOrderByChatRoomId(Guid chatRoomId);
+        Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUser();
     }
 }

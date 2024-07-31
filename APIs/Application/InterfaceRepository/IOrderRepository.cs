@@ -18,5 +18,6 @@ namespace Application.InterfaceRepository
         Task<ReceiveOrderViewModel> GetOrderDetail(Guid orderId);
         Task<List<ReceiveOrderViewModel>> GetAllOrder();
         Task<List<ReceiveOrderViewModel>> GetAllRequestBy2UserId(Guid userId1, Guid userId2);
+        Task<List<ReceiveOrderViewModel>> GetAllOrderByUserId(Guid userId);
     }
 }

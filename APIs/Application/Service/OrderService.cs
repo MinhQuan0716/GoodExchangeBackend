@@ -249,5 +249,10 @@ namespace Application.Service
             }
             throw new Exception("chatRoom not exist");
         }
+
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUser()
+        {
+            return await _unitOfWork.OrderRepository.GetAllOrderByUserId(_claimService.GetCurrentUserId) ?? new List<ReceiveOrderViewModel>();
+        }
     }
 }
