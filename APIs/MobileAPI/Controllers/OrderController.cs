@@ -119,5 +119,23 @@ namespace MobileAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrderByChatRoomId(Guid chatRoomId)
+        {
+            try
+            {
+                var orderList = await _orderService.GetAllOrderByChatRoomId(chatRoomId);
+                if (orderList.Any())
+                {
+                    return Ok(orderList);
+                }
+                return NotFound();
+            }
+            catch(Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

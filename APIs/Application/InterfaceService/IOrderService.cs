@@ -20,5 +20,6 @@ namespace Application.InterfaceService
         Task<bool> ConfirmOrder(Guid orderId);
         Task<bool> CancleOrderForAdmin(Guid orderId);
         Task<List<ReceiveOrderViewModel>> GetAllOrderAsync();
+        Task<List<ReceiveOrderViewModel>> GetAllOrderByChatRoomId(Guid chatRoomId);
     }
 }

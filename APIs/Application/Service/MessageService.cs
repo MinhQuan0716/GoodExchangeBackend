@@ -124,7 +124,8 @@ namespace Application.Service
                         {
                             OrderId = order.Id,
                             Amount = postForProductPrice.ProductPrice,
-                            TransactionType = "Purchase pending"
+                            TransactionType = "Purchase pending",
+                            WalletId = wallet.Id,
                         };
                         await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
                         await _unitOfWork.SaveChangeAsync();
@@ -205,7 +206,8 @@ namespace Application.Service
                         {
                             OrderId = order.Id,
                             Amount = postForProductPrice.ProductPrice,
-                            TransactionType = "Purchase pending"
+                            TransactionType = "Purchase pending",
+                            WalletId = wallet.Id
                         };
                         await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
                         await _unitOfWork.SaveChangeAsync();

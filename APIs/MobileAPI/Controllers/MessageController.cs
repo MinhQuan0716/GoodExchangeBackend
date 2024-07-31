@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.Service;
 using Application.ViewModel.MessageModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,13 @@ namespace MobileAPI.Controllers
         private readonly IMessageService _messageService;
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IOrderService _orderService;
-
-        public MessageController(IMessageService messageService, IHubContext<ChatHub> hubContext, IOrderService orderService)
+        private readonly IPostService _postService;
+        public MessageController(IMessageService messageService, IHubContext<ChatHub> hubContext, IOrderService orderService, IPostService postService)
         {
             _messageService = messageService;
             _hubContext = hubContext;
             _orderService = orderService;
+            _postService = postService;
         }
         /*[Authorize]
         [HttpPost]
@@ -55,6 +57,11 @@ namespace MobileAPI.Controllers
             if (checkOrderStatus)
             {
                 return BadRequest("Post already get accept by other user");
+            }
+            var checkPost = await _postService.GetPostDetailAsync(postId);
+            if (checkPost.PostAuthor.AuthorId == userId)
+            {
+                return BadRequest("User can not order their own post");
             }
             var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
             if (userChatRooms == null)
