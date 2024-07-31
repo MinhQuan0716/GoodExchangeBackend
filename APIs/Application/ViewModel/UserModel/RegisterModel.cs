@@ -19,5 +19,6 @@ namespace Application.ViewModel.UserViewModel
         public string Phonenumber { get; set; }
         public string Homeaddress { get; set; }
         public string? ProfileImage { get; set; }
+        public string code { get; set; }
     }
 }

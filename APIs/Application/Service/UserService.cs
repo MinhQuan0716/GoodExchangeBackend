@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -56,6 +57,11 @@ namespace Application.Service
 
         public async Task<bool> CreateAccount(RegisterModel registerModel)
         {
+            var email = _cacheService.GetData<string>(registerModel.code);
+            if (email == null)
+            {
+                throw new Exception("code not correct");
+            }
             var user = await _unitOfWork.UserRepository.FindUserByEmail(registerModel.Email);
             if (user != null)
             {
