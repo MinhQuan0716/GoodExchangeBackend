@@ -53,22 +53,29 @@ namespace MobileAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> ContactNow(Guid userId, Guid postId)
         {
-            var checkOrderStatus = await _orderService.CheckOrderStatusByPostId(postId);
-            if (checkOrderStatus)
+            try
             {
-                return BadRequest("Post already get accept by other user");
+                var checkOrderStatus = await _orderService.CheckOrderStatusByPostId(postId);
+                if (checkOrderStatus)
+                {
+                    return BadRequest("Post already get accept by other user");
+                }
+                var checkPost = await _postService.GetPostDetailAsync(postId);
+                if (checkPost.PostAuthor.AuthorId == userId)
+                {
+                    return BadRequest("User can not order their own post");
+                }
+                var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
+                if (userChatRooms == null)
+                {
+                    return BadRequest("userId not exist");
+                }
+                return Ok(userChatRooms);
             }
-            var checkPost = await _postService.GetPostDetailAsync(postId);
-            if (checkPost.PostAuthor.AuthorId == userId)
+            catch (Exception ex)
             {
-                return BadRequest("User can not order their own post");
+                return BadRequest(ex.Message);
             }
-            var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
-            if (userChatRooms == null)
-            {
-                return BadRequest("userId not exist");
-            }
-            return Ok(userChatRooms);
         }
     }
 }

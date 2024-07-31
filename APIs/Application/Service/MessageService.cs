@@ -83,6 +83,17 @@ namespace Application.Service
                 }
                 else
                 {
+                    var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+                    if (checkOrders != null && checkOrders.Any())
+                    {
+                        foreach (var item in checkOrders)
+                        {
+                            if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
+                            {
+                                throw new Exception("This post already been sold");
+                            }
+                        }
+                    }
                     // create order
                     var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
                     if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
@@ -164,6 +175,17 @@ namespace Application.Service
                 }
                 else
                 {
+                    var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+                    if (checkOrders != null && checkOrders.Any())
+                    {
+                        foreach (var item in checkOrders)
+                        {
+                            if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
+                            {
+                                throw new Exception("This post already been sold");
+                            }
+                        }
+                    }
                     //check duplicate order
                     var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
                     if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())

@@ -135,7 +135,7 @@ namespace Application.Service
             var OrderList = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
             foreach(var order in OrderList)
             {
-                if (order.OrderStatusId == 2)
+                if (order.OrderStatusId == 2 || order.OrderStatusId == 4 || order.OrderStatusId == 5)
                 {
                     return true;
                 }
