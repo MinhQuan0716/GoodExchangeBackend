@@ -121,11 +121,11 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllOrderByChatRoomId(Guid chatRoomId)
+        public async Task<IActionResult> GetAllOrderByChatRoomId(Guid roomId)
         {
             try
             {
-                var orderList = await _orderService.GetAllOrderByChatRoomId(chatRoomId);
+                var orderList = await _orderService.GetAllOrderByChatRoomId(roomId);
                 if (orderList.Any())
                 {
                     return Ok(orderList);
