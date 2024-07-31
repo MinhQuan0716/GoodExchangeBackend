@@ -18,6 +18,7 @@ namespace MobileAPI.Controllers
         {
             _userService = userService;
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
