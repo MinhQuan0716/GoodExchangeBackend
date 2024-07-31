@@ -33,6 +33,9 @@
     <None Update="ImageFolder\Class Diagram-Create Post.drawio.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ImageFolder\Class Diagram-UpdatePost.drawio.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
