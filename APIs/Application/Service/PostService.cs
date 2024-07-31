@@ -82,7 +82,11 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            string folderName = "Product";
+            var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
+            if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
+            {
+                throw new Exception("You must be verified to be able to do this action");
+            }
             if (postModel.PaymentType == "Subscription")
             {
                 var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
