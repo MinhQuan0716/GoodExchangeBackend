@@ -60,11 +60,6 @@ namespace MobileAPI.Controllers
                 {
                     return BadRequest("Post already get accept by other user");
                 }
-                var checkPost = await _postService.GetPostDetailAsync(postId);
-                if (checkPost.PostAuthor.AuthorId == userId)
-                {
-                    return BadRequest("User can not order their own post");
-                }
                 var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
                 if (userChatRooms == null)
                 {
