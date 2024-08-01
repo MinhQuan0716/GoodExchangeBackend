@@ -55,6 +55,7 @@ namespace Application.Service
 
             var reportModels = reports.Select(report => new ReportModel
             {
+                Id = report.Id,
                 ReportContent = report.ReportContent,
                 ReportUserId = report.ReportUserId,
                 ReportPostId = report.ReportPostId,

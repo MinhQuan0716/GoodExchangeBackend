@@ -10,6 +10,7 @@ namespace Application.ViewModel.ReportModel
 {
     public class ReportModel
     {
+        public Guid Id { get; set; }
         public string ReportContent { get; set; }
         public Guid? ReportUserId { get; set; }
         public Guid? ReportPostId { get; set; }
