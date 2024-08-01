@@ -54,7 +54,8 @@ namespace Infrastructure.Repository
                                                                   ProfileImage = x.UserImage,
                                                                   RoleName = x.User.Role.RoleName,
                                                                   UserName = x.User.UserName,
-                                                                  VerifyStatus = x.VerificationStatus.VerificationStatusName
+                                                                  VerifyStatus = x.VerificationStatus.VerificationStatusName,
+                                                                  VerifyImage=x.UserImage
                                                               }).SingleAsync();
             return verfiyModel;
         }
@@ -71,7 +72,8 @@ namespace Infrastructure.Repository
                                                                ProfileImage = x.UserImage,
                                                                RoleName = x.User.Role.RoleName,
                                                                UserName = x.User.UserName,
-                                                               VerifyStatus = x.VerificationStatus.VerificationStatusName
+                                                               VerifyStatus = x.VerificationStatus.VerificationStatusName,
+                                                               VerifyImage = x.UserImage
                                                            }).SingleAsync();
             return verfiyModel;
         }

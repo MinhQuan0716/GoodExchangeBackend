@@ -377,7 +377,7 @@ namespace Application.Service
         public async Task<bool> UploadProfileImage(IFormFile userImage)
         {
             var findUser = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
-            if (findUser !=null)
+            if (findUser ==null)
             {
                 return false;
             }

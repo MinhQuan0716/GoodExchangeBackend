@@ -14,5 +14,6 @@ namespace Application.ViewModel.VerifyModel
         public string ProfileImage { get; set; }
         public string RoleName { get; set; }
         public string VerifyStatus { get; set; }
+        public string VerifyImage { get; set; }
     }
 }
