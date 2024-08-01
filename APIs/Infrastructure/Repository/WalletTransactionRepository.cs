@@ -26,6 +26,7 @@ namespace Infrastructure.Repository
                                                                        .ThenInclude(wallet => wallet.Owner).AsSplitQuery()
                                                                        .Select(x => new TransactionViewModel
                                                                        {
+                                                                           Id=x.Id,
                                                                            Username=x.Wallet.Owner.UserName,
                                                                            Email=x.Wallet.Owner.Email,
                                                                            Action=x.TransactionType,
