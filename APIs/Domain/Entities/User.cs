@@ -20,7 +20,7 @@ namespace Domain.Entities
         public bool? IsBuisnessAccount { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
-        public Guid WalletId { get; set; }
+        public Guid? WalletId { get; set; }
         public Wallet Wallet { get; set; }
         public Guid? VerifyUserId {  get; set; }
         public VerifyUser VerifyUser { get; set; }

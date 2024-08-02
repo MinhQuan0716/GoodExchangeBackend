@@ -5,6 +5,7 @@ using Infrastructure.Mappers;
 using Application.SchemaFilter;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using WebAPI.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -82,7 +83,7 @@ if (app.Environment.IsProduction())
 }
 
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseSession();
 app.UseCors("AllowAll");
 app.MapControllers();
