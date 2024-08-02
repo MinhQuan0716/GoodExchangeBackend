@@ -74,13 +74,25 @@ namespace Application.Service
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
             newAccount.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
             await _unitOfWork.UserRepository.AddAsync(newAccount);
-            await _unitOfWork.SaveChangeAsync();
-            var verfiyUserId = await CreateVerifyUser(newAccount.Id);
-            newAccount.VerifyUserId = verfiyUserId;
-            var WalletId = await CreateWallet(newAccount.Id);
-            newAccount.WalletId = WalletId;
-            _unitOfWork.UserRepository.Update(newAccount);
-            return await _unitOfWork.SaveChangeAsync()>0;
+            var changesSaved = await _unitOfWork.SaveChangeAsync();
+            if (changesSaved > 0)
+            {
+                var registerUser = await _unitOfWork.UserRepository.GetByIdAsync(newAccount.Id);
+                if (registerUser == null)
+                {
+                    throw new Exception("Failed to retrieve the newly created user.");
+                }
+
+                var verifyUserId = await CreateVerifyUser(registerUser.Id);
+                registerUser.VerifyUserId = verifyUserId;
+
+                var walletId = await CreateWallet(registerUser.Id);
+                registerUser.WalletId = walletId;
+
+                _unitOfWork.UserRepository.Update(registerUser);
+                return await _unitOfWork.SaveChangeAsync() > 0;
+            }
+            return false;
         }
 
         public async Task<Token> Login(LoginModel loginModel, string apiOrigin)
@@ -327,7 +339,7 @@ namespace Application.Service
             };
             await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
             await _unitOfWork.SaveChangeAsync();
-            var verifyUser = await _unitOfWork.WalletRepository.FindWalletByUserId(userId);
+            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(userId);
             return verifyUser.Id;
         }
         public async Task<bool> PromoteUserToModerator(Guid userId)

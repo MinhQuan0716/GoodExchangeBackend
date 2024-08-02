@@ -9,6 +9,7 @@ using Domain.Entities;
 using Fare;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Moq;
 using System;
@@ -33,11 +34,20 @@ namespace Backend.Application.Test.ServiceTest
             //Arrange
             var listUser = new List<User>();
             var registerModel = _fixture.Build<RegisterModel>().With(x => x.Phonenumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x => x.Birthday, "2002-09-12").Create();
+            var newUser = new User { Id = Guid.NewGuid(), Email = registerModel.Email };
+            var newVerifyUser = new VerifyUser { Id = Guid.NewGuid(), UserId = newUser.Id };
+            var newWallet = new Wallet {Id = Guid.NewGuid(), OwnerId = newUser.Id };
             //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
             var newAccount = _mapper.Map<User>(registerModel);
+            _unitOfWorkMock.Setup(um => um.UserRepository.GetByIdAsync(newAccount.Id)).ReturnsAsync(newUser);
             _unitOfWorkMock.Setup(um => um.UserRepository.AddAsync(newAccount)).Verifiable();
             _unitOfWorkMock.Setup(um => um.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(um => um.VerifyUsersRepository.AddAsync(It.IsAny<VerifyUser>())).Verifiable();
+            _unitOfWorkMock.Setup(um => um.VerifyUsersRepository.FindVerifyUserIdByUserId(newUser.Id))
+                .ReturnsAsync(newVerifyUser);
+            _unitOfWorkMock.Setup(um => um.WalletRepository.FindWalletByUserId(newUser.Id))
+                .ReturnsAsync(newWallet);
             bool isCreated = await _userService.CreateAccount(registerModel);
             //Assert
             Assert.True(isCreated);
