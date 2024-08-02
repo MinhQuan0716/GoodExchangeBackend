@@ -100,6 +100,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<PerformanceMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseSession();
 
 //app.UseRateLimiter();
