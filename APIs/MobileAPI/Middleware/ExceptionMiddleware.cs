@@ -18,16 +18,21 @@ namespace MobileAPI.Middleware
             {
                 await _next(httpContext);
             }
+            catch (ArgumentException ex)
+            {
+                await HandleExceptionAsync(httpContext, ex, HttpStatusCode.BadRequest);
+            }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, ex,HttpStatusCode.InternalServerError);
             }
+
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = (int)statusCode;
             var result = JsonSerializer.Serialize(new { message = exception.Message });
             return context.Response.WriteAsync(result);
         }
