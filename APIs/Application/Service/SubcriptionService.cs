@@ -60,6 +60,7 @@ namespace Application.Service
                                 WalletId= wallet.Id,    
                                 TransactionType=$"Extend subscription for {subscription.Description}",
                                 SubscriptionId =subscription.Id,
+                                Amount=(float)subscription.Price
                             };
                             _unitOfWork.WalletTransactionRepository.AddAsync(newTransaction);
                         }

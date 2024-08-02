@@ -100,7 +100,7 @@ namespace Application.Service
             var pushTicketReq = new PushTicketRequest()
             {
                 PushTo = newList, // Target device token
-                PushBadgeCount = 1, // Badge count to be displayed on the app icon
+                PushBadgeCount = 2, // Badge count to be displayed on the app icon
                 PushBody = "Your verification has been denied" // Message content of the push notification
             };
             var result = await expoSDKClient.PushSendAsync(pushTicketReq);
