@@ -31,7 +31,7 @@ namespace Application.Service
             {
                 throw new Exception("Order not found");
             }
-
+            //check order
             if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
             {
                 throw new Exception("You already accepted or rejected this order");
@@ -59,7 +59,6 @@ namespace Application.Service
                     }
                 }
             }
-
             var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
             if (post != null)
             {
@@ -73,7 +72,6 @@ namespace Application.Service
                         walletTransaction.TransactionType = "Purchase complete";
                         _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
                     }
-
                     _unitOfWork.WalletRepository.Update(wallet);
                 }
             }
@@ -150,7 +148,6 @@ namespace Application.Service
             {
                 throw new Exception("Order not found");
             }
-
             if (order.OrderStatusId == 2)
             {
                 throw new Exception("Order has already been accepted and cannot be canceled.");
