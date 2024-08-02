@@ -22,5 +22,7 @@ namespace Application.InterfaceService
         Task<List<ReceiveOrderViewModel>> GetAllOrderAsync();
         Task<List<ReceiveOrderViewModel>> GetAllOrderByChatRoomId(Guid chatRoomId);
         Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUser();
+        Task<List<SentOrderViewModel>> GetSendOrderByChatRoomId(Guid chatRoomId);
+        Task<List<ReceiveOrderViewModel>> GetReceiveOrderByChatRoomId(Guid chatRoomId);
     }
 }

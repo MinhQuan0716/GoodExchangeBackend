@@ -267,5 +267,49 @@ namespace Application.Service
         {
             return await _unitOfWork.OrderRepository.GetAllOrderByUserId(_claimService.GetCurrentUserId) ?? new List<ReceiveOrderViewModel>();
         }
+
+        public async Task<List<SentOrderViewModel>> GetSendOrderByChatRoomId(Guid chatRoomId)
+        {
+            var chatRoom = await _unitOfWork.ChatRoomRepository.GetByIdAsync(chatRoomId);
+            if (chatRoom != null)
+            {
+                var currentUserId = _claimService.GetCurrentUserId;
+                var postOwnerId = new Guid();
+                if (currentUserId == chatRoom.SenderId)
+                {
+                    postOwnerId = chatRoom.ReceiverId;
+                }
+                else
+                {
+                    currentUserId = chatRoom.ReceiverId;
+                    postOwnerId = chatRoom.SenderId;
+                }
+                var listOrder = await _unitOfWork.OrderRepository.GetAllSendOrderBy2UserId(currentUserId, postOwnerId) ?? new List<SentOrderViewModel>();
+                return listOrder;
+            }
+            throw new Exception("chatRoom not exist");
+        }
+
+        public async Task<List<ReceiveOrderViewModel>> GetReceiveOrderByChatRoomId(Guid chatRoomId)
+        {
+            var chatRoom = await _unitOfWork.ChatRoomRepository.GetByIdAsync(chatRoomId);
+            if (chatRoom != null)
+            {
+                var currentUserId = _claimService.GetCurrentUserId;
+                var orderCreatedBy = new Guid();
+                if (currentUserId == chatRoom.SenderId)
+                {
+                    orderCreatedBy = chatRoom.ReceiverId;
+                }
+                else
+                {
+                    currentUserId = chatRoom.ReceiverId;
+                    orderCreatedBy = chatRoom.SenderId;
+                }
+                var listOrder = await _unitOfWork.OrderRepository.GetAllReceiveOrderBy2UserId(orderCreatedBy, currentUserId) ?? new List<ReceiveOrderViewModel>();
+                return listOrder;
+            }
+            throw new Exception("chatRoom not exist");
+        }
     }
 }

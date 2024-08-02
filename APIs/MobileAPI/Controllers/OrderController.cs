@@ -139,6 +139,24 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
+        public async Task<IActionResult> GetSendOrderByChatRoomId(Guid roomId)
+        {
+            try
+            {
+                var orderList = await _orderService.GetSendOrderByChatRoomId(roomId);
+                if (orderList.Any())
+                {
+                    return Ok(orderList);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetAllOrder()
         {
             try
