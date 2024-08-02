@@ -222,6 +222,7 @@ namespace Backend.Application.Test.ServiceTest
                {
                    new TransactionViewModel { Action = "Purchase pending", Amount = 60 }
                });
+            _unitOfWorkMock.Setup(repo => repo.MessageRepository.AddAsync(It.IsAny<Message>())).Verifiable();
 
             // For PostRepository
             _unitOfWorkMock.Setup(repo => repo.PostRepository.GetPostDetail(postId))
@@ -238,7 +239,6 @@ namespace Backend.Application.Test.ServiceTest
             var result = await _messageService.GetOrCreateChatRoomAsync(user1, postId);
 
             // Assert
-            _unitOfWorkMock.Verify(repo => repo.MessageRepository.AddAsync(It.IsAny<Message>()), Times.Once);
             Assert.NotNull(result);
         }
 

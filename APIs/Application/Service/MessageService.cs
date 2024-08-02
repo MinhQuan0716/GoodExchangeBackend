@@ -81,49 +81,35 @@ namespace Application.Service
                     SenderId = user2,
                     ReceiverId = user1
                 };
-                var room = _mapper.Map<ChatRoom>(newRoom);
                 await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);
                 await _unitOfWork.SaveChangeAsync();
                 chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
             }
+
             var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
-            if (checkOrders != null && checkOrders.Any())
+            if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5))
             {
-                foreach (var item in checkOrders)
-                {
-                    if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
-                    {
-                        throw new Exception("This post already been sold");
-                    }
-                }
+                throw new Exception("This post has already been sold");
             }
+
             var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
-            if(duplicateRequest != null)
+            if (duplicateRequest != null && duplicateRequest.Any(x => x.CreatedBy == _claimService.GetCurrentUserId))
             {
-                if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
-                {
-                    return chatRoom;
-                }
+                return chatRoom;
             }
+
             var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
             var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
             var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
-            float pendingTransaction = 0;
-            if (wallletTransaction != null)
-            {
-                foreach (var item in wallletTransaction)
-                {
-                    if (item.Action == "Purchase pending")
-                    {
-                        pendingTransaction += item.Amount;
-                    }
-                }
-            }
+
+            float pendingTransaction = wallletTransaction?.Where(item => item.Action == "Purchase pending").Sum(item => item.Amount) ?? 0;
+
             if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
             {
                 throw new Exception("You don't have enough money to order this transaction");
             }
-            Order order = new Order
+
+            var order = new Order
             {
                 PostId = postId,
                 OrderStatusId = 1,
@@ -133,6 +119,7 @@ namespace Application.Service
             };
             await _unitOfWork.OrderRepository.AddAsync(order);
             await _unitOfWork.SaveChangeAsync();
+
             if (postForProductPrice.ConditionTypeId == 1)
             {
                 var newWalletTransaction = new WalletTransaction
@@ -145,8 +132,9 @@ namespace Application.Service
                 await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
                 await _unitOfWork.SaveChangeAsync();
             }
-            var duplicateMessage = _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl);
-            if (duplicateMessage != null)
+
+            var duplicateMessage = await _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl);
+            if (duplicateMessage == null)
             {
                 var createMessageModel = new CreateMessageModel
                 {
@@ -159,8 +147,10 @@ namespace Application.Service
                 await _unitOfWork.MessageRepository.AddAsync(newMessage);
                 await _unitOfWork.SaveChangeAsync();
             }
+
             return await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
         }
+
         public async Task<ChatRoomWithOrder> GetMessagesByChatRoomId(Guid chatRoomId)
         {
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(chatRoomId);
