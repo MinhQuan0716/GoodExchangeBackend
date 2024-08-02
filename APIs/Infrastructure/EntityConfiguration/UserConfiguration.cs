@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Util;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -14,6 +15,27 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasIndex(x => x.Email).IsUnique(true);
+            builder.HasData(new User
+            {
+                Id=Guid.NewGuid(),
+                UserName="Admin",
+                Email="admin@gmail.com",
+                PasswordHash=new string("Admin@123").Hash(),
+                RoleId=1,
+                WalletId=Guid.Empty,
+                VerifyUserId=Guid.Empty,
+            },
+            new User
+            {
+                Id=Guid.NewGuid(),
+                UserName = "Moderator",
+                Email = "moderator@gmail.com",
+                PasswordHash = new string("Moderator").Hash(),
+                RoleId = 2,
+                WalletId = Guid.Empty,
+                VerifyUserId=Guid.Empty,
+            }
+            );
         }
     }
 }
