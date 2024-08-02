@@ -22,7 +22,7 @@ namespace Infrastructure.Repository
 
         public async Task<VerifyUser> FindVerifyUserIdByUserId(Guid userId)
         {
-            return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId).Include(m => m.VerificationStatus).SingleOrDefaultAsync();
+            return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId&&x.IsDelete==false).Include(m => m.VerificationStatus).SingleAsync();
         }
 
         public async Task<List<VerifyViewModel>> GetAllVerifyUserAsync()

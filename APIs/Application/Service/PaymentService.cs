@@ -57,7 +57,7 @@ namespace Application.Service
                 CreatedBy=userWallet.Id,
                 SubscriptionId=subscriptionId,
                 TransactionType=$"Purchase subscription {subscription.Description}",
-                Amount=subscription.Price,
+                Amount=(float)subscription.Price,
             };
             SubscriptionHistory subcriptionHistory = new SubscriptionHistory()
             {
@@ -158,6 +158,13 @@ namespace Application.Service
                 Guid checkUserId = Guid.Parse(userId);
                 var userWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(checkUserId);
                 userWallet.UserBalance += amount;
+                WalletTransaction walletTransaction = new WalletTransaction()
+                {
+                    TransactionType = "Deposit into Wallet",
+                    WalletId = userWallet.Id,
+                    Amount = (float)amount,
+                };
+                _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);
                 _unitOfWork.WalletRepository.Update(userWallet);
             }
             else
