@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceRepository;
+using Microsoft.EntityFrameworkCore.Storage;
 using Application.InterfaceService;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace Application
         public IWalletTransactionRepository WalletTransactionRepository { get; }
         public IReportRepository ReportRepository { get; }
         public Task<int> SaveChangeAsync();
+        public Task<IDbContextTransaction> BeginTransactionAsync();
 
     }
 }

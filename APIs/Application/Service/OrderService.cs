@@ -26,63 +26,76 @@ namespace Application.Service
 
         public async Task<bool> AcceptRequest(Guid requestId)
         {
-            var order = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
-            if (order == null)
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
-                throw new Exception("Order not found");
-            }
-
-            if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
-            {
-                throw new Exception("You already accepted or rejected this order");
-            }
-
-            // Update the request status
-            order.OrderStatusId = 2;
-            _unitOfWork.OrderRepository.Update(order);
-
-            // Get all other requests by post ID and update their statuses to rejected
-            var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(order.PostId);
-            if (rejectOrders != null && rejectOrders.Any())
-            {
-                // Update their statuses to rejected
-                foreach (var item in rejectOrders)
+                try
                 {
-                    if (item.Id != order.Id)  // Skip the already updated request
+                    var order = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
+                    if (order == null)
                     {
-                        item.OrderStatusId = 3;
-                        _unitOfWork.OrderRepository.Update(item);
-                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
-                        if (wallletTransaction != null)
+                        throw new Exception("Order not found");
+                    }
+
+                    if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
+                    {
+                        throw new Exception("You already accepted or rejected this order");
+                    }
+
+                    // Update the request status
+                    order.OrderStatusId = 2;
+                    _unitOfWork.OrderRepository.Update(order);
+
+                    var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(order.PostId);
+                    if (rejectOrders != null && rejectOrders.Any())
+                    {
+                        foreach (var item in rejectOrders)
                         {
-                            wallletTransaction.TransactionType = "Purchase Denied";
-                            _unitOfWork.WalletTransactionRepository.Update(wallletTransaction);
+                            if (item.Id != order.Id)
+                            {
+                                item.OrderStatusId = 3;
+                                _unitOfWork.OrderRepository.Update(item);
+                                var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
+                                if (walletTransaction != null)
+                                {
+                                    walletTransaction.TransactionType = "Purchase Denied";
+                                    _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                                }
+                            }
                         }
                     }
-                }
-            }
-            var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
-            if (post != null)
-            {
-                if (post.ConditionTypeId == 1)
-                {
-                    var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
-                    var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
-                    wallet.UserBalance -= post.ProductPrice;
-                    if (wallletTransaction != null)
-                    {
-                        wallletTransaction.TransactionType = "Purchase complete";
-                        _unitOfWork.WalletTransactionRepository.Update(wallletTransaction);
-                    }
-                    
-                    _unitOfWork.WalletRepository.Update(wallet);
-                    await _unitOfWork.SaveChangeAsync();
-                }
-            }
 
-            // Save all changes
-            return await _unitOfWork.SaveChangeAsync() > 0;
+                    var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
+                    if (post != null)
+                    {
+                        if (post.ConditionTypeId == 1)
+                        {
+                            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
+                            var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
+                            wallet.UserBalance -= post.ProductPrice;
+                            if (walletTransaction != null)
+                            {
+                                walletTransaction.TransactionType = "Purchase complete";
+                                _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                            }
+
+                            _unitOfWork.WalletRepository.Update(wallet);
+                            await _unitOfWork.SaveChangeAsync();
+                        }
+                    }
+
+                    // Commit the transaction
+                    await transaction.CommitAsync();
+                    return await _unitOfWork.SaveChangeAsync() > 0;
+                }
+                catch (Exception)
+                {
+                    // Rollback the transaction in case of an error
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
+
         public async Task<bool> DeliveredOrder(Guid orderId)
         {
             var request = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);

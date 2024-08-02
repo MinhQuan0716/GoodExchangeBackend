@@ -37,7 +37,7 @@ namespace Infrastructure.Repository
         public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
         {
 #pragma warning disable CS8603 // Possible null reference return.
-            return await _dbContext.Users.Where(x => x.Id == userId).Include(x=>x.VerifyUser).AsSplitQuery().Select(x => new CurrentUserModel
+            return await _dbContext.Users.Where(x => x.Id == userId).Include(x=>x.VerifyUser).AsSplitQuery().Include(x=>x.RatedUsers).Select(x => new CurrentUserModel
             {
                 Userid=x.Id,
                 Username=x.UserName,

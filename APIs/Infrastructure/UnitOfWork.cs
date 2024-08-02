@@ -2,7 +2,9 @@
 using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +95,10 @@ namespace Infrastructure
         public Task<int> SaveChangeAsync()
         {
             return _dbContext.SaveChangesAsync();
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _dbContext.Database.BeginTransactionAsync();
         }
     }
 }

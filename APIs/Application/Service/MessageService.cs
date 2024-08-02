@@ -133,15 +133,18 @@ namespace Application.Service
             };
             await _unitOfWork.OrderRepository.AddAsync(order);
             await _unitOfWork.SaveChangeAsync();
-            var newWalletTransaction = new WalletTransaction
+            if (postForProductPrice.ConditionTypeId == 1)
             {
-                OrderId = order.Id,
-                Amount = postForProductPrice.ProductPrice,
-                TransactionType = "Purchase pending",
-                WalletId = wallet.Id,
-            };
-            await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
-            await _unitOfWork.SaveChangeAsync();
+                var newWalletTransaction = new WalletTransaction
+                {
+                    OrderId = order.Id,
+                    Amount = postForProductPrice.ProductPrice,
+                    TransactionType = "Purchase pending",
+                    WalletId = wallet.Id,
+                };
+                await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
+                await _unitOfWork.SaveChangeAsync();
+            }
             var duplicateMessage = _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl);
             if (duplicateMessage != null)
             {

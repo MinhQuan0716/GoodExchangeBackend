@@ -74,6 +74,12 @@ namespace Application.Service
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
             newAccount.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
             await _unitOfWork.UserRepository.AddAsync(newAccount);
+            await _unitOfWork.SaveChangeAsync();
+            var verfiyUserId = await CreateVerifyUser(newAccount.Id);
+            newAccount.VerifyUserId = verfiyUserId;
+            var WalletId = await CreateWallet(newAccount.Id);
+            newAccount.WalletId = WalletId;
+            _unitOfWork.UserRepository.Update(newAccount);
             return await _unitOfWork.SaveChangeAsync()>0;
         }
 

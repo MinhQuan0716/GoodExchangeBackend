@@ -55,11 +55,6 @@ namespace MobileAPI.Controllers
         {
             try
             {
-                var checkOrderStatus = await _orderService.CheckOrderStatusByPostId(postId);
-                if (checkOrderStatus)
-                {
-                    return BadRequest("Post already get accept by other user");
-                }
                 var userChatRooms = await _messageService.GetOrCreateChatRoomAsync(userId, postId);
                 if (userChatRooms == null)
                 {

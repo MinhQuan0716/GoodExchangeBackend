@@ -27,21 +27,21 @@ namespace Backend.Application.Test.ServiceTest
         {
             _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object,_uploadFileMock.Object) ;
         }
-        /*[Fact]
+        [Fact]
         public async Task Register_ShouldReturnTrue()
         {
             //Arrange
             var listUser = new List<User>();
-            var registerModel= _fixture.Build<RegisterModel>().With(x=>x.Phonenumber,new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x=>x.Birthday,"2002-09-12").Create();
+            var registerModel = _fixture.Build<RegisterModel>().With(x => x.Phonenumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x => x.Birthday, "2002-09-12").Create();
             //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
             var newAccount = _mapper.Map<User>(registerModel);
-            _unitOfWorkMock.Setup(um => um.UserRepository.AddAsync(newAccount)).Verifiable(); 
-            _unitOfWorkMock.Setup(um=>um.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(um => um.UserRepository.AddAsync(newAccount)).Verifiable();
+            _unitOfWorkMock.Setup(um => um.SaveChangeAsync()).ReturnsAsync(1);
             bool isCreated = await _userService.CreateAccount(registerModel);
             //Assert
             Assert.True(isCreated);
-        }*/
+        }
         [Fact]
         public async Task Regiser_ShouldReturnException()
         {

@@ -103,6 +103,15 @@ namespace Application.Service
                 PushBadgeCount = 1, // Badge count to be displayed on the app icon
                 PushBody = "Your verification has been denied" // Message content of the push notification
             };
+            var result = await expoSDKClient.PushSendAsync(pushTicketReq);
+            if (result?.PushTicketErrors?.Count() > 0)
+            {
+                foreach (var error in result.PushTicketErrors)
+                {
+                    Console.WriteLine($"Error: {error.ErrorCode} - {error.ErrorMessage}");
+                }
+                return false;
+            }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
