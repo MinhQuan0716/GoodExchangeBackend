@@ -50,13 +50,11 @@ namespace Application.Service
                     {
                         item.OrderStatusId = 3;
                         _unitOfWork.OrderRepository.Update(item);
-                        await _unitOfWork.SaveChangeAsync();
                         var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
                         if (walletTransaction != null)
                         {
-                            walletTransaction.TransactionType = "Purchase Denied";
+                            walletTransaction.TransactionType = "Purchase denied";
                             _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
-                            await _unitOfWork.SaveChangeAsync();
                         }
                     }
                 }
@@ -77,10 +75,9 @@ namespace Application.Service
                     }
 
                     _unitOfWork.WalletRepository.Update(wallet);
-                    await _unitOfWork.SaveChangeAsync();
                 }
             }
-            return await _unitOfWork.SaveChangeAsync() > 0;
+            return await _unitOfWork.SaveChangeAsync()>0;
         }
 
         public async Task<bool> DeliveredOrder(Guid orderId)
