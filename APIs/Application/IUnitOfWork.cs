@@ -28,7 +28,6 @@ namespace Application
         public IWalletTransactionRepository WalletTransactionRepository { get; }
         public IReportRepository ReportRepository { get; }
         public Task<int> SaveChangeAsync();
-        public Task<IDbContextTransaction> BeginTransactionAsync();
 
     }
 }

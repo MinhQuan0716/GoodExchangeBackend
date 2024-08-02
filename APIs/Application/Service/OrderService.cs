@@ -26,74 +26,61 @@ namespace Application.Service
 
         public async Task<bool> AcceptRequest(Guid requestId)
         {
-            using (var transaction = await _unitOfWork.BeginTransactionAsync())
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
+            if (order == null)
             {
-                try
+                throw new Exception("Order not found");
+            }
+
+            if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
+            {
+                throw new Exception("You already accepted or rejected this order");
+            }
+
+            // Update the request status
+            order.OrderStatusId = 2;
+            _unitOfWork.OrderRepository.Update(order);
+
+            var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(order.PostId);
+            if (rejectOrders != null && rejectOrders.Any())
+            {
+                foreach (var item in rejectOrders)
                 {
-                    var order = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
-                    if (order == null)
+                    if (item.Id != order.Id)
                     {
-                        throw new Exception("Order not found");
-                    }
-
-                    if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
-                    {
-                        throw new Exception("You already accepted or rejected this order");
-                    }
-
-                    // Update the request status
-                    order.OrderStatusId = 2;
-                    _unitOfWork.OrderRepository.Update(order);
-
-                    var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(order.PostId);
-                    if (rejectOrders != null && rejectOrders.Any())
-                    {
-                        foreach (var item in rejectOrders)
+                        item.OrderStatusId = 3;
+                        _unitOfWork.OrderRepository.Update(item);
+                        await _unitOfWork.SaveChangeAsync();
+                        var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
+                        if (walletTransaction != null)
                         {
-                            if (item.Id != order.Id)
-                            {
-                                item.OrderStatusId = 3;
-                                _unitOfWork.OrderRepository.Update(item);
-                                var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
-                                if (walletTransaction != null)
-                                {
-                                    walletTransaction.TransactionType = "Purchase Denied";
-                                    _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
-                                }
-                            }
-                        }
-                    }
-
-                    var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
-                    if (post != null)
-                    {
-                        if (post.ConditionTypeId == 1)
-                        {
-                            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
-                            var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
-                            wallet.UserBalance -= post.ProductPrice;
-                            if (walletTransaction != null)
-                            {
-                                walletTransaction.TransactionType = "Purchase complete";
-                                _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
-                            }
-
-                            _unitOfWork.WalletRepository.Update(wallet);
+                            walletTransaction.TransactionType = "Purchase Denied";
+                            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
                             await _unitOfWork.SaveChangeAsync();
                         }
                     }
-
-                    // Commit the transaction
-                    await transaction.CommitAsync();
-                    return await _unitOfWork.SaveChangeAsync() > 0;
-                }
-                catch (Exception)
-                {
-                    // Rollback the transaction in case of an error
-                    await transaction.RollbackAsync();
-                    throw;
                 }
             }
+
+            var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
+            if (post != null)
+            {
+                if (post.ConditionTypeId == 1)
+                {
+                    var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
+                    var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
+                    wallet.UserBalance -= post.ProductPrice;
+                    if (walletTransaction != null)
+                    {
+                        walletTransaction.TransactionType = "Purchase complete";
+                        _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                    }
+
+                    _unitOfWork.WalletRepository.Update(wallet);
+                    await _unitOfWork.SaveChangeAsync();
+                }
+            }
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
         public async Task<bool> DeliveredOrder(Guid orderId)
@@ -213,19 +200,6 @@ namespace Application.Service
             if (order == null)
             {
                 throw new Exception("Order not found");
-            }
-
-            if (order.OrderStatusId == 1)
-            {
-                throw new Exception("Order is pending");
-            }
-            if (order.OrderStatusId == 3)
-            {
-                throw new Exception("Order is deny");
-            }
-            if (order.OrderStatusId == 6)
-            {
-                throw new Exception("Order is already cancle");
             }
             order.OrderStatusId = 6;
             _unitOfWork.OrderRepository.Update(order);
