@@ -92,7 +92,6 @@ namespace Application.Service
             {
                 throw new Exception("Order not accepted");
             }
-
             // Update the request status
             request.OrderStatusId = 4;
             _unitOfWork.OrderRepository.Update(request);
@@ -164,6 +163,7 @@ namespace Application.Service
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
             walletTransaction.TransactionType = "purchase cancled";
+            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -198,6 +198,7 @@ namespace Application.Service
             {
                 throw new Exception("Order not found");
             }
+            var orderStatus = order.OrderStatusId;
             order.OrderStatusId = 6;
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
@@ -210,8 +211,11 @@ namespace Application.Service
                 {
                     if (post.ConditionTypeId ==1)
                     {
-                        wallet.UserBalance += post.ProductPrice;
-                        _unitOfWork.WalletRepository.Update(wallet);
+                        if (orderStatus == 2 || orderStatus == 4 || orderStatus == 6)
+                        {
+                            wallet.UserBalance += post.ProductPrice;
+                            _unitOfWork.WalletRepository.Update(wallet);
+                        }
                     }
                 }
             }
