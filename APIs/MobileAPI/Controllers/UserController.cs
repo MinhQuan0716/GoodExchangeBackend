@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.Util;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using Domain.Entities;
@@ -14,9 +15,11 @@ namespace MobileAPI.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly ISendMailHelper _sendMailHelper;
+        public UserController(IUserService userService, ISendMailHelper sendMailHelper)
         {
             _userService = userService;
+            _sendMailHelper = sendMailHelper;
         }
 
         [HttpPost]
@@ -163,16 +166,16 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
-      /*  [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)
-        {
-            bool uploadImage=await _userService.UploadImageForVerifyUser(userImage);
-            if (uploadImage)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }*/
+        /*  [Authorize]
+          [HttpPost]
+          public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)
+          {
+              bool uploadImage=await _userService.UploadImageForVerifyUser(userImage);
+              if (uploadImage)
+              {
+                  return Ok();
+              }
+              return BadRequest();
+          }*/
     }
 }

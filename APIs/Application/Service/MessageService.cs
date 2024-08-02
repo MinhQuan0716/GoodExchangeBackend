@@ -74,172 +74,90 @@ namespace Application.Service
             }
             Guid user2 = _claimService.GetCurrentUserId;
             var chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
-            if (chatRoom != null)
+            if (chatRoom == null)
             {
-                var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
-                if (!post.Where(x => x.Id == postId).Any())
+                var newRoom = new ChatRoom
                 {
-
-                }
-                else
-                {
-                    var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
-                    if (checkOrders != null && checkOrders.Any())
-                    {
-                        foreach (var item in checkOrders)
-                        {
-                            if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
-                            {
-                                throw new Exception("This post already been sold");
-                            }
-                        }
-                    }
-                    // create order
-                    var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
-                    if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
-                    {
-                        throw new Exception("You already order this");
-                    }
-                    else
-                    {
-                        Order order = new Order
-                        {
-                            PostId = postId,
-                            OrderStatusId = 1,
-                            OrderMessage = "",
-                            UserId = user2,
-                            CreatedBy = user2,
-                        };
-                        await _unitOfWork.OrderRepository.AddAsync(order);
-                        await _unitOfWork.SaveChangeAsync();
-                        // create pending transaction
-                        var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
-                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
-                        var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
-                        float pendingTransaction = 0;
-                        if (wallletTransaction != null)
-                        {
-                            foreach (var item in wallletTransaction)
-                            {
-                                if (item.Action == "Purchase pending")
-                                {
-                                    pendingTransaction += item.Amount;
-                                }
-                            }
-                        }
-                        if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
-                        {
-                            throw new Exception("You don't have enough money to order this transaction");
-                        }
-                        var newWalletTransaction = new WalletTransaction
-                        {
-                            OrderId = order.Id,
-                            Amount = postForProductPrice.ProductPrice,
-                            TransactionType = "Purchase pending",
-                            WalletId = wallet.Id,
-                        };
-                        await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
-                        await _unitOfWork.SaveChangeAsync();
-                    }
-                }
-                return chatRoom;
+                    SenderId = user2,
+                    ReceiverId = user1
+                };
+                var room = _mapper.Map<ChatRoom>(newRoom);
+                await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);
+                await _unitOfWork.SaveChangeAsync();
+                chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
             }
-            var newRoom = new ChatRoom
+            var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+            if (checkOrders != null && checkOrders.Any())
             {
-                SenderId = user2,
-                ReceiverId = user1
+                foreach (var item in checkOrders)
+                {
+                    if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
+                    {
+                        throw new Exception("This post already been sold");
+                    }
+                }
+            }
+            var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
+            if(duplicateRequest != null)
+            {
+                if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
+                {
+                    return chatRoom;
+                }
+            }
+            var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
+            var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
+            var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
+            float pendingTransaction = 0;
+            if (wallletTransaction != null)
+            {
+                foreach (var item in wallletTransaction)
+                {
+                    if (item.Action == "Purchase pending")
+                    {
+                        pendingTransaction += item.Amount;
+                    }
+                }
+            }
+            if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
+            {
+                throw new Exception("You don't have enough money to order this transaction");
+            }
+            Order order = new Order
+            {
+                PostId = postId,
+                OrderStatusId = 1,
+                OrderMessage = "",
+                UserId = user2,
+                CreatedBy = user2,
             };
-            var room = _mapper.Map<ChatRoom>(newRoom);
-            await _unitOfWork.ChatRoomRepository.AddAsync(newRoom);
+            await _unitOfWork.OrderRepository.AddAsync(order);
             await _unitOfWork.SaveChangeAsync();
-            if (postId != Guid.Empty)
+            var newWalletTransaction = new WalletTransaction
             {
-                var postModel = await _unitOfWork.PostRepository.GetPostDetail(postId);
-                var duplicateMessage = _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl);
-                if (duplicateMessage!=null)
+                OrderId = order.Id,
+                Amount = postForProductPrice.ProductPrice,
+                TransactionType = "Purchase pending",
+                WalletId = wallet.Id,
+            };
+            await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
+            await _unitOfWork.SaveChangeAsync();
+            var duplicateMessage = _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl);
+            if (duplicateMessage != null)
+            {
+                var createMessageModel = new CreateMessageModel
                 {
-                    var createMessageModel = new CreateMessageModel
-                    {
-                        MessageContent = "Tôi đang có hứng thú với món đồ " + postModel.PostTitle + " " + postModel.ProductImageUrl,
-                        RoomId = room.Id
-                    };
-                    var newMessage = _mapper.Map<Message>(createMessageModel);
-                    newMessage.CreationDate = DateTime.UtcNow;
-                    newMessage.CreatedBy = user2;
-                    await _unitOfWork.MessageRepository.AddAsync(newMessage);
-                }
-                var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user1);
-                if (!post.Where(x => x.Id == postId).Any())
-                {
-
-                }
-                else
-                {
-                    var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
-                    if (checkOrders != null && checkOrders.Any())
-                    {
-                        foreach (var item in checkOrders)
-                        {
-                            if (item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5)
-                            {
-                                throw new Exception("This post already been sold");
-                            }
-                        }
-                    }
-                    //check duplicate order
-                    var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
-                    if (duplicateRequest.Where(x => x.CreatedBy == _claimService.GetCurrentUserId).Any())
-                    {
-                        throw new Exception("You already order this");
-                    }
-                    else
-                    {
-                        // create order
-                        Order order = new Order
-                        {
-                            PostId = postId,
-                            OrderStatusId = 1,
-                            OrderMessage = "",
-                            UserId = user2,
-                            CreatedBy = user2,
-                        };
-                        await _unitOfWork.OrderRepository.AddAsync(order);
-                        await _unitOfWork.SaveChangeAsync();
-                        // create pending transaction
-                        var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
-                        var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
-                        var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
-                        float pendingTransaction = 0;
-                        if (wallletTransaction != null)
-                        {
-                            foreach (var item in wallletTransaction)
-                            {
-                                if (item.Action == "Purchase pending")
-                                {
-                                    pendingTransaction += item.Amount;
-                                }
-                            }
-                        }
-                        if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
-                        {
-                            throw new Exception("You don't have enough money to order this transaction");
-                        }
-                        var newWalletTransaction = new WalletTransaction
-                        {
-                            OrderId = order.Id,
-                            Amount = postForProductPrice.ProductPrice,
-                            TransactionType = "Purchase pending",
-                            WalletId = wallet.Id
-                        };
-                        await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
-                        await _unitOfWork.SaveChangeAsync();
-                    }
-                }
+                    MessageContent = "Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl,
+                    RoomId = chatRoom.roomId
+                };
+                var newMessage = _mapper.Map<Message>(createMessageModel);
+                newMessage.CreationDate = DateTime.UtcNow;
+                newMessage.CreatedBy = user2;
+                await _unitOfWork.MessageRepository.AddAsync(newMessage);
+                await _unitOfWork.SaveChangeAsync();
             }
-            var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(newRoom.Id);
-            return messages;
+            return await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
         }
-
         public async Task<ChatRoomWithOrder> GetMessagesByChatRoomId(Guid chatRoomId)
         {
             var messages = await _unitOfWork.ChatRoomRepository.GetMessagesByRoomId(chatRoomId);
