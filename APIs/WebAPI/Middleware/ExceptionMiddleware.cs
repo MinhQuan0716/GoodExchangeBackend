@@ -26,7 +26,7 @@ namespace WebAPI.Middleware
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "text/plain";
+            context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             var result = JsonSerializer.Serialize(new { message = exception.Message });
             return context.Response.WriteAsync(result);

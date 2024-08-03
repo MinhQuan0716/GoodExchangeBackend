@@ -41,19 +41,15 @@ namespace MobileAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> AcceptOrder(Guid orderId)
         {
-            try
-            {
+           
                 var isAccepted = await _orderService.AcceptRequest(orderId);
                 if (isAccepted)
                 {
                     return Ok();
                 }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+               return BadRequest();
+            
+           
         }
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderDetail(Guid orderId)
@@ -69,109 +65,81 @@ namespace MobileAPI.Controllers
         [HttpPut()]
         public async Task<IActionResult> UpdateDeliveredOrder(Guid orderId)
         {
-            try
-            {
+           
                 var isAccepted = await _orderService.DeliveredOrder(orderId);
                 if (isAccepted)
                 {
                     return Ok();
                 }
                 return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+           
         }
         [Authorize]
         [HttpPut()]
         public async Task<IActionResult> UpdateCancleOrder(Guid orderId)
         {
-            try
-            {
+          
                 var isAccepted = await _orderService.CancleOrder(orderId);
                 if (isAccepted)
                 {
                     return Ok();
                 }
                 return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+           
         }
         [Authorize]
         [HttpPut()]
         public async Task<IActionResult> UpdateConfirmOrder(Guid orderId)
         {
-            try
-            {
+            
                 var isAccepted = await _orderService.ConfirmOrder(orderId);
                 if (isAccepted)
                 {
                     return Ok();
                 }
                 return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+          
         }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllOrderByChatRoomId(Guid roomId)
         {
-            try
-            {
+            
                 var orderList = await _orderService.GetAllOrderByChatRoomId(roomId);
                 if (orderList.Any())
                 {
                     return Ok(orderList);
                 }
                 return NotFound();
-            }
-            catch(Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
+          
         }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSendOrderByChatRoomId(Guid roomId)
         {
-            try
-            {
+            
                 var orderList = await _orderService.GetSendOrderByChatRoomId(roomId);
                 if (orderList.Any())
                 {
                     return Ok(orderList);
                 }
                 return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+          
         }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllOrder()
         {
-            try
-            {
+            
                 var orderList = await _orderService.GetAllOrderByCurrentUser();
                 if (orderList.Any())
                 {
                     return Ok(orderList);
                 }
                 return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
     }
 }
