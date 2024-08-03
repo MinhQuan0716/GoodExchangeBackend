@@ -24,6 +24,7 @@ namespace Infrastructure.EntityConfiguration
                 RoleId=1,
                 WalletId=Guid.Empty,
                 VerifyUserId=Guid.Empty,
+                IsDelete=false,
             },
             new User
             {
@@ -34,6 +35,7 @@ namespace Infrastructure.EntityConfiguration
                 RoleId = 2,
                 WalletId = Guid.Empty,
                 VerifyUserId=Guid.Empty,
+                IsDelete=false,
             }
             );
         }

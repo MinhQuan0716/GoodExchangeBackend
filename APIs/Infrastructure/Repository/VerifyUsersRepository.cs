@@ -42,6 +42,11 @@ namespace Infrastructure.Repository
             return listVerifyUser;
         }
 
+        public async Task<VerifyUser> GetVerificationDeniedByUserId(Guid userId)
+        {
+            return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId && x.IsDelete == false&&x.VerifyStatusId==3).Include(m => m.VerificationStatus).SingleAsync();
+        }
+
         public async Task<VerifyViewModel> GetVerifyUserDetailAsync(Guid id)
         {
             var verfiyModel=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false&&x.Id==id)
