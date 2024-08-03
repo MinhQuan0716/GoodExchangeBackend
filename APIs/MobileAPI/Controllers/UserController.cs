@@ -160,7 +160,7 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> UploadProfileImage(IFormFile userImage)
         {
             var isUploaded=await _userService.UploadProfileImage(userImage);
-            if (!isUploaded)
+            if (isUploaded)
             {
                 return Ok();
             }
