@@ -128,7 +128,7 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> UpdateUser(UpdateUserProfileModel updateUserProfileModel)
+        public async Task<IActionResult> UpdateUser([FromForm]UpdateUserProfileModel updateUserProfileModel)
         {
             bool isUpdate = await _userService.UpdateUserProfileAsync(updateUserProfileModel);
             if (isUpdate)
@@ -155,27 +155,5 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
-        [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UploadProfileImage(IFormFile userImage)
-        {
-            var isUploaded=await _userService.UploadProfileImage(userImage);
-            if (isUploaded)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }
-        /*  [Authorize]
-          [HttpPost]
-          public async Task<IActionResult> UploadImageForVerify(IFormFile userImage)
-          {
-              bool uploadImage=await _userService.UploadImageForVerifyUser(userImage);
-              if (uploadImage)
-              {
-                  return Ok();
-              }
-              return BadRequest();
-          }*/
     }
 }

@@ -28,7 +28,6 @@ namespace Application.InterfaceService
         Task<bool> UpdatePasswordAsync(UpdatePasswordModel updatePasswordModel);
         
         Task<CurrentLoginUserForWebViewModel> GetCurrentLoginUserForWeb();
-        Task<bool> UploadProfileImage(IFormFile userImage);
         Task<bool> UnBanUserAsync(Guid userId);
         Task<UserDetailViewModel> GetUserInformation(Guid userId);
         Task<List<UserViewModelForWeb>> GetAllUserForWeb();

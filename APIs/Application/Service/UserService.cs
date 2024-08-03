@@ -315,6 +315,8 @@ namespace Application.Service
             }
             _mapper.Map(updateUserProfileModel, findUser, typeof(UpdateUserProfileModel), typeof(User));
             (findUser.FirstName, findUser.LastName) = StringUtil.SplitName(updateUserProfileModel.Fullname);
+            string userImageUrl = await _uploadFile.UploadFileToFireBase(updateUserProfileModel.UploadImage, "Profile Image");
+            findUser.ProfileImage=userImageUrl;
             _unitOfWork.UserRepository.Update(findUser);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -391,20 +393,6 @@ namespace Application.Service
         {
             return await _unitOfWork.UserRepository.GetCurrentLoginUserForWebAsync(_claimService.GetCurrentUserId);
         }
-
-        public async Task<bool> UploadProfileImage(IFormFile userImage)
-        {
-            var findUser = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
-            if (findUser ==null)
-            {
-                return false;
-            }
-            string userImageUrl = await _uploadFile.UploadFileToFireBase(userImage, "Profile Image");
-            findUser.ProfileImage= userImageUrl;
-            _unitOfWork.UserRepository.Update(findUser); 
-            return await _unitOfWork.SaveChangeAsync()>0;
-        }
-
         public async Task<bool> UnBanUserAsync(Guid userId)
         {
             var user = await _unitOfWork.UserRepository.GetBannedUserById(userId);
