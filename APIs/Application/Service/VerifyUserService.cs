@@ -121,14 +121,21 @@ namespace Application.Service
         }
         public async Task<bool> UploadImageForVerifyUser(IFormFile userImage)
         {
-            var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
-            if (verifyUser != null)
+            try
             {
-                string imageUrl = await _uploadFile.UploadFileToFireBase(userImage, "VerifyUser");
-                verifyUser.UserImage = imageUrl;
-                verifyUser.VerifyStatusId = 1;
-                _unitOfWork.VerifyUsersRepository.Update(verifyUser);
+                var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
+                if (verifyUser != null)
+                {
+                    string imageUrl = await _uploadFile.UploadFileToFireBase(userImage, "VerifyUser");
+                    verifyUser.UserImage = imageUrl;
+                    verifyUser.VerifyStatusId = 1;
+                    _unitOfWork.VerifyUsersRepository.Update(verifyUser);
+                }
+            } catch(Exception ex)
+            {
+                throw new Exception("You have no pending verify request");
             }
+            
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
         public async Task<bool> UploadImage(IFormFile ImageVerify)
@@ -169,6 +176,29 @@ namespace Application.Service
         public async Task<VerifyViewModel> GetVerifyModelDetailByUserIdAsync(Guid userId)
         {
             return await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailAsync(userId);
+        }
+
+        public async Task<bool> ReuploadImageForVerification(IFormFile formFile)
+        {
+            bool isUploaded=false;
+            try
+            {
+                var verifyDenyUser = await _unitOfWork.VerifyUsersRepository.GetVerificationDeniedByUserId(_claimService.GetCurrentUserId);
+                if(verifyDenyUser != null)
+                {
+                    string imageUrl = await _uploadFile.UploadFileToFireBase(formFile, "VerifyUser");
+                    verifyDenyUser.UserImage = imageUrl;
+                    verifyDenyUser.VerifyStatusId = 1;
+                    _unitOfWork.VerifyUsersRepository.Update(verifyDenyUser);
+                }
+                isUploaded = await _unitOfWork.SaveChangeAsync() > 0;
+
+            } catch(Exception ex)
+            {
+                throw new Exception("You have no denied verification request");
+              
+            }
+            return isUploaded;
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Application.InterfaceService
         Task<bool> DenyImageAsync(Guid verifyId);
         Task<string> getVerifyStatus();
         Task<VerifyViewModel> GetVerifyModelDetailByUserIdAsync(Guid userId);
+        Task<bool> ReuploadImageForVerification(IFormFile formFile);
     }
 }
