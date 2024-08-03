@@ -96,9 +96,5 @@ namespace Infrastructure
         {
             return _dbContext.SaveChangesAsync();
         }
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
-        {
-            return await _dbContext.Database.BeginTransactionAsync();
-        }
     }
 }
