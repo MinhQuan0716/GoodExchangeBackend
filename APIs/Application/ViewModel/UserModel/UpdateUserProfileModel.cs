@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace Application.ViewModel.UserModel
         public string Fullname { get; set; }
         public DateOnly Birthday { get; set; }
         public string Phonenumber { get; set; }
+        public IFormFile UploadImage { get; set; }
     }
 }

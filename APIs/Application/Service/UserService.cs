@@ -121,8 +121,8 @@ namespace Application.Service
                 checkVerifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
             }
            
-            user.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
-            _unitOfWork.UserRepository.Update(user);
+         /*   user.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
+            _unitOfWork.UserRepository.Update(user);*/
             await _unitOfWork.SaveChangeAsync();
             if (user.RoleId == 3)
             {
@@ -315,6 +315,8 @@ namespace Application.Service
             }
             _mapper.Map(updateUserProfileModel, findUser, typeof(UpdateUserProfileModel), typeof(User));
             (findUser.FirstName, findUser.LastName) = StringUtil.SplitName(updateUserProfileModel.Fullname);
+            string userImageUrl = await _uploadFile.UploadFileToFireBase(updateUserProfileModel.UploadImage, "Profile Image");
+            findUser.ProfileImage=userImageUrl;
             _unitOfWork.UserRepository.Update(findUser);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -391,20 +393,6 @@ namespace Application.Service
         {
             return await _unitOfWork.UserRepository.GetCurrentLoginUserForWebAsync(_claimService.GetCurrentUserId);
         }
-
-        public async Task<bool> UploadProfileImage(IFormFile userImage)
-        {
-            var findUser = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
-            if (findUser ==null)
-            {
-                return false;
-            }
-            string userImageUrl = await _uploadFile.UploadFileToFireBase(userImage, "Profile Image");
-            findUser.ProfileImage= userImageUrl;
-            _unitOfWork.UserRepository.Update(findUser); 
-            return await _unitOfWork.SaveChangeAsync()>0;
-        }
-
         public async Task<bool> UnBanUserAsync(Guid userId)
         {
             var user = await _unitOfWork.UserRepository.GetBannedUserById(userId);

@@ -12,7 +12,7 @@ namespace Application.Util
     {
        public async Task<string> UploadFileToFireBase(IFormFile file,string folderName)
         {
-            string fileName = file.FileName;
+            string fileName =Guid.NewGuid().ToString()+ file.FileName;
             if (file.Length == 0)
             {
                 throw new Exception("File is empty");
