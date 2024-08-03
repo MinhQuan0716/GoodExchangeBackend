@@ -246,10 +246,9 @@ namespace Application.Service
                     if(findVerifyByUserId == null)
                     {
                         var VerifyUserId = await CreateVerifyUser(loginUser.Id);
-
                         loginUser.VerifyUserId = VerifyUserId;
                     }
-                    await _unitOfWork.UserRepository.UpdateUserAsync(loginUser);
+                    _unitOfWork.UserRepository.Update(loginUser);
                     await _unitOfWork.SaveChangeAsync();
                 }
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());

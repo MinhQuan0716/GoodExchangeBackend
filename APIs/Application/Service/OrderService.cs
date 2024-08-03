@@ -159,7 +159,10 @@ namespace Application.Service
             order.OrderStatusId = 6;
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
-            walletTransaction.TransactionType = "purchase cancled";
+            if (walletTransaction != null)
+            {
+                walletTransaction.TransactionType = "purchase cancled";
+            }
             _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -181,9 +184,13 @@ namespace Application.Service
             var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
             if (post != null)
             {
-                var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
-                wallet.UserBalance += post.ProductPrice;
-                _unitOfWork.WalletRepository.Update(wallet);
+                var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
+                if (walletTransaction != null)
+                {
+                    var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
+                    wallet.UserBalance += post.ProductPrice;
+                    _unitOfWork.WalletRepository.Update(wallet);
+                }
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
