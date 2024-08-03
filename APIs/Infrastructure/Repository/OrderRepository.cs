@@ -56,7 +56,7 @@ namespace Infrastructure.Repository
                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                     SenderUsername = u.UserName
                                                 }).Single()
-                                            }).AsQueryable().AsNoTracking().ToListAsync();
+                                            }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -89,7 +89,7 @@ namespace Infrastructure.Repository
                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                     SenderUsername = u.UserName
                                                 }).Single()
-                                            }).AsQueryable().AsNoTracking().ToListAsync();
+                                            }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -172,7 +172,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()): 0),
                                                      SenderUsername=u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().ToListAsync();
+                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -277,7 +277,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().ToListAsync();
+                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -326,7 +326,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().ToListAsync();
+                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -375,7 +375,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().ToListAsync();
+                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
 
@@ -424,7 +424,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().ToListAsync();
+                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
             return listRequest;
         }
     }

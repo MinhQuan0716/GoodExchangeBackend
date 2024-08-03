@@ -162,8 +162,8 @@ namespace Application.Service
             if (walletTransaction != null)
             {
                 walletTransaction.TransactionType = "purchase cancled";
+                _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
             }
-            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
