@@ -82,7 +82,6 @@ namespace Application.Service
 
                 var walletId = await CreateWallet(newAccount.Id);
                 newAccount.WalletId = walletId;
-
                 _unitOfWork.UserRepository.Update(newAccount);
                 return await _unitOfWork.SaveChangeAsync() > 0;
             }

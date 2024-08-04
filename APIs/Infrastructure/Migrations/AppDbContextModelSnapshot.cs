@@ -694,10 +694,10 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("67b737ab-61a3-4661-adda-23ce7e1f010d"),
+                            Id = new Guid("3d467fb4-a342-4fe1-b05b-563349065dd4"),
                             Email = "admin@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$i58QvavtX1bAM1.3IoTDae3a0400yBz7YC45DlTQY5x5/u1VyGN22",
+                            PasswordHash = "$2a$11$soYs4e4aFsfmbHXX613q/u1oTQYlxHUda3G0M0RZBrH0wVS9n/W36",
                             RoleId = 1,
                             UserName = "Admin",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -705,10 +705,10 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3128a6d8-276c-42a5-8d5c-9418b34125b3"),
+                            Id = new Guid("8638a4cb-117a-4e7b-b8e6-157188db8f63"),
                             Email = "moderator@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$SAnPrD4JuWvFRKJKPECciesUY2SexVuX24YY7FHaHZzAH/c6lVhoS",
+                            PasswordHash = "$2a$11$I0ul7peKTWUXv5FUcvtCeOAP/28OOlrMSm4V7mC0Obj/1/l/oZLf2",
                             RoleId = 2,
                             UserName = "Moderator",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),

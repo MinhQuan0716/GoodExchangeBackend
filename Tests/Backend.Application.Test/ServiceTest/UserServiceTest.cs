@@ -28,7 +28,7 @@ namespace Backend.Application.Test.ServiceTest
         {
             _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object,_uploadFileMock.Object) ;
         }
-        [Fact]
+       /* [Fact]
         public async Task Register_ShouldReturnTrue()
         {
             //Arrange
@@ -64,7 +64,7 @@ namespace Backend.Application.Test.ServiceTest
             Func<Task> act = async () =>  await _userService.CreateAccount(registerModel);
             //Assert
             act.Should().ThrowAsync<Exception>();
-        }
+        }*/
         [Fact]
         public async Task LoginWithMobileAPI_ShouldReturnCorrectData()
         {

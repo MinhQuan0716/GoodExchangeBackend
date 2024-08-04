@@ -17,25 +17,25 @@ namespace Infrastructure.EntityConfiguration
             builder.HasIndex(x => x.Email).IsUnique(true);
             builder.HasData(new User
             {
-                Id=Guid.NewGuid(),
-                UserName="Admin",
-                Email="admin@gmail.com",
-                PasswordHash=new string("Admin@123").Hash(),
-                RoleId=1,
-                WalletId=Guid.Empty,
-                VerifyUserId=Guid.Empty,
-                IsDelete=false,
+                Id = Guid.NewGuid(),
+                UserName = "Admin",
+                Email = "admin@gmail.com",
+                PasswordHash = new string("Admin@123").Hash(),
+                RoleId = 1,
+                WalletId = Guid.Empty,
+                VerifyUserId = Guid.Empty,
+                IsDelete = false,
             },
             new User
             {
-                Id=Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 UserName = "Moderator",
                 Email = "moderator@gmail.com",
                 PasswordHash = new string("Moderator").Hash(),
                 RoleId = 2,
                 WalletId = Guid.Empty,
-                VerifyUserId=Guid.Empty,
-                IsDelete=false,
+                VerifyUserId = Guid.Empty,
+                IsDelete = false,
             }
             );
         }
