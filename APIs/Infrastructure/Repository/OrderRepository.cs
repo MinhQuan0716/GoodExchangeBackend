@@ -30,6 +30,7 @@ namespace Infrastructure.Repository
         public async Task<List<ReceiveOrderViewModel>> GetAllOrder()
         {
             var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false)
+                                            .OrderBy(x=>x.CreationDate)
                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                             .Include(x => x.Post).AsSplitQuery()
@@ -56,13 +57,14 @@ namespace Infrastructure.Repository
                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                     SenderUsername = u.UserName
                                                 }).Single()
-                                            }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                            }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
         public async Task<List<SentOrderViewModel>> GetAllRequestByCreatedByUserId(Guid userId)
         {
             var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.CreatedBy == userId)
+                                            .OrderByDescending(x => x.CreationDate)
                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                             .Include(x => x.Post).AsSplitQuery()
@@ -89,7 +91,7 @@ namespace Infrastructure.Repository
                                                                  ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                     SenderUsername = u.UserName
                                                 }).Single()
-                                            }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                            }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
@@ -130,7 +132,7 @@ namespace Infrastructure.Repository
              );
 
              return result.ToList();*/
-            var listRequest = await _dbContext.Orders
+            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p=>p.Product).ThenInclude(p=>p.Category).AsSplitQuery()
@@ -172,7 +174,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()): 0),
                                                      SenderUsername=u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                             }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
@@ -224,16 +226,16 @@ namespace Infrastructure.Repository
 
         public async Task<List<Order>> GetRequestByPostId(Guid postId)
         {
-            return await _dbContext.Orders.Where(x => x.PostId == postId).ToListAsync();
+            return await _dbContext.Orders.Where(x => x.PostId == postId).OrderByDescending(x => x.CreationDate).ToListAsync();
         }
 
         public async Task<List<Order>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
         {
-            return await _dbContext.Orders.Where(x => x.UserId == userId&&x.PostId==postId).AsNoTracking().ToListAsync();
+            return await _dbContext.Orders.Where(x => x.UserId == userId&&x.PostId==postId).OrderByDescending(x => x.CreationDate).AsNoTracking().ToListAsync();
         }
         public async Task<List<ReceiveOrderViewModel>> GetAllRequestBy2UserId(Guid userId1, Guid userId2)
         {
-            var listRequest = await _dbContext.Orders
+            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -277,13 +279,13 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                             }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
         public async Task<List<ReceiveOrderViewModel>> GetAllOrderByUserId(Guid userId)
         {
-            var listRequest = await _dbContext.Orders
+            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -326,13 +328,13 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                             }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
         public async Task<List<ReceiveOrderViewModel>> GetAllReceiveOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId)
         {
-            var listRequest = await _dbContext.Orders
+            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -375,13 +377,13 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                             }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
 
         public async Task<List<SentOrderViewModel>> GetAllSendOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId)
         {
-            var listRequest = await _dbContext.Orders
+            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -424,7 +426,7 @@ namespace Infrastructure.Repository
                                                                   ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
                                                      SenderUsername = u.UserName
                                                  }).Single()
-                                             }).AsQueryable().AsNoTracking().OrderByDescending(x => x.CreationDate).ToListAsync();
+                                             }).AsQueryable().AsNoTracking().ToListAsync();
             return listRequest;
         }
     }
