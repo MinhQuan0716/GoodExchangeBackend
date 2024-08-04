@@ -12,6 +12,7 @@ namespace Application.Service
     public class WalletTransactionService : IWalletTransactionService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IClaimService _claimService;
         public WalletTransactionService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -19,6 +20,10 @@ namespace Application.Service
         public async Task<List<TransactionViewModel>> GetAllTransactionAsync()
         {
             return await _unitOfWork.WalletTransactionRepository.GetAllTransaction();
+        }
+        public async Task<List<TransactionViewModel>> GetAllTransactionByCurrentUserIdAsync()
+        {
+            return await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(_claimService.GetCurrentUserId);
         }
     }
 }

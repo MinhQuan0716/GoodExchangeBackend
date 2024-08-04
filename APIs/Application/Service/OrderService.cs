@@ -1,5 +1,5 @@
 ﻿using Application.InterfaceService;
-using Application.ViewModel.RequestModel;
+using Application.ViewModel.OrderModel;
 using AutoMapper;
 using Domain.Entities;
 using Hangfire.Dashboard;
@@ -24,9 +24,9 @@ namespace Application.Service
             _mapper = mapper;
         }
 
-        public async Task<bool> AcceptRequest(Guid requestId)
+        public async Task<bool> AcceptOrder(Guid OrderId)
         {
-            var order = await _unitOfWork.OrderRepository.GetByIdAsync(requestId);
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(OrderId);
             if (order == null)
             {
                 throw new Exception("Order not found");
@@ -37,11 +37,11 @@ namespace Application.Service
                 throw new Exception("You already accepted or rejected this order");
             }
 
-            // Update the request status
+            // Update the Order status
             order.OrderStatusId = 2;
             _unitOfWork.OrderRepository.Update(order);
 
-            var rejectOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(order.PostId);
+            var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
             if (rejectOrders != null && rejectOrders.Any())
             {
                 foreach (var item in rejectOrders)
@@ -80,53 +80,35 @@ namespace Application.Service
 
         public async Task<bool> DeliveredOrder(Guid orderId)
         {
-            var request = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
-            if (request == null)
+            var Order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
+            if (Order == null)
             {
                 throw new Exception("Order not found");
             }
 
-            if (request.OrderStatusId != 2)
+            if (Order.OrderStatusId != 2)
             {
                 throw new Exception("Order not accepted");
             }
-            // Update the request status
-            request.OrderStatusId = 4;
-            _unitOfWork.OrderRepository.Update(request);
+            // Update the Order status
+            Order.OrderStatusId = 4;
+            _unitOfWork.OrderRepository.Update(Order);
             // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<SentOrderViewModel>> GetAllRequestsOfCreatebByUserAsync()
+        public async Task<List<SentOrderViewModel>> GetAllOrdersOfCreatebByUserAsync()
         {
-            return await _unitOfWork.OrderRepository.GetAllRequestByCreatedByUserId(_claimService.GetCurrentUserId);
+            return await _unitOfWork.OrderRepository.GetAllOrderByCreatedByUserId(_claimService.GetCurrentUserId);
         }
 
-        public async Task<List<ReceiveOrderViewModel>> GetAllRequestsOfCurrentUserAsync()
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrdersOfCurrentUserAsync()
         {
-            return await _unitOfWork.OrderRepository.GetAllRequestByCurrentUserId(_claimService.GetCurrentUserId);
-        }
-        public async Task<bool> SendRequest(CreateOrderModel requestModel)
-        {
-            var post = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(requestModel.AuthorId);
-            if (!post.Where(x => x.Id == requestModel.PostId).Any())
-            {
-                throw new Exception("This user do not create this post");
-            }
-            var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(requestModel.AuthorId,requestModel.PostId);
-            if (duplicateRequest.Where(x=>x.CreatedBy==_claimService.GetCurrentUserId).Any())
-            {
-                throw new Exception("You already send the request");
-            }
-            Order request =_mapper.Map<Order>(requestModel);
-            request.OrderStatusId = 1;
-            await _unitOfWork.OrderRepository.AddAsync(request);
-
-            return await _unitOfWork.SaveChangeAsync() > 0;
+            return await _unitOfWork.OrderRepository.GetAllOrderByCurrentUserId(_claimService.GetCurrentUserId);
         }
         public async Task<bool> CheckOrderStatusByPostId(Guid postId)
         {
-            var OrderList = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+            var OrderList = await _unitOfWork.OrderRepository.GetOrderByPostId(postId);
             foreach(var order in OrderList)
             {
                 if (order.OrderStatusId == 2 || order.OrderStatusId == 4 || order.OrderStatusId == 5)
@@ -236,7 +218,7 @@ namespace Application.Service
             var chatRoom = await _unitOfWork.ChatRoomRepository.GetByIdAsync(chatRoomID);
             if(chatRoom != null)
             {
-                var listOrder= await _unitOfWork.OrderRepository.GetAllRequestBy2UserId(chatRoom.SenderId, chatRoom.ReceiverId) ?? new List<ReceiveOrderViewModel>();
+                var listOrder= await _unitOfWork.OrderRepository.GetAllOrderBy2UserId(chatRoom.SenderId, chatRoom.ReceiverId) ?? new List<ReceiveOrderViewModel>();
                 return listOrder;
             }
             throw new Exception("chatRoom not exist");

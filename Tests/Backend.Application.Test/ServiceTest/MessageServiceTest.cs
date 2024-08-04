@@ -56,7 +56,7 @@ namespace Backend.Application.Test.ServiceTest
                 Messages = new List<MessageDto>(),
                 Order = new List<OrderDto>()
             };
-            var duplicateRequests = new List<Order>
+            var duplicateOrders = new List<Order>
             {
                 new Order { CreatedBy = user2 } // Ensure this matches the `CreatedBy` used in your service
             };
@@ -65,10 +65,10 @@ namespace Backend.Application.Test.ServiceTest
             _claimServiceMock.Setup(cs => cs.GetCurrentUserId).Returns(user2);
             _unitOfWorkMock.Setup(repo => repo.ChatRoomRepository.GetRoomBy2UserId(user1, user2))
                            .ReturnsAsync(existingChatRoomWithOrder);
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByPostId(postId))
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByPostId(postId))
                    .ReturnsAsync(new List<Order>());
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByUserIdAndPostId(user1, postId))
-                   .ReturnsAsync(duplicateRequests);
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByUserIdAndPostId(user1, postId))
+                   .ReturnsAsync(duplicateOrders);
             // Add other necessary mock setups here (e.g., for OrderRepository, WalletRepository, etc.)
 
             // Act
@@ -102,7 +102,7 @@ namespace Backend.Application.Test.ServiceTest
                 Messages = new List<MessageDto>(),
                 Order = new List<OrderDto>()
             };
-            var duplicateRequests = new List<Order>
+            var duplicateOrders = new List<Order>
             {
                 new Order { CreatedBy = user2 } // Ensure this matches the `CreatedBy` used in your service
             };
@@ -113,8 +113,8 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(repo => repo.SaveChangeAsync())
                .ReturnsAsync(1);
             _unitOfWorkMock.Setup(repo => repo.ChatRoomRepository.GetRoomBy2UserId(user1, user2)).ReturnsAsync(newChatRoom);
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByUserIdAndPostId(user1, postId))
-                   .ReturnsAsync(duplicateRequests);
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByUserIdAndPostId(user1, postId))
+                   .ReturnsAsync(duplicateOrders);
             // Act
             var result = await _messageService.GetOrCreateChatRoomAsync(user1, postId);
 
@@ -138,7 +138,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(repo => repo.UserRepository.GetByIdAsync(user1))
                            .ReturnsAsync(new User { Id = user1 });
             _claimServiceMock.Setup(cs => cs.GetCurrentUserId).Returns(user2);
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByPostId(postId))
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByPostId(postId))
                            .ReturnsAsync(soldOrders);
 
             // Act & Assert
@@ -164,9 +164,9 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(repo => repo.UserRepository.GetByIdAsync(user1))
                            .ReturnsAsync(new User { Id = user1 });
             _claimServiceMock.Setup(cs => cs.GetCurrentUserId).Returns(user2);
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByPostId(postId))
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByPostId(postId))
                            .ReturnsAsync(new List<Order>());
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByUserIdAndPostId(user1, postId))
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByUserIdAndPostId(user1, postId))
                            .ReturnsAsync(new List<Order>());
             _unitOfWorkMock.Setup(repo => repo.WalletRepository.GetUserWalletByUserId(user2))
                            .ReturnsAsync(wallet);
@@ -213,7 +213,7 @@ namespace Backend.Application.Test.ServiceTest
                            .ReturnsAsync(existingChatRoomWithOrder);
             _unitOfWorkMock.Setup(repo => repo.PostRepository.GetPostDetail(postId))
                            .ReturnsAsync(postForProductPrice);
-            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetRequestByPostId(postId))
+            _unitOfWorkMock.Setup(repo => repo.OrderRepository.GetOrderByPostId(postId))
                .ReturnsAsync(new List<Order>());
             _unitOfWorkMock.Setup(repo => repo.WalletRepository.GetUserWalletByUserId(user2))
                .ReturnsAsync(new Wallet { UserBalance = 160 });

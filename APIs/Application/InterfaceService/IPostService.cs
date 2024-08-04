@@ -29,7 +29,7 @@ namespace Application.InterfaceService
         Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitile,string productStatus,string exchangeCondition);
         Task<bool> CheckIfPostInWishList(Guid postId);
         Task<bool>UnbanPost(Guid postId);
-        Task<Pagination<PostViewModelForWeb>> GetAllPostForWeb(int pageIndex,int pageSize);
+        Task<List<PostViewModelForWeb>> GetAllPostForWeb();
         Task<List<PostViewModel>> SearchPostCreatedByCurrentUserByPostTitle(string postTitle);
     }
 }

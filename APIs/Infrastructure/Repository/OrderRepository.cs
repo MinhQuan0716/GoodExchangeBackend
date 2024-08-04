@@ -1,7 +1,8 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.OrderModel;
 using Application.ViewModel.PostModel;
-using Application.ViewModel.RequestModel;
+using Application.ViewModel.OrderModel;
 using Application.ViewModel.UserModel;
 using Dapper;
 using Domain.Entities;
@@ -29,7 +30,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<ReceiveOrderViewModel>> GetAllOrder()
         {
-            var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false)
+            var listOrder = await _dbContext.Orders.Where(x => x.IsDelete == false)
                                             .OrderBy(x=>x.CreationDate)
                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
@@ -41,13 +42,13 @@ namespace Infrastructure.Repository
                                                 OrderMessage = x.OrderMessage,
                                                 OrderStatus = x.Status.StatusName,
                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                Post = new PostViewModelForRequest
+                                                Post = new PostViewModelForOrder
                                                 {
                                                     PostId = x.PostId,
                                                     PostContent = x.Post.PostContent,
                                                     PostTitle = x.Post.PostTitle
                                                 },
-                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                 {
                                                     SenderId = x.CreatedBy.Value,
                                                     SenderEmail = u.Email,
@@ -58,12 +59,12 @@ namespace Infrastructure.Repository
                                                     SenderUsername = u.UserName
                                                 }).Single()
                                             }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
-        public async Task<List<SentOrderViewModel>> GetAllRequestByCreatedByUserId(Guid userId)
+        public async Task<List<SentOrderViewModel>> GetAllOrderByCreatedByUserId(Guid userId)
         {
-            var listRequest = await _dbContext.Orders.Where(x => x.IsDelete == false && x.CreatedBy == userId)
+            var listOrder = await _dbContext.Orders.Where(x => x.IsDelete == false && x.CreatedBy == userId)
                                             .OrderByDescending(x => x.CreationDate)
                                             .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                             .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
@@ -75,13 +76,13 @@ namespace Infrastructure.Repository
                                                 OrderMessage = x.OrderMessage,
                                                 OrderStatus=x.Status.StatusName,
                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                Post = new PostViewModelForRequest
+                                                Post = new PostViewModelForOrder
                                                 {
                                                     PostId = x.PostId,
                                                     PostContent = x.Post.PostContent,
                                                     PostTitle = x.Post.PostTitle
                                                 },
-                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                 {
                                                     SenderId = x.CreatedBy.Value,
                                                     SenderEmail = u.Email,
@@ -92,16 +93,16 @@ namespace Infrastructure.Repository
                                                     SenderUsername = u.UserName
                                                 }).Single()
                                             }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
-        public async Task<List<ReceiveOrderViewModel>> GetAllRequestByCurrentUserId(Guid userId)
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUserId(Guid userId)
         {
             /* var sql = @"
          SELECT 
-             r.Id AS RequestId,
-             r.RequestMessage,
-             s.StatusName AS RequestStatus,
+             r.Id AS OrderId,
+             r.OrderMessage,
+             s.StatusName AS OrderStatus,
              u.Id AS SenderId,
              u.Email AS SenderEmail,
              u.UserName AS SenderUsername,
@@ -109,30 +110,30 @@ namespace Infrastructure.Repository
              p.PostContent,
              p.PostTitle
          FROM 
-             Requests r
+             Orders r
          INNER JOIN 
              Users u ON r.UserId = u.Id
          INNER JOIN 
              Posts p ON r.PostId = p.Id
          INNER JOIN 
-             RequestStatuses s ON r.RequestStatusId = s.StatusId
+             OrderStatuses s ON r.OrderStatusId = s.StatusId
          WHERE 
              r.UserId = @UserId;";
 
-             var result = await _connection.QueryAsync<RequestViewModel, UserViewModelForRequest, PostViewModelForRequest, RequestViewModel>(
+             var result = await _connection.QueryAsync<OrderViewModel, UserViewModelForOrder, PostViewModelForOrder, OrderViewModel>(
                  sql,
-                 (request, user, post) =>
+                 (Order, user, post) =>
                  {
-                     request.User = user;
-                     request.Post = post;
-                     return request;
+                     Order.User = user;
+                     Order.Post = post;
+                     return Order;
                  },
                  new { UserId = userId },
                  splitOn: "SenderId, PostId"
              );
 
              return result.ToList();*/
-            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
+            var listOrder = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x=>x.User).ThenInclude(u=>u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p=>p.Product).ThenInclude(p=>p.Category).AsSplitQuery()
@@ -145,7 +146,7 @@ namespace Infrastructure.Repository
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus=x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
+                                                 Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
@@ -164,7 +165,7 @@ namespace Infrastructure.Repository
                                                      }
                                                      
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
@@ -175,7 +176,7 @@ namespace Infrastructure.Repository
                                                      SenderUsername=u.UserName
                                                  }).Single()
                                              }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
         public async Task<ReceiveOrderViewModel> GetOrderDetail(Guid orderId)
@@ -191,7 +192,7 @@ namespace Infrastructure.Repository
                                                   OrderMessage=x.OrderMessage,
                                                   OrderStatus=x.Status.StatusName,
                                                   CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
-                                                  Post=new PostViewModelForRequest
+                                                  Post=new PostViewModelForOrder
                                                   {
                                                       PostId=x.PostId,
                                                       PostContent=x.Post.PostContent,
@@ -210,7 +211,7 @@ namespace Infrastructure.Repository
 
                                                       }
                                                   },
-                                                  User=new UserViewModelForRequest
+                                                  User=new UserViewModelForOrder
                                                   {
                                                       SenderId=x.UserId,
                                                       SenderEmail=x.User.Email,
@@ -224,18 +225,18 @@ namespace Infrastructure.Repository
             return detail;
         }
 
-        public async Task<List<Order>> GetRequestByPostId(Guid postId)
+        public async Task<List<Order>> GetOrderByPostId(Guid postId)
         {
             return await _dbContext.Orders.Where(x => x.PostId == postId).OrderByDescending(x => x.CreationDate).ToListAsync();
         }
 
-        public async Task<List<Order>> GetRequestByUserIdAndPostId(Guid userId,Guid postId)
+        public async Task<List<Order>> GetOrderByUserIdAndPostId(Guid userId,Guid postId)
         {
             return await _dbContext.Orders.Where(x => x.UserId == userId&&x.PostId==postId).OrderByDescending(x => x.CreationDate).AsNoTracking().ToListAsync();
         }
-        public async Task<List<ReceiveOrderViewModel>> GetAllRequestBy2UserId(Guid userId1, Guid userId2)
+        public async Task<List<ReceiveOrderViewModel>> GetAllOrderBy2UserId(Guid userId1, Guid userId2)
         {
-            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
+            var listOrder = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -250,7 +251,7 @@ namespace Infrastructure.Repository
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
+                                                 Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
@@ -269,7 +270,7 @@ namespace Infrastructure.Repository
                                                      }
 
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
@@ -280,12 +281,12 @@ namespace Infrastructure.Repository
                                                      SenderUsername = u.UserName
                                                  }).Single()
                                              }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
         public async Task<List<ReceiveOrderViewModel>> GetAllOrderByUserId(Guid userId)
         {
-            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
+            var listOrder = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -299,7 +300,7 @@ namespace Infrastructure.Repository
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
+                                                 Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
@@ -318,7 +319,7 @@ namespace Infrastructure.Repository
                                                      }
 
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
@@ -329,12 +330,12 @@ namespace Infrastructure.Repository
                                                      SenderUsername = u.UserName
                                                  }).Single()
                                              }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
         public async Task<List<ReceiveOrderViewModel>> GetAllReceiveOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId)
         {
-            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
+            var listOrder = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -348,7 +349,7 @@ namespace Infrastructure.Repository
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
+                                                 Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
@@ -367,7 +368,7 @@ namespace Infrastructure.Repository
                                                      }
 
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
@@ -378,12 +379,12 @@ namespace Infrastructure.Repository
                                                      SenderUsername = u.UserName
                                                  }).Single()
                                              }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
 
         public async Task<List<SentOrderViewModel>> GetAllSendOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId)
         {
-            var listRequest = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
+            var listOrder = await _dbContext.Orders.OrderByDescending(x => x.CreationDate)
                                              .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
                                              .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
                                              .Include(x => x.Post).ThenInclude(p => p.Product).ThenInclude(p => p.Category).AsSplitQuery()
@@ -397,7 +398,7 @@ namespace Infrastructure.Repository
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
                                                  CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                 Post = new PostViewModelForRequest
+                                                 Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
                                                      PostContent = x.Post.PostContent,
@@ -416,7 +417,7 @@ namespace Infrastructure.Repository
                                                      }
 
                                                  },
-                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForRequest
+                                                 User = _dbContext.Users.Where(u => u.Id == x.CreatedBy).AsSplitQuery().Select(u => new UserViewModelForOrder
                                                  {
                                                      SenderId = x.CreatedBy.Value,
                                                      SenderEmail = u.Email,
@@ -427,7 +428,7 @@ namespace Infrastructure.Repository
                                                      SenderUsername = u.UserName
                                                  }).Single()
                                              }).AsQueryable().AsNoTracking().ToListAsync();
-            return listRequest;
+            return listOrder;
         }
     }
 }

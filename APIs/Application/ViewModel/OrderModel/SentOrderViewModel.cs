@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.ViewModel.RequestModel
+namespace Application.ViewModel.OrderModel
 {
     public class SentOrderViewModel
     {
@@ -14,7 +14,7 @@ namespace Application.ViewModel.RequestModel
         public string OrderMessage { get; set; }
         public string OrderStatus { get; set; }
         public DateOnly CreationDate { get; set; }
-        public PostViewModelForRequest Post { get; set; }
-        public UserViewModelForRequest User { get; set; }
+        public PostViewModelForOrder Post { get; set; }
+        public UserViewModelForOrder User { get; set; }
     }
 }

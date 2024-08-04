@@ -1,6 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.Service;
-using Application.ViewModel.RequestModel;
+using Application.ViewModel.OrderModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +19,10 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReceieveOrder()
         {
-            var requestList = await _orderService.GetAllRequestsOfCurrentUserAsync();
-            if (requestList.Any())
+            var OrderList = await _orderService.GetAllOrdersOfCurrentUserAsync();
+            if (OrderList.Any())
             {
-                return Ok(requestList);
+                return Ok(OrderList);
             }
             return NotFound();
         }
@@ -30,10 +30,10 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSendOrder()
         {
-            var requestList = await _orderService.GetAllRequestsOfCreatebByUserAsync();
-            if (requestList.Any())
+            var OrderList = await _orderService.GetAllOrdersOfCreatebByUserAsync();
+            if (OrderList.Any())
             {
-                return Ok(requestList);
+                return Ok(OrderList);
             }
             return NotFound();
         }
@@ -42,7 +42,7 @@ namespace MobileAPI.Controllers
         public async Task<IActionResult> AcceptOrder(Guid orderId)
         {
            
-                var isAccepted = await _orderService.AcceptRequest(orderId);
+                var isAccepted = await _orderService.AcceptOrder(orderId);
                 if (isAccepted)
                 {
                     return Ok();
