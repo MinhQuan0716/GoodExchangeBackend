@@ -25,19 +25,13 @@ namespace MobileAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            try
-            {
                 var isCreate = await _userService.CreateAccount(registerModel);
                 if (!isCreate)
                 {
                     return BadRequest();
                 }
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+           
         }
         /// <summary>
         /// Api For Login

@@ -107,7 +107,8 @@ namespace Application.Service
                 {
                     PostTitle = postModel.PostTitle,
                     PostContent = postModel.PostContent,
-                    Product = newProduct
+                    Product = newProduct,
+                    UserId=_claimService.GetCurrentUserId
                 };
                 await _unitOfWork.PostRepository.AddAsync(createPost);
             }
@@ -132,7 +133,8 @@ namespace Application.Service
                 {
                     PostTitle = postModel.PostTitle,
                     PostContent = postModel.PostContent,
-                    Product = newProduct
+                    Product = newProduct,
+                    UserId = _claimService.GetCurrentUserId
                 };
                 await _unitOfWork.PostRepository.AddAsync(createPost);
                 _unitOfWork.WalletRepository.Update(userWallet);

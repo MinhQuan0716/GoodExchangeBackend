@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240804115456_ModifyPostEntity_ver02")]
+    partial class ModifyPostEntity_ver02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -702,10 +705,10 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("27aa7437-5d36-4a01-80e8-7f3e572f6d5c"),
+                            Id = new Guid("ab65dd21-a7ac-4f46-bf84-cf36674af0e6"),
                             Email = "admin@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$hanjdmGElOlMm777B0nPje3BaknjC1iB0Vt2Sq5hl7YLifjZ8B1nG",
+                            PasswordHash = "$2a$11$mMu9lJN3bTUsShtbQahUxeN0ZvYcGGUTPPOZrmj.Bp0b7cUedChq.",
                             RoleId = 1,
                             UserName = "Admin",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -713,10 +716,10 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("319d5597-f149-4fa5-9c05-60e4f7120b8f"),
+                            Id = new Guid("8438eac1-0ff7-455d-ae6b-32cae394373e"),
                             Email = "moderator@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$szP08ouBbXAX6s5KkM98Feef599AJDYfP3VTf/2IRERFiLUUIgJEG",
+                            PasswordHash = "$2a$11$jnq.MX2Tm.g16PTotPZTqONvf1bVyj3jfEHeWh0SqiF0oItIspheS",
                             RoleId = 2,
                             UserName = "Moderator",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),

@@ -123,7 +123,7 @@ namespace Application.Service
         {
             try
             {
-                var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(_claimService.GetCurrentUserId);
+                var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserIdForUploadImage(_claimService.GetCurrentUserId);
                 if (verifyUser != null)
                 {
                     string imageUrl = await _uploadFile.UploadFileToFireBase(userImage, "VerifyUser");
@@ -133,7 +133,7 @@ namespace Application.Service
                 }
             } catch(Exception ex)
             {
-                throw new Exception("You have no pending verify request");
+                throw new Exception("All of your verify request have been approved");
             }
             
             return await _unitOfWork.SaveChangeAsync() > 0;
