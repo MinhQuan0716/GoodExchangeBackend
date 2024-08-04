@@ -10,6 +10,9 @@ namespace Domain.Enum
     {
         Pending,
         Accept,
-        Reject
+        Reject,
+        Cancelled,
+        Confirm,
+        Delivered
     }
 }
