@@ -30,5 +30,6 @@ namespace Domain.Entities
         public ICollection<Rating> RatedUsers { get; set; }
         public ICollection<Order> Requests { get; set; }
         public ICollection<SubscriptionHistory> SubscriptionHistories { get; set; }
+        public ICollection<Post> Posts { get; set; }
     }
 }

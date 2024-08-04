@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240804110824_ModifyPostEntity")]
+    partial class ModifyPostEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -702,10 +705,10 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4f7f8695-f8b0-4a22-9b3d-95bf119f764d"),
+                            Id = new Guid("d98048da-4376-4a58-ba02-e16384f5858a"),
                             Email = "admin@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$J.o0TYjCyuB.zfeKLzHWAuCk4/Cy3UnqORefuw0vFOh/1z6y7q05G",
+                            PasswordHash = "$2a$11$SNNORHaVZ1g6EdzZ3oVjEeueettbg1Xw16J8RbhybuQ/PJxTMjNFm",
                             RoleId = 1,
                             UserName = "Admin",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -713,10 +716,10 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("46a64b11-6372-4d51-a995-4cc5f21290b6"),
+                            Id = new Guid("2dcd03c5-396c-4862-8096-314d27bd5407"),
                             Email = "moderator@gmail.com",
                             IsDelete = false,
-                            PasswordHash = "$2a$11$KX347viZ5m7g2ur3T67OIuBkBxZoM7PV3z.AKAlh.EQ1JUccF5W2y",
+                            PasswordHash = "$2a$11$3rCPl/ZRLYetlMOAwaLcpOsmTXkFiVvYXGZYpwRTPKgOfDB4opUbW",
                             RoleId = 2,
                             UserName = "Moderator",
                             VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -1009,7 +1012,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.User", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
