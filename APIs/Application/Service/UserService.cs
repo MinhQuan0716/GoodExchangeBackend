@@ -77,18 +77,11 @@ namespace Application.Service
             var changesSaved = await _unitOfWork.SaveChangeAsync();
             if (changesSaved > 0)
             {
-                /*var registerUser = await _unitOfWork.UserRepository.GetByIdAsync(newAccount.Id);
-                if (registerUser == null)
-                {
-                    throw new Exception("Failed to retrieve the newly created user.");
-                }*/
-
                 var verifyUserId = await CreateVerifyUser(newAccount.Id);
                 newAccount.VerifyUserId = verifyUserId;
 
                 var walletId = await CreateWallet(newAccount.Id);
                 newAccount.WalletId = walletId;
-
                 _unitOfWork.UserRepository.Update(newAccount);
                 return await _unitOfWork.SaveChangeAsync() > 0;
             }
@@ -347,6 +340,10 @@ namespace Application.Service
             await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
             await _unitOfWork.SaveChangeAsync();
             var verifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(userId);
+            if (verifyUser == null)
+            {
+                Console.WriteLine("VerifyUser is null after SaveChangeAsync.");
+            }
             return verifyUser.Id;
         }
         public async Task<bool> PromoteUserToModerator(Guid userId)

@@ -86,14 +86,14 @@ namespace Application.Service
                 chatRoom = await _unitOfWork.ChatRoomRepository.GetRoomBy2UserId(user1, user2);
             }
 
-            var checkOrders = await _unitOfWork.OrderRepository.GetRequestByPostId(postId);
+            var checkOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(postId);
             if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5) && checkOrders.Any(item => item.UserId != user2))
             {
                 throw new Exception("This post has already been sold");
             }
 
-            var duplicateRequest = await _unitOfWork.OrderRepository.GetRequestByUserIdAndPostId(user1, postId);
-            if (duplicateRequest != null && duplicateRequest.Any(x => x.CreatedBy == _claimService.GetCurrentUserId))
+            var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user1, postId);
+            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId))
             {
                 return chatRoom;
             }

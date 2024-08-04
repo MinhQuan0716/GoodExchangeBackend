@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.PostModel
 {
-    public class PostViewModelForRequest
+    public class PostViewModelForOrder
     {
         public Guid PostId { get; set; }
         public string PostTitle { get; set; }

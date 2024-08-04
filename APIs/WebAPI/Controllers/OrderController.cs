@@ -22,5 +22,16 @@ namespace WebAPI.Controllers
             }
             return NotFound();
         }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> CancleOrder(Guid orderId)
+        {
+            var isUpdate = await _orderService.CancleOrderForAdmin(orderId);
+            if (isUpdate)
+            {
+                return Ok();
+            }
+            return NotFound();
+        }
     }
 }

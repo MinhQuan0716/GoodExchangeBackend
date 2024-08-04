@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.UserModel
 {
-    public class UserViewModelForRequest
+    public class UserViewModelForOrder
     {
         public Guid SenderId { get; set; }
         public string SenderUsername { get; set; }

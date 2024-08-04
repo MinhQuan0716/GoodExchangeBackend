@@ -217,11 +217,10 @@ namespace Application.Service
             return listPostModel;
         }
 
-        public async Task<Pagination<PostViewModelForWeb>> GetAllPostForWeb(int pageIndex,int pageSize)
+        public async Task<List<PostViewModelForWeb>> GetAllPostForWeb()
         {
           var listPost= await _unitOfWork.PostRepository.GetAllPostForWebAsync();
-            var paginatedListPost=PaginationUtil<PostViewModelForWeb>.ToPagination(listPost, pageIndex, pageSize);
-            return paginatedListPost;
+          return listPost;
         }
 
         public async Task<List<PostViewModel>> GetPostByCreatedById()
