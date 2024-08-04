@@ -106,18 +106,18 @@ namespace Application.Service
             var accessTokenKey = user.Id.ToString() + "_" + "accesstoken";
             var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
             var accessTokeData = _cacheService.SetData<string>(accessTokenKey, accessToken, _currentTime.GetCurrentTime().AddDays(2));
-            Wallet findUserWallet = null;
-            VerifyUser checkVerifyUser = null;
-            if (user.RoleId == 3)
+          /*  Wallet findUserWallet = null;
+            VerifyUser checkVerifyUser = null;*/
+          /*  if (user.RoleId == 3)
             {
                 findUserWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(user.Id);
                 checkVerifyUser = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
-            }
+            }*/
            
          /*   user.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
             _unitOfWork.UserRepository.Update(user);*/
-            await _unitOfWork.SaveChangeAsync();
-            if (user.RoleId == 3)
+          /*  await _unitOfWork.SaveChangeAsync();*/
+            /*if (user.RoleId == 3)
             {
                 if (findUserWallet == null)
                 {
@@ -133,7 +133,7 @@ namespace Application.Service
                     _unitOfWork.UserRepository.Update(user);
                     await _unitOfWork.SaveChangeAsync();
                 }
-            }
+            }*/
             return new Token
             {
                 userId=user.Id,

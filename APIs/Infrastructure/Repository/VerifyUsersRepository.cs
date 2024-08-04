@@ -25,6 +25,11 @@ namespace Infrastructure.Repository
             return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId&&x.IsDelete==false).Include(m => m.VerificationStatus).SingleAsync();
         }
 
+        public async Task<VerifyUser> FindVerifyUserIdByUserIdForUploadImage(Guid userId)
+        {
+            return await _appDbContext.VerifyUsers.Where(x => x.UserId == userId && x.IsDelete == false && x.VerifyStatusId != 2).Include(m => m.VerificationStatus).SingleAsync();
+        }
+
         public async Task<List<VerifyViewModel>> GetAllVerifyUserAsync()
         {
             var listVerifyUser=await _appDbContext.VerifyUsers.Where(x=>x.IsDelete==false)
