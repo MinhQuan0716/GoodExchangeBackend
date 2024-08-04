@@ -15,7 +15,7 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasIndex(x => x.Email).IsUnique(true);
-            builder.HasData(new User
+           /* builder.HasData(new User
             {
                 Id = Guid.NewGuid(),
                 UserName = "Admin",
@@ -37,7 +37,7 @@ namespace Infrastructure.EntityConfiguration
                 VerifyUserId = Guid.Empty,
                 IsDelete = false,
             }
-            );
+            );*/
         }
     }
 }
