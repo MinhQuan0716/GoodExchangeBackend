@@ -236,19 +236,22 @@ namespace Application.Service
                     await _unitOfWork.SaveChangeAsync();
                     loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
                     var findUserWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(loginUser.Id);
-                    var findVerifyByUserId=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(loginUser.Id);
+                    var findVerifyByUserId = await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(loginUser.Id);
                     if (findUserWallet == null)
                     {
                         var WalletId = await CreateWallet(loginUser.Id);
                         loginUser.WalletId = WalletId;
+                        _unitOfWork.UserRepository.Update(loginUser);
+                        await _unitOfWork.SaveChangeAsync();
                     }
-                    if(findVerifyByUserId == null)
+                    if (findVerifyByUserId == null)
                     {
                         var VerifyUserId = await CreateVerifyUser(loginUser.Id);
                         loginUser.VerifyUserId = VerifyUserId;
+                        _unitOfWork.UserRepository.Update(loginUser);
+                        await _unitOfWork.SaveChangeAsync();
                     }
-                    _unitOfWork.UserRepository.Update(loginUser);
-                    await _unitOfWork.SaveChangeAsync();
+                   
                 }
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
                 var refreshToken = RefreshToken.GetRefreshToken();
