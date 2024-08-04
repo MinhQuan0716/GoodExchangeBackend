@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
         {
             _orderService = orderService;
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllOrder()
         {
@@ -22,16 +22,27 @@ namespace WebAPI.Controllers
             }
             return NotFound();
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<IActionResult> CancleOrder(Guid orderId)
+        public async Task<IActionResult> CancleOrder(Guid Id)
         {
-            var isUpdate = await _orderService.CancleOrderForAdmin(orderId);
+            var isUpdate = await _orderService.CancleOrderForAdmin(Id);
             if (isUpdate)
             {
                 return Ok();
             }
             return NotFound();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{orderId}")]
+        public async Task<IActionResult> GetOrderDetail(Guid Id)
+        {
+            var orderDetail = await _orderService.GetOrderDetailAsync(Id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+            return Ok(orderDetail);
         }
     }
 }
