@@ -233,9 +233,6 @@ namespace Application.Service
                         WalletId = new Guid(),
                     };
                     await _unitOfWork.UserRepository.AddAsync(newAcc);
-                    await _unitOfWork.SaveChangeAsync();
-                    loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
-                   
                     var changesSaved = await _unitOfWork.SaveChangeAsync();
                     if (changesSaved > 0)
                     {
@@ -247,6 +244,7 @@ namespace Application.Service
                         _unitOfWork.UserRepository.Update(newAcc);
                         await _unitOfWork.SaveChangeAsync();
                     }
+                    loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
                 }
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
                 var refreshToken = RefreshToken.GetRefreshToken();
