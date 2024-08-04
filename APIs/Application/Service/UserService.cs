@@ -77,19 +77,19 @@ namespace Application.Service
             var changesSaved = await _unitOfWork.SaveChangeAsync();
             if (changesSaved > 0)
             {
-                var registerUser = await _unitOfWork.UserRepository.GetByIdAsync(newAccount.Id);
+                /*var registerUser = await _unitOfWork.UserRepository.GetByIdAsync(newAccount.Id);
                 if (registerUser == null)
                 {
                     throw new Exception("Failed to retrieve the newly created user.");
-                }
+                }*/
 
-                var verifyUserId = await CreateVerifyUser(registerUser.Id);
-                registerUser.VerifyUserId = verifyUserId;
+                var verifyUserId = await CreateVerifyUser(newAccount.Id);
+                newAccount.VerifyUserId = verifyUserId;
 
-                var walletId = await CreateWallet(registerUser.Id);
-                registerUser.WalletId = walletId;
+                var walletId = await CreateWallet(newAccount.Id);
+                newAccount.WalletId = walletId;
 
-                _unitOfWork.UserRepository.Update(registerUser);
+                _unitOfWork.UserRepository.Update(newAccount);
                 return await _unitOfWork.SaveChangeAsync() > 0;
             }
             return false;
