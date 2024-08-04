@@ -31,14 +31,14 @@ namespace Infrastructure.Migrations
                 oldClrType: typeof(bool),
                 oldType: "bit");
 
-          /*  migrationBuilder.InsertData(
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BirthDay", "CreatedBy", "CreationDate", "DeletedBy", "DeletetionDate", "Email", "FirstName", "HomeAddress", "IsBuisnessAccount", "IsDelete", "LastName", "ModificationBy", "ModificationDate", "PasswordHash", "PhoneNumber", "ProfileImage", "RoleId", "UserName", "VerifyUserId", "WalletId" },
                 values: new object[,]
                 {
                     { new Guid("8438eac1-0ff7-455d-ae6b-32cae394373e"), null, null, null, null, null, "moderator@gmail.com", null, null, null, false, null, null, null, "$2a$11$jnq.MX2Tm.g16PTotPZTqONvf1bVyj3jfEHeWh0SqiF0oItIspheS", null, null, 2, "Moderator", new Guid("00000000-0000-0000-0000-000000000000"), new Guid("00000000-0000-0000-0000-000000000000") },
                     { new Guid("ab65dd21-a7ac-4f46-bf84-cf36674af0e6"), null, null, null, null, null, "admin@gmail.com", null, null, null, false, null, null, null, "$2a$11$mMu9lJN3bTUsShtbQahUxeN0ZvYcGGUTPPOZrmj.Bp0b7cUedChq.", null, null, 1, "Admin", new Guid("00000000-0000-0000-0000-000000000000"), new Guid("00000000-0000-0000-0000-000000000000") }
-                });*/
+                });
         }
 
         /// <inheritdoc />
