@@ -29,6 +29,21 @@ namespace Infrastructure.EntityConfiguration
             {
                 StatusId=3,
                 StatusName=nameof(StatusName.Reject),
+            },
+            new OrderStatus
+            {
+                StatusId=4,
+                StatusName=nameof(StatusName.Cancelled)
+            },
+            new OrderStatus
+            {
+                StatusId=5,
+                StatusName=nameof(StatusName.Confirm),
+            },
+            new OrderStatus
+            {
+                StatusId=6,
+                StatusName=nameof(StatusName.Delivered)
             }
             );
         }
