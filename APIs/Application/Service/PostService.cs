@@ -139,8 +139,28 @@ namespace Application.Service
                 await _unitOfWork.PostRepository.AddAsync(createPost);
                 _unitOfWork.WalletRepository.Update(userWallet);
             }
-            
-          
+            if (postModel.productModel.ConditionId==3)
+            {
+                var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                var newProduct = _mapper.Map<Product>(postModel.productModel);
+                newProduct.ProductImageUrl = imageUrl;
+                if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                {
+                    newProduct.ProductPrice = 0;
+                }
+                await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                await _unitOfWork.SaveChangeAsync();
+                var createPost = new Post
+                {
+                    PostTitle = postModel.PostTitle,
+                    PostContent = postModel.PostContent,
+                    Product = newProduct,
+                    UserId = _claimService.GetCurrentUserId
+                };
+                await _unitOfWork.PostRepository.AddAsync(createPost);
+            }
+
+
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 

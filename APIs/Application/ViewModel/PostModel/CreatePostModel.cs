@@ -13,6 +13,6 @@ namespace Application.ViewModel.PostModel
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
         public CreateProductModel productModel { get; set; }
-        public string PaymentType { get; set; }
+        public string? PaymentType { get; set; }
     }
 }
