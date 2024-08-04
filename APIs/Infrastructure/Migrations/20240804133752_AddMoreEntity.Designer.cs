@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240727102318_ModifyWalletTransactionEntity")]
-    partial class ModifyWalletTransactionEntity
+    [Migration("20240804133752_AddMoreEntity")]
+    partial class AddMoreEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -302,6 +302,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsPriority")
+                        .HasColumnType("bit");
+
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -319,10 +322,15 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -516,7 +524,53 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.SubcriptionHistory", b =>
+            modelBuilder.Entity("Domain.Entities.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("ExpiryMonth")
+                        .HasColumnType("real");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SubcriptionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SubscriptionHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -567,53 +621,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SubcriptionHistories");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Subscription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletetionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("ExpiryMonth")
-                        .HasColumnType("real");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModificationBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("Price")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("SubcriptionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Subscriptions");
+                    b.ToTable("SubscriptionHistories");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -682,7 +690,7 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("VerifyUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("WalletId")
+                    b.Property<Guid?>("WalletId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -693,6 +701,30 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("27aa7437-5d36-4a01-80e8-7f3e572f6d5c"),
+                            Email = "admin@gmail.com",
+                            IsDelete = false,
+                            PasswordHash = "$2a$11$DUEtfo/4/wNxyTV8m9LPaOwBZE2tD70d5isPom.7zNidXyhINp.i2",
+                            RoleId = 1,
+                            UserName = "Admin",
+                            VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            WalletId = new Guid("00000000-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("319d5597-f149-4fa5-9c05-60e4f7120b8f"),
+                            Email = "moderator@gmail.com",
+                            IsDelete = false,
+                            PasswordHash = "$2a$11$kgQPkJfrAw91JMh1uyMtUObEXmYk8vRptVWzV334WDQ4udj/LuEgm",
+                            RoleId = 2,
+                            UserName = "Moderator",
+                            VerifyUserId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            WalletId = new Guid("00000000-0000-0000-0000-000000000000")
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.VerificationStatus", b =>
@@ -847,11 +879,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("OrderId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SubscriptionId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TransactionType")
@@ -979,6 +1009,14 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.User", "Author")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
                     b.Navigation("Product");
                 });
 
@@ -1031,7 +1069,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("ReportUser");
                 });
 
-            modelBuilder.Entity("Domain.Entities.SubcriptionHistory", b =>
+            modelBuilder.Entity("Domain.Entities.SubscriptionHistory", b =>
                 {
                     b.HasOne("Domain.Entities.Subscription", "Subcription")
                         .WithMany("SubcriptionHistories")
@@ -1040,7 +1078,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("SubscriptionHistories")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1095,15 +1133,11 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("Transactions")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrderId");
 
                     b.HasOne("Domain.Entities.Subscription", "Subcription")
                         .WithMany("WalletTransactions")
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SubscriptionId");
 
                     b.HasOne("Domain.Entities.Wallet", "Wallet")
                         .WithMany("Transactions")
@@ -1183,11 +1217,15 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("ChatRooms2");
 
+                    b.Navigation("Posts");
+
                     b.Navigation("RatedUsers");
 
                     b.Navigation("Raters");
 
                     b.Navigation("Requests");
+
+                    b.Navigation("SubscriptionHistories");
 
                     b.Navigation("VerifyUser")
                         .IsRequired();
