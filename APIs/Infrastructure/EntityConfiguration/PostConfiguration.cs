@@ -14,6 +14,7 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<Post> builder)
         {
             builder.HasOne(x => x.Author).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(deleteBehavior:DeleteBehavior.NoAction);
+            builder.Property(x => x.IsPriority).IsRequired(false);
         }
     }
 }

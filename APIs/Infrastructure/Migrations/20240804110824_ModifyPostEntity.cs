@@ -27,7 +27,7 @@ namespace Infrastructure.Migrations
                 name: "IsPriority",
                 table: "Posts",
                 type: "bit",
-                nullable: false,
+                nullable: true,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<Guid>(
