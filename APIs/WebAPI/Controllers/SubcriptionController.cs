@@ -66,5 +66,12 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> SubscriptionDetail(Guid id)
+        {
+            var subscriptionDetail=await _subcriptionService.GetSubscriptionDetailAsync(id);
+            return Ok(subscriptionDetail);
+        }
     }
 }

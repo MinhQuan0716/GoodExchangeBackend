@@ -109,5 +109,12 @@ namespace Application.Service
             _unitOfWork.SubcriptionRepository.Update(foundSubscription);
             return await _unitOfWork.SaveChangeAsync()>0;
         }
+
+        public async Task<SubscriptionDetailViewModel> GetSubscriptionDetailAsync(Guid subscriptionId)
+        {
+            var subscriptionDetail=await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            var subscriptionDetailViewModel=_mapper.Map<SubscriptionDetailViewModel>(subscriptionDetail);
+            return subscriptionDetailViewModel;
+        }
     }
 }
