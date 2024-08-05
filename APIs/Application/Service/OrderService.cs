@@ -3,6 +3,7 @@ using Application.ViewModel.OrderModel;
 using AutoMapper;
 using Domain.Entities;
 using Hangfire.Dashboard;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,12 @@ namespace Application.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClaimService _claimService;
         private readonly IMapper _mapper;
+        private readonly int _pending = 1;
+        private readonly int _accept = 2;
+        private readonly int _reject = 3;
+        private readonly int _cancel = 4;
+        private readonly int _confirm = 5;
+        private readonly int _delivered = 6;
         public OrderService(IUnitOfWork unitOfWork, IClaimService claimService,IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -32,13 +39,13 @@ namespace Application.Service
                 throw new Exception("Order not found");
             }
             //check order
-            if (order.OrderStatusId == 2 || order.OrderStatusId == 3)
+            if (order.OrderStatusId == _accept || order.OrderStatusId == _reject)
             {
                 throw new Exception("You already accepted or rejected this order");
             }
 
             // Update the Order status
-            order.OrderStatusId = 2;
+            order.OrderStatusId = _accept;
             _unitOfWork.OrderRepository.Update(order);
 
             var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
@@ -48,7 +55,7 @@ namespace Application.Service
                 {
                     if (item.Id != order.Id)
                     {
-                        item.OrderStatusId = 3;
+                        item.OrderStatusId = _reject;
                         _unitOfWork.OrderRepository.Update(item);
                         var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
                         if (walletTransaction != null)
@@ -83,15 +90,15 @@ namespace Application.Service
             var Order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
             if (Order == null)
             {
-                throw new Exception("Order not found");
+                throw new Exception("Order is not found");
             }
 
-            if (Order.OrderStatusId != 2)
+            if (Order.OrderStatusId != _accept)
             {
-                throw new Exception("Order not accepted");
+                throw new Exception("Order is not accepted");
             }
             // Update the Order status
-            Order.OrderStatusId = 4;
+            Order.OrderStatusId = _delivered;
             _unitOfWork.OrderRepository.Update(Order);
             // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
@@ -111,7 +118,7 @@ namespace Application.Service
             var OrderList = await _unitOfWork.OrderRepository.GetOrderByPostId(postId);
             foreach(var order in OrderList)
             {
-                if (order.OrderStatusId == 2 || order.OrderStatusId == 4 || order.OrderStatusId == 5)
+                if (order.OrderStatusId == _accept || order.OrderStatusId == _confirm || order.OrderStatusId == _delivered)
                 {
                     return true;
                 }
@@ -130,15 +137,23 @@ namespace Application.Service
             {
                 throw new Exception("Order not found");
             }
-            if (order.OrderStatusId == 2)
+            if (order.OrderStatusId == _accept)
             {
                 throw new Exception("Order has already been accepted and cannot be canceled.");
             }
-            if (order.OrderStatusId == 6)
+            if (order.OrderStatusId == _delivered)
+            {
+                throw new Exception("Order has already been delivered and cannot be canceled.");
+            }
+            if (order.OrderStatusId == _confirm)
+            {
+                throw new Exception("Order has already been confirm and cannot be canceled.");
+            }
+            if (order.OrderStatusId == _cancel)
             {
                 throw new Exception("Order has already been cancled.");
             }
-            order.OrderStatusId = 6;
+            order.OrderStatusId = _cancel;
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
             if (walletTransaction != null)
@@ -157,11 +172,11 @@ namespace Application.Service
                 throw new Exception("Order not found");
             }
 
-            if (order.OrderStatusId != 4)
+            if (order.OrderStatusId != _delivered)
             {
                 throw new Exception("Order is not delivered.");
             }
-            order.OrderStatusId = 5;
+            order.OrderStatusId = _confirm;
             _unitOfWork.OrderRepository.Update(order);
             var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
             if (post != null)
@@ -185,7 +200,7 @@ namespace Application.Service
                 throw new Exception("Order not found");
             }
             var orderStatus = order.OrderStatusId;
-            order.OrderStatusId = 6;
+            order.OrderStatusId = _cancel;
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
             walletTransaction.TransactionType = "purchase cancled";
@@ -197,7 +212,7 @@ namespace Application.Service
                 {
                     if (post.ConditionTypeId ==1)
                     {
-                        if (orderStatus == 2 || orderStatus == 4 || orderStatus == 6)
+                        if (orderStatus == _accept || orderStatus == _confirm || orderStatus == _delivered)
                         {
                             wallet.UserBalance += post.ProductPrice;
                             _unitOfWork.WalletRepository.Update(wallet);

@@ -180,7 +180,10 @@ namespace Backend.Application.Test.ServiceTest
             var product = _mapper.Map<Product>(productModel);
             var subscriptionHistory = _fixture.Build<SubscriptionHistoryDetailViewModel>()
                 .With(x => x.StartDate, DateOnly.FromDateTime(DateTime.UtcNow))
+                .With(x => x.Status, "True")
+                .With(x => x.SubscriptionId, new Guid())
                 .With(x => x.EndDate, DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))).CreateMany(2).ToList();
+            var subscription = _fixture.Build<Subscription>().With(x => x.Description, "priority").Create();
             var postModel = _fixture.Build<CreatePostModel>().With(x => x.PaymentType, "Subscription").With(x => x.productModel, productModel).Create();
             var post = _mapper.Map<Post>(postModel);
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
@@ -189,6 +192,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
             _unitOfWorkMock.Setup(unit => unit.SubscriptionHistoryRepository.GetUserPruchaseSubscription(It.IsAny<Guid>())).ReturnsAsync(subscriptionHistory);
             _unitOfWorkMock.Setup(unit => unit.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(It.IsAny<Guid>())).ReturnsAsync(verifyModel);
+            _unitOfWorkMock.Setup(unit => unit.SubcriptionRepository.GetByIdAsync(subscriptionHistory.FirstOrDefault().SubscriptionId)).ReturnsAsync(subscription);
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);

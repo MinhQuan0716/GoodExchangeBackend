@@ -89,8 +89,6 @@ namespace Application.Service
             }
             if (postModel.productModel.ConditionId != 3)
             {
-
-
                 if (postModel.PaymentType == "Subscription")
                 {
                     var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(_claimService.GetCurrentUserId);
@@ -98,23 +96,44 @@ namespace Application.Service
                     {
                         throw new Exception("You must subscribe to  create post");
                     }
-                    var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
-                    var newProduct = _mapper.Map<Product>(postModel.productModel);
-                    newProduct.ProductImageUrl = imageUrl;
-                    if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                    if (listSubscription.Any(ls => ls.Status == "True"))
                     {
-                        newProduct.ProductPrice = 0;
+                        var isPriority = false;
+                        var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
+                        var newProduct = _mapper.Map<Product>(postModel.productModel);
+                        var subscriptionId = listSubscription.Where(ls => ls.Status == "True").Select(sh => sh.SubscriptionId).FirstOrDefault();
+                        if (subscriptionId != null)
+                        {
+                            var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+                            if (subscription != null)
+                            {
+                                if (subscription.Description == "priority")
+                                {
+                                    isPriority = true;
+                                }
+                            }
+                        }
+                        newProduct.ProductImageUrl = imageUrl;
+                        if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
+                        {
+                            newProduct.ProductPrice = 0;
+                        }
+                        await _unitOfWork.ProductRepository.AddAsync(newProduct);
+                        await _unitOfWork.SaveChangeAsync();
+                        var createPost = new Post
+                        {
+                            PostTitle = postModel.PostTitle,
+                            PostContent = postModel.PostContent,
+                            Product = newProduct,
+                            UserId = _claimService.GetCurrentUserId,
+                            IsPriority = isPriority
+                        };
+                        await _unitOfWork.PostRepository.AddAsync(createPost);
                     }
-                    await _unitOfWork.ProductRepository.AddAsync(newProduct);
-                    await _unitOfWork.SaveChangeAsync();
-                    var createPost = new Post
+                    else
                     {
-                        PostTitle = postModel.PostTitle,
-                        PostContent = postModel.PostContent,
-                        Product = newProduct,
-                        UserId = _claimService.GetCurrentUserId
-                    };
-                    await _unitOfWork.PostRepository.AddAsync(createPost);
+                        throw new Exception("Your subscription is expired");
+                    }
                 }
                 if (postModel.PaymentType == "Wallet")
                 {
@@ -138,7 +157,8 @@ namespace Application.Service
                         PostTitle = postModel.PostTitle,
                         PostContent = postModel.PostContent,
                         Product = newProduct,
-                        UserId = _claimService.GetCurrentUserId
+                        UserId = _claimService.GetCurrentUserId,
+                        IsPriority = false,
                     };
                     await _unitOfWork.PostRepository.AddAsync(createPost);
                     _unitOfWork.WalletRepository.Update(userWallet);
@@ -160,7 +180,8 @@ namespace Application.Service
                     PostTitle = postModel.PostTitle,
                     PostContent = postModel.PostContent,
                     Product = newProduct,
-                    UserId = _claimService.GetCurrentUserId
+                    UserId = _claimService.GetCurrentUserId,
+                    IsPriority = true
                 };
                 await _unitOfWork.PostRepository.AddAsync(createPost);
             }

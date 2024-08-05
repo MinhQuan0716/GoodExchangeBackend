@@ -133,12 +133,12 @@ namespace Application.Service
                 await _unitOfWork.SaveChangeAsync();
             }
 
-            var duplicateMessage = await _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl);
+            var duplicateMessage = await _unitOfWork.MessageRepository.getByContent("Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle);
             if (duplicateMessage == null)
             {
                 var createMessageModel = new CreateMessageModel
                 {
-                    MessageContent = "Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle + " " + postForProductPrice.ProductImageUrl,
+                    MessageContent = "Tôi đang có hứng thú với món đồ " + postForProductPrice.PostTitle,
                     RoomId = chatRoom.roomId
                 };
                 var newMessage = _mapper.Map<Message>(createMessageModel);
