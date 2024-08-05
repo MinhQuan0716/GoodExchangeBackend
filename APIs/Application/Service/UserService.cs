@@ -32,6 +32,7 @@ namespace Application.Service
         private readonly IClaimService _claimService;
         private readonly ICacheService _cacheService;
         private readonly IUploadFile _uploadFile;
+        private readonly string _ImageUrl = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2F31312d9e-b7ed-4ac1-a890-da5d9899d956profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg?alt=media&token=c039485b-5130-405f-aee4-2a0d3df2eef6";
         public UserService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
             , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService,IUploadFile uploadFile)
         {
@@ -72,7 +73,7 @@ namespace Application.Service
             newAccount.RoleId = 3;
             newAccount.PasswordHash = registerModel.Password.Hash();
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
-            newAccount.ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088";
+            newAccount.ProfileImage = _ImageUrl;
             await _unitOfWork.UserRepository.AddAsync(newAccount);
             var changesSaved = await _unitOfWork.SaveChangeAsync();
             if (changesSaved > 0)
