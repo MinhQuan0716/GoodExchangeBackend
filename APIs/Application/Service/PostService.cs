@@ -380,10 +380,11 @@ namespace Application.Service
             foreach(var user in listUser)
             {
                 var listUserPurchaseSubscription=await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(user.Id);
-                var listUserExpireSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserExpireSubscription(user.Id);
-                if (listUserPurchaseSubscription.Count() > 0)
+               /* var listUserExpireSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserExpireSubscription(user.Id);*/
+                if (listUserPurchaseSubscription != null&& listUserPurchaseSubscription.Count()>0)
                 {
-                    if (listUserExpireSubscription.Count() == listUserPurchaseSubscription.Count())
+                    
+                    if (listUserPurchaseSubscription.Where(x=>x.Status== "Expried").Count() == listUserPurchaseSubscription.Count())
                     {
                         var listPostCreatedByUser = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
                         _unitOfWork.PostRepository.SoftRemoveRange(listPostCreatedByUser);

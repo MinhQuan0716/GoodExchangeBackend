@@ -43,8 +43,8 @@ namespace Application.Service
 
         public async Task<bool> ApproveImageAsync(Guid verifyId)
         {
-            string tokenDevice1 = "ExponentPushToken[Bo1u-nBDnqtZaupsEuGX91]";
-            string tokenDevice2 = "ExponentPushToken[M5YkGHHh6_WjaMvIjsfwOl]";
+            string tokenDevice1 = "ExponentPushToken[JP-nS5APtU9r7r3NZAlWDZ]";
+            string tokenDevice2 = "ExponentPushToken[NRBrafIIgP6QdLp81_Tl6_]";
             var findVerified=await _unitOfWork.VerifyUsersRepository.GetByIdAsync(verifyId);
             if(findVerified == null)
             {
@@ -80,8 +80,8 @@ namespace Application.Service
 
         public async Task<bool> DenyImageAsync(Guid verifyId)
         {
-            string tokenDevice1 = "ExponentPushToken[Bo1u-nBDnqtZaupsEuGX91]";
-            string tokenDevice2 = "ExponentPushToken[M5YkGHHh6_WjaMvIjsfwOl]";
+            string tokenDevice1 = "ExponentPushToken[JP-nS5APtU9r7r3NZAlWDZ]";
+            string tokenDevice2 = "ExponentPushToken[NRBrafIIgP6QdLp81_Tl6_]";
             List<string> newList = new List<string>();
             newList.Add(tokenDevice2);
             newList.Add(tokenDevice1);
