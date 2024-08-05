@@ -216,5 +216,15 @@ namespace MobileAPI.Controllers
             }
             return Ok(isExisted);
         }
+      /*  [HttpDelete]
+        public async Task<IActionResult> RemovePostExpiredSubscription()
+        {
+            var isDelete = await _postService.RemovePostWhenSubscriptionExpire();
+            if(!isDelete)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }*/
     }
 }
