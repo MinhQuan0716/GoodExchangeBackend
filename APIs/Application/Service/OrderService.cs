@@ -141,6 +141,14 @@ namespace Application.Service
             {
                 throw new Exception("Order has already been accepted and cannot be canceled.");
             }
+            if (order.OrderStatusId == _delivered)
+            {
+                throw new Exception("Order has already been delivered and cannot be canceled.");
+            }
+            if (order.OrderStatusId == _confirm)
+            {
+                throw new Exception("Order has already been confirm and cannot be canceled.");
+            }
             if (order.OrderStatusId == _cancel)
             {
                 throw new Exception("Order has already been cancled.");
