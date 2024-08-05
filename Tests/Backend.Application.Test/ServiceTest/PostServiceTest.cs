@@ -180,6 +180,7 @@ namespace Backend.Application.Test.ServiceTest
             var product = _mapper.Map<Product>(productModel);
             var subscriptionHistory = _fixture.Build<SubscriptionHistoryDetailViewModel>()
                 .With(x => x.StartDate, DateOnly.FromDateTime(DateTime.UtcNow))
+                .With(x => x.Status, "True")
                 .With(x => x.EndDate, DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))).CreateMany(2).ToList();
             var postModel = _fixture.Build<CreatePostModel>().With(x => x.PaymentType, "Subscription").With(x => x.productModel, productModel).Create();
             var post = _mapper.Map<Post>(postModel);

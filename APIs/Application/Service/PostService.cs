@@ -100,6 +100,11 @@ namespace Application.Service
                     {
                         var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
                         var newProduct = _mapper.Map<Product>(postModel.productModel);
+                        var subscriptionId = listSubscription.Where(ls => ls.Status == "True").Select(sh => sh.SubscriptionId).FirstOrDefault();
+                        if (subscriptionId != null)
+                        {
+
+                        }
                         newProduct.ProductImageUrl = imageUrl;
                         if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
                         {
