@@ -92,9 +92,12 @@ namespace Application.Service
                 if (postModel.PaymentType == "Subscription")
                 {
                     var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
-                    if (listSubscription.Count() == 0)
+                    if (listSubscription != null)
                     {
-                        throw new Exception("You must subscribe to  create post");
+                        if (listSubscription.Count() == 0)
+                        {
+                            throw new Exception("You must subscribe to  create post");
+                        }
                     }
                     if (listSubscription.Any(ls => ls.Status == "True"))
                     {

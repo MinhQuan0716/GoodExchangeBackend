@@ -44,26 +44,8 @@ namespace Application.Service
                     var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
                     if (subscriptionHistory.EndDate > DateTime.UtcNow)
                     {
-                        if (wallet.UserBalance < subscription.Price)
-                        {
-                            subscriptionHistory.Status = false;
-                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                        }
-                        else
-                        {
-                            wallet.UserBalance = wallet.UserBalance - subscription.Price;
-                            subscriptionHistory.EndDate = DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth);
-                            _unitOfWork.WalletRepository.Update(wallet);
-                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                            WalletTransaction newTransaction = new WalletTransaction()
-                            {
-                                WalletId= wallet.Id,    
-                                TransactionType=$"Extend subscription for {subscription.Description}",
-                                SubscriptionId =subscription.Id,
-                                Amount=(float)subscription.Price
-                            };
-                            _unitOfWork.WalletTransactionRepository.AddAsync(newTransaction);
-                        }
+                        subscriptionHistory.Status = false;
+                        _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
                     }
                 }
             }
