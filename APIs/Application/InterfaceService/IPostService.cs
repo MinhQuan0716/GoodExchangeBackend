@@ -31,5 +31,6 @@ namespace Application.InterfaceService
         Task<bool>UnbanPost(Guid postId);
         Task<List<PostViewModelForWeb>> GetAllPostForWeb();
         Task<List<PostViewModel>> SearchPostCreatedByCurrentUserByPostTitle(string postTitle);
+        Task<bool> RemovePostWhenSubscriptionExpire();
     }
 }

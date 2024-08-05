@@ -94,7 +94,7 @@ namespace Infrastructure.Repository
         {
             foreach (TEntity entity in entities)
             {
-                entity.IsDelete = false;
+                entity.IsDelete = true;
                 entity.DeletedBy = _claimService.GetCurrentUserId;
                 entity.DeletetionDate = _currentTime.GetCurrentTime();
             }

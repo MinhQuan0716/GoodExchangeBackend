@@ -120,5 +120,6 @@ app.MapHub<ChatHub>("/chatHub");
 //Call hangfire
 await app.StartAsync();
 RecurringJob.AddOrUpdate<ISubcriptionService>(sub => sub.ExtendSubscription(), "0 0 * * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+RecurringJob.AddOrUpdate<IPostService>(post => post.RemovePostWhenSubscriptionExpire(), "0 0 * * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 await app.WaitForShutdownAsync();
 

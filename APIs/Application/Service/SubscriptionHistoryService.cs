@@ -25,7 +25,7 @@ namespace Application.Service
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetAllUsersSubscriptionHistoryDetailAsync()
         {
-            return await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
+            return await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(_claimService.GetCurrentUserId);
         }
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUsersAvailableSubscription()

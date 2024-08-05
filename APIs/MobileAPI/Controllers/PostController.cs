@@ -175,6 +175,7 @@ namespace MobileAPI.Controllers
         /// </summary>
         /// <param name="postId"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult>GetPostDetailInListPostCreatedByUser(Guid postId)
         {

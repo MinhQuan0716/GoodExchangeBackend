@@ -190,7 +190,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.PostRepository.AddAsync(post)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.ProductRepository.AddAsync(product)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit => unit.SubscriptionHistoryRepository.GetUserPruchaseSubscription(It.IsAny<Guid>())).ReturnsAsync(subscriptionHistory);
+            _unitOfWorkMock.Setup(unit => unit.SubscriptionHistoryRepository.GetUserPurchaseSubscription(It.IsAny<Guid>())).ReturnsAsync(subscriptionHistory);
             _unitOfWorkMock.Setup(unit => unit.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(It.IsAny<Guid>())).ReturnsAsync(verifyModel);
             _unitOfWorkMock.Setup(unit => unit.SubcriptionRepository.GetByIdAsync(subscriptionHistory.FirstOrDefault().SubscriptionId)).ReturnsAsync(subscription);
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
