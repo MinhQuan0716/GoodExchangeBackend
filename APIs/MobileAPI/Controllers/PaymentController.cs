@@ -26,25 +26,21 @@ namespace MobileAPI.Controllers
             }
             return Ok(payemntUrl);
         }
-      /*  [HttpGet]
-        public async Task<IActionResult> VnPayReturn([FromQuery] VnPayResponse vnPayResponse)
-        {
-            var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
-            if (isUpdated!=null)
-            {
-                return Ok(isUpdated);
-            }
-            return BadRequest(isUpdated);
-        }*/
         [HttpGet]
         public async Task<IActionResult> VnPayRedirect([FromQuery] VnPayResponse vnPayResponse)
         {
             var isUpdated = await _paymentService.HandleIpn(vnPayResponse);
-            if (isUpdated != null)
+            if (isUpdated.RspCode=="00")
             {
-                return Ok("Payment success");
+                string exePath = Environment.CurrentDirectory.ToString();
+                string FilePath = exePath + @"/PaymentTemplate/PaymentSuccessful.html";
+                var htmlContent = await System.IO.File.ReadAllTextAsync(FilePath);
+                return Content(htmlContent, "text/html");
             }
-            return BadRequest();
+            string evnPath = Environment.CurrentDirectory.ToString();
+            string filePath = evnPath + @"/PaymentTemplate/PaymentFailed.html";
+            var htmlFileContent = await System.IO.File.ReadAllTextAsync(filePath);
+            return Content(htmlFileContent, "text/html");
         }
         [Authorize]
         [HttpPost]

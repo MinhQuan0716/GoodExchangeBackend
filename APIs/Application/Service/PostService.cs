@@ -93,7 +93,7 @@ namespace Application.Service
 
                 if (postModel.PaymentType == "Subscription")
                 {
-                    var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPruchaseSubscription(_claimService.GetCurrentUserId);
+                    var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(_claimService.GetCurrentUserId);
                     if (listSubscription.Count() == 0)
                     {
                         throw new Exception("You must subscribe to  create post");
@@ -347,6 +347,27 @@ namespace Application.Service
             oldPost.Product = existingProduct;
             _unitOfWork.PostRepository.Update(oldPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> RemovePostWhenSubscriptionExpire()
+        {
+            bool isDeleted = false;
+            var listUser = await _unitOfWork.UserRepository.GetAllMember();
+            foreach(var user in listUser)
+            {
+                var listUserPurchaseSubscription=await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(user.Id);
+                var listUserExpireSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserExpireSubscription(user.Id);
+                if (listUserPurchaseSubscription.Count() > 0)
+                {
+                    if (listUserExpireSubscription.Count() == listUserPurchaseSubscription.Count())
+                    {
+                        var listPostCreatedByUser = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
+                        _unitOfWork.PostRepository.SoftRemoveRange(listPostCreatedByUser);
+                        isDeleted = await _unitOfWork.SaveChangeAsync() > 0;
+                    }
+                }
+            }
+            return isDeleted;
         }
     }
 }

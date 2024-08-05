@@ -62,7 +62,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id)
         {
-            var posts = await _appDbContext.Posts.Where(p => p.CreatedBy == id)
+            var posts = await _appDbContext.Posts.Where(p => p.UserId == id)
                 .Include(p => p.Product)
                 .Include(p => p.Product.Category)
                 .Include(p => p.Product.ConditionType)

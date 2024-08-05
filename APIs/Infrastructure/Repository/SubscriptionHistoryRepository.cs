@@ -57,7 +57,14 @@ namespace Infrastructure.Repository
             return subscription;
         }
 
-        public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPruchaseSubscription(Guid userId)
+        public async Task<List<SubscriptionHistory>> GetUserExpireSubscription(Guid userId)
+        {
+            var listExpireSubscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false && x.Status == false)
+                                                                                .ToListAsync();
+            return listExpireSubscription;
+        }    
+
+        public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPurchaseSubscription(Guid userId)
         {
            var listUserSubscription=await _appDbContext.SubscriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
                                                                             .Include(x=>x.Subcription).AsSplitQuery()
