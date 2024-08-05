@@ -17,5 +17,7 @@ namespace Application.InterfaceService
         Task<bool> DeactiveSubscriptionAsync(Guid subscriptionId);
         Task<bool> RevokeSubscriptionAsync(Guid subscriptionId);
         Task<SubscriptionDetailViewModel> GetSubscriptionDetailAsync(Guid subscriptionId);
+        Task<bool> PrioritySubscriptionAsync(Guid subscriptionId);
+        Task<bool> UnPrioritySubscriptionAsync(Guid subscriptionId);
     }
 }

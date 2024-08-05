@@ -98,5 +98,21 @@ namespace Application.Service
             var subscriptionDetailViewModel=_mapper.Map<SubscriptionDetailViewModel>(subscriptionDetail);
             return subscriptionDetailViewModel;
         }
+
+        public async Task<bool> PrioritySubscriptionAsync(Guid subscriptionId)
+        {
+            var subscriptionDetail = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            subscriptionDetail.Description = "priority";
+            _unitOfWork.SubcriptionRepository.Update(subscriptionDetail);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<bool> UnPrioritySubscriptionAsync(Guid subscriptionId)
+        {
+            var subscriptionDetail = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            subscriptionDetail.Description = "standard";
+            _unitOfWork.SubcriptionRepository.Update(subscriptionDetail);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
     }
 }

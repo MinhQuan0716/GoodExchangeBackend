@@ -9,7 +9,7 @@ namespace Application.ViewModel.SubcriptionModel
     public class CreateSubcriptionModel
     {
         public long Price { get; set; }
-        public bool IsPriority { get; set; }
+        public string Description { get; set; }
         public string SubcriptionType { get; set; }
         public float ExpiryMonth { get; set; }
     }

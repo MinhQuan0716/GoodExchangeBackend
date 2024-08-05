@@ -73,5 +73,27 @@ namespace WebAPI.Controllers
             var subscriptionDetail=await _subcriptionService.GetSubscriptionDetailAsync(id);
             return Ok(subscriptionDetail);
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{susbcriptionId}")]
+        public async Task<IActionResult> PrioritySubscription(Guid susbcriptionId)
+        {
+            var isRevoked = await _subcriptionService.PrioritySubscriptionAsync(susbcriptionId);
+            if (isRevoked)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{susbcriptionId}")]
+        public async Task<IActionResult> UnPrioritySubscription(Guid susbcriptionId)
+        {
+            var isRevoked = await _subcriptionService.UnPrioritySubscriptionAsync(susbcriptionId);
+            if (isRevoked)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }
