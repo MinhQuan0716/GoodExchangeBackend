@@ -92,9 +92,13 @@ namespace Infrastructure.Mappers
         internal void SubcriptionMap()
         {
             CreateMap<CreateSubcriptionModel, Subscription>()
-                .ReverseMap();
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.IsPriority ? "priority" : "standard"))
+                .ReverseMap()
+                .ForMember(dest => dest.IsPriority, opt => opt.MapFrom(src => src.Description == "priority"));
             CreateMap<UpdateSubscriptionModel, Subscription>()
-                .ReverseMap();
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.IsPriority ? "priority" : "standard"))
+                .ReverseMap()
+                .ForMember(dest => dest.IsPriority, opt => opt.MapFrom(src => src.Description == "priority"));
             CreateMap<SubscriptionDetailViewModel,Subscription>()
                 .ReverseMap();
         }
