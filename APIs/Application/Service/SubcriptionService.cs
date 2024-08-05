@@ -44,13 +44,9 @@ namespace Application.Service
                     var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
                     if (subscriptionHistory.EndDate > DateTime.UtcNow)
                     {
-                        if (wallet.UserBalance < subscription.Price)
+                        if (wallet.UserBalance > subscription.Price)
                         {
-                            subscriptionHistory.Status = false;
-                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                        }
-                        else
-                        {
+                           
                             wallet.UserBalance = wallet.UserBalance - subscription.Price;
                             subscriptionHistory.EndDate = DateTime.UtcNow.AddMonths((int)subscription.ExpiryMonth);
                             _unitOfWork.WalletRepository.Update(wallet);
