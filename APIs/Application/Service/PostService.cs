@@ -98,12 +98,20 @@ namespace Application.Service
                     }
                     if (listSubscription.Any(ls => ls.Status == "True"))
                     {
+                        var isPriority = false;
                         var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
                         var newProduct = _mapper.Map<Product>(postModel.productModel);
                         var subscriptionId = listSubscription.Where(ls => ls.Status == "True").Select(sh => sh.SubscriptionId).FirstOrDefault();
                         if (subscriptionId != null)
                         {
-
+                            var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+                            if (subscription != null)
+                            {
+                                if (subscription.Description == "priority")
+                                {
+                                    isPriority = true;
+                                }
+                            }
                         }
                         newProduct.ProductImageUrl = imageUrl;
                         if (postModel.productModel.ConditionId == 2 || postModel.productModel.ProductPrice == null)
@@ -117,7 +125,8 @@ namespace Application.Service
                             PostTitle = postModel.PostTitle,
                             PostContent = postModel.PostContent,
                             Product = newProduct,
-                            UserId = _claimService.GetCurrentUserId
+                            UserId = _claimService.GetCurrentUserId,
+                            IsPriority = isPriority
                         };
                         await _unitOfWork.PostRepository.AddAsync(createPost);
                     }
@@ -148,7 +157,8 @@ namespace Application.Service
                         PostTitle = postModel.PostTitle,
                         PostContent = postModel.PostContent,
                         Product = newProduct,
-                        UserId = _claimService.GetCurrentUserId
+                        UserId = _claimService.GetCurrentUserId,
+                        IsPriority = false,
                     };
                     await _unitOfWork.PostRepository.AddAsync(createPost);
                     _unitOfWork.WalletRepository.Update(userWallet);
@@ -170,7 +180,8 @@ namespace Application.Service
                     PostTitle = postModel.PostTitle,
                     PostContent = postModel.PostContent,
                     Product = newProduct,
-                    UserId = _claimService.GetCurrentUserId
+                    UserId = _claimService.GetCurrentUserId,
+                    IsPriority = true
                 };
                 await _unitOfWork.PostRepository.AddAsync(createPost);
             }

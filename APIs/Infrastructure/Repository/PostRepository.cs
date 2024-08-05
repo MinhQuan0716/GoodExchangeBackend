@@ -31,7 +31,8 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> GetAllPost(Guid userId)
         {
-            return await _appDbContext.Posts.Where(x => x.IsDelete == false&&x.CreatedBy!=userId).Include(x => x.Product)
+            return await _appDbContext.Posts.Where(x => x.IsDelete == false&&x.CreatedBy!=userId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate)
+                                           .Include(x => x.Product)
                                            .ThenInclude(p => p.Category)
                                            .AsSplitQuery()
                                            .Include(x => x.Product)
@@ -79,7 +80,7 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            return posts;
+            return posts.OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
         }
 
         public async Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync()
@@ -89,7 +90,7 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            var sortedPosts = posts.OrderBy(p => p.CreationDate).ToList();
+            var sortedPosts = posts.OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
 
             return sortedPosts;
 
@@ -140,6 +141,7 @@ namespace Infrastructure.Repository
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
             return await _appDbContext.Posts.Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false).AsSplitQuery()
+                .OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate)
                                             .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
                                             .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
                                             .Select(x => new PostViewModel
@@ -169,7 +171,7 @@ namespace Infrastructure.Repository
                 p => p.Product,
                 p => p.Product.Category,
                 p => p.Product.ConditionType);
-            var sortedListPost = listPost.Where(p => p.Product.Category.CategoryId == categoryId).ToList();
+            var sortedListPost = listPost.Where(p => p.Product.Category.CategoryId == categoryId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
             return sortedListPost;
         }
        
