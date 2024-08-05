@@ -92,16 +92,19 @@ namespace Application.Service
                 if (postModel.PaymentType == "Subscription")
                 {
                     var listSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(_claimService.GetCurrentUserId);
-                    if (listSubscription.Count() == 0)
+                    if (listSubscription != null)
                     {
-                        throw new Exception("You must subscribe to  create post");
+                        if (listSubscription.Count() == 0)
+                        {
+                            throw new Exception("You must subscribe to  create post");
+                        }
                     }
                     if (listSubscription.Any(ls => ls.Status == "True"))
                     {
                         var isPriority = false;
                         var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
                         var newProduct = _mapper.Map<Product>(postModel.productModel);
-                        var subscriptionId = listSubscription.Where(ls => ls.Status == "True").Select(sh => sh.SubscriptionId).FirstOrDefault();
+                        var subscriptionId = listSubscription.Where(ls => ls.Status == "Available").Select(sh => sh.SubscriptionId).FirstOrDefault();
                         if (subscriptionId != null)
                         {
                             var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
