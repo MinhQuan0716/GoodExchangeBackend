@@ -13,7 +13,9 @@ namespace Application.InterfaceService
         Task<List<CategoryViewModel>> GetAllCategory();
         Task<bool> CreateCategory(CreateCategoryModel category);
         Task<bool> UpdateCategory(UpdateCategoryModel category);
-        Task<bool> DeleteCategory(int id);  
+        Task<bool> DeleteCategory(int id);     
+        Task<CategoryViewModel> GetCategoryDetail(int id);
+
     }
 }
 

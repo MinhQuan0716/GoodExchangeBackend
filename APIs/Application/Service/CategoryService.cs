@@ -40,6 +40,12 @@ namespace Application.Service
             return category;
         }
 
+        public async Task<CategoryViewModel> GetCategoryDetail(int id)
+        {
+            var category = await _unitOfWork.CategoryRepository.GetCategoryByIdAsync(id);
+            return category;
+        }
+
         public async Task<bool> UpdateCategory(UpdateCategoryModel category)
         {
             var foundCategory = await _unitOfWork.CategoryRepository.GetById(category.CategoryId);

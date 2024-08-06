@@ -55,5 +55,13 @@ namespace WebAPI.Controllers
             var listCategory=await _categoryService.GetAllCategory();
             return Ok(listCategory);
         }
+        [Authorize(Roles = "Admin,Moderator")]
+        [HttpGet]
+
+        public async Task<IActionResult> GetCategoryDetail(int id)
+        {
+            var category = await _categoryService.GetCategoryDetail(id);
+            return Ok(category);
+        }
     }
 }

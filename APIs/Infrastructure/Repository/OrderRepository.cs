@@ -430,5 +430,39 @@ namespace Infrastructure.Repository
                                              }).AsQueryable().AsNoTracking().ToListAsync();
             return listOrder;
         }
+
+        public async Task<List<OrderViewModelForWeb>> GetAllOrderForWeb()
+        {
+            var listOrder = await _dbContext.Orders.Where(x => x.IsDelete == false)
+                                            .OrderBy(x => x.CreationDate)
+                                            .Include(x => x.User).ThenInclude(u => u.VerifyUser).AsSplitQuery()
+                                            .Include(x => x.User).ThenInclude(u => u.Raters).AsSplitQuery()
+                                            .Include(x => x.Post).AsSplitQuery()
+                                            .Include(x => x.Status).AsSplitQuery()
+                                            .Select(x => new OrderViewModelForWeb
+                                            {
+                                                Id = x.Id,
+                                                OrderMessage = x.OrderMessage,
+                                                OrderStatus = x.Status.StatusName,
+                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                Post = new PostViewModelForOrder
+                                                {
+                                                    PostId = x.PostId,
+                                                    PostContent = x.Post.PostContent,
+                                                    PostTitle = x.Post.PostTitle
+                                                },
+                                                User = _dbContext.Users.Where(u => u.Id == x.UserId).AsSplitQuery().Select(u => new UserViewModelForOrder
+                                                {
+                                                    SenderId = x.CreatedBy.Value,
+                                                    SenderEmail = u.Email,
+                                                    SenderHomeAddress = u.HomeAddress,
+                                                    SenderImageUrl = u.VerifyUser.UserImage,
+                                                    SenderRating = (u.RatedUsers.Count() > 0
+                                                                 ? u.RatedUsers.Sum(r => r.RatingPoint) / (u.RatedUsers.Count()) : 0),
+                                                    SenderUsername = u.UserName
+                                                }).Single()
+                                            }).AsQueryable().AsNoTracking().ToListAsync();
+            return listOrder;
+        }
     }
 }
