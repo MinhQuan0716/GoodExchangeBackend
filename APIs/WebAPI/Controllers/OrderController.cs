@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             return NotFound();
         }
         [Authorize(Roles = "Admin")]
-        [HttpGet("{orderId}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetOrderDetail(Guid Id)
         {
             var orderDetail = await _orderService.GetOrderDetailAsync(Id);
