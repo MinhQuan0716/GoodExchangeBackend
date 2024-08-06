@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             return NotFound();
         }
         [Authorize(Roles = "Admin")]
-        [HttpPut("{orderId}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> CancleOrder(Guid Id)
         {
             var isUpdate = await _orderService.CancleOrderForAdmin(Id);
