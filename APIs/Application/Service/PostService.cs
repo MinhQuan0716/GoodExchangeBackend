@@ -99,7 +99,7 @@ namespace Application.Service
                             throw new Exception("You must subscribe to  create post");
                         }
                     }
-                    if (listSubscription.Any(ls => ls.Status == "True"))
+                    if (listSubscription.Any(ls => ls.Status == "Available"))
                     {
                         var isPriority = false;
                         var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");

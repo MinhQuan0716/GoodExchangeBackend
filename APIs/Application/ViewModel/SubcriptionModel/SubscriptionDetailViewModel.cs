@@ -13,5 +13,6 @@ namespace Application.ViewModel.SubcriptionModel
         public string Description { get; set; }
         public string SubcriptionType { get; set; }
         public float ExpiryMonth { get; set; }
+       /* public bool IsPriority { get; set; }*/
     }
 }
