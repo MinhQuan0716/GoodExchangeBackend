@@ -75,10 +75,10 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
         [Authorize(Roles ="Admin,Moderator")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> detail(Guid id)
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> detail(Guid userId)
         {
-            var useDetail = await _userService.GetUserInformation(id);
+            var useDetail = await _userService.GetUserInformation(userId);
             return Ok(useDetail);
         }
         [Authorize]
