@@ -215,7 +215,7 @@ namespace Application.Service
                 string email = payload.Email;
                 string firstName = payload.GivenName;
                 string lastName = payload.FamilyName;
-                string pictureUrl = payload.Picture;
+                string pictureUrl = _ImageUrl;
                 var loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
                 if (loginUser == null)
                 {
