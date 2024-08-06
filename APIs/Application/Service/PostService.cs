@@ -381,14 +381,31 @@ namespace Application.Service
             {
                 var listUserPurchaseSubscription=await _unitOfWork.SubscriptionHistoryRepository.GetUserPurchaseSubscription(user.Id);
                /* var listUserExpireSubscription = await _unitOfWork.SubscriptionHistoryRepository.GetUserExpireSubscription(user.Id);*/
-                if (listUserPurchaseSubscription != null&& listUserPurchaseSubscription.Count()>0)
+                if (listUserPurchaseSubscription != null)
                 {
-                    
-                    if (listUserPurchaseSubscription.Where(x=>x.Status== "Expried").Count() == listUserPurchaseSubscription.Count())
+                    if (listUserPurchaseSubscription.Count() > 0)
                     {
-                        var listPostCreatedByUser = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
-                        _unitOfWork.PostRepository.SoftRemoveRange(listPostCreatedByUser);
-                        isDeleted = await _unitOfWork.SaveChangeAsync() > 0;
+                        if (listUserPurchaseSubscription.Where(x => x.Status == "Expried").Count() == listUserPurchaseSubscription.Count())
+                        {
+                            var listPostCreatedByUser = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
+                            _unitOfWork.PostRepository.SoftRemoveRange(listPostCreatedByUser);
+                            isDeleted = await _unitOfWork.SaveChangeAsync() > 0;
+                        }
+                    }
+                    
+                } else
+                {
+                    var listPostCreatedByUser = await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(user.Id);
+                      if(listPostCreatedByUser != null)
+                    {
+                       foreach(var post in listPostCreatedByUser)
+                        {
+                            if (post.Product.ConditionId != 3)
+                            {
+                                _unitOfWork.PostRepository.SoftRemove(post);
+                                isDeleted = await _unitOfWork.SaveChangeAsync() > 0;
+                            }
+                        }
                     }
                 }
             }
