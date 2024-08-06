@@ -59,10 +59,10 @@ namespace MobileAPI.Controllers
         /// <param name="categoryId"></param>
         /// <returns></returns>
         /*[Authorize]*/
-        [HttpGet]
-        public async Task<IActionResult> SortPostByCategory(int categoryId) 
+        [HttpPost]
+        public async Task<IActionResult> SortPostByCategory(int categoryId,List<PostViewModel>? postViewModels) 
         {
-            var post=await _postService.SortPostByCategory(categoryId);
+            var post=await _postService.SortPostByCategory(categoryId,postViewModels);
             return Ok(post);
         }
         /// <summary>
