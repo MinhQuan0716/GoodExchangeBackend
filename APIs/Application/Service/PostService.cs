@@ -110,7 +110,7 @@ namespace Application.Service
                             var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
                             if (subscription != null)
                             {
-                                if (subscription.Description == "priority")
+                                if (subscription.Description == "Priority")
                                 {
                                     isPriority = true;
                                 }
@@ -291,7 +291,7 @@ namespace Application.Service
 
         public async Task<List<PostViewModel>> GetPostSortByCreationDay()
         {
-            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsSortByCreationDayAsync(_claimService.GetCurrentUserId);
             return _mapper.Map<List<PostViewModel>>(posts);
         }
 

@@ -83,15 +83,14 @@ namespace Infrastructure.Repository
             return posts.OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
         }
 
-        public async Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync()
+        public async Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync(Guid currentUserId)
         {
             var posts = await GetAllAsync(
                 p => p.Product,
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            var sortedPosts = posts.OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
-
+            var sortedPosts = posts.Where(p => p.CreatedBy != currentUserId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
             return sortedPosts;
 
         }

@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
             return Ok(user);
         }
         [Authorize(Roles ="Admin")]
-        [HttpPut]
+        [HttpPut("{userId}")]
         public async Task<IActionResult> CreateModerator(Guid userId)
         {
             bool isPromoted=await _userService.PromoteUserToModerator(userId);
