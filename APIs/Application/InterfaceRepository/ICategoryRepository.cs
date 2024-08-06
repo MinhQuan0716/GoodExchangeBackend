@@ -15,5 +15,6 @@ namespace Application.InterfaceRepository
         void UpdateCategory(Category category); 
         void Remove(Category category);
         Task<Category> GetById(int id);
+        Task<CategoryViewModel> GetCategoryByIdAsync(int id);
     }
 }

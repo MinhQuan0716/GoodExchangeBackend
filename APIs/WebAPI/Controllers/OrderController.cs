@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrder()
         {
-            var orderList = await _orderService.GetAllOrderAsync();
+            var orderList = await _orderService.GetAllOrderForWebAsync();
             if (orderList.Any())
             {
                 return Ok(orderList);

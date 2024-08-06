@@ -41,6 +41,16 @@ namespace Infrastructure.Repository
                                               .SingleAsync();
         }
 
+        public async Task<CategoryViewModel> GetCategoryByIdAsync(int id)
+        {
+            var categories = await _dbContext.Categories.Where(x => x.CategoryId == id).Select(x => new CategoryViewModel
+            {
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
+            }).SingleOrDefaultAsync();
+            return categories;
+        }
+
         public void Remove(Category category)
         {
            _dbContext.Categories.Remove(category);

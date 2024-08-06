@@ -203,19 +203,22 @@ namespace Application.Service
             order.OrderStatusId = _cancel;
             _unitOfWork.OrderRepository.Update(order);
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
-            walletTransaction.TransactionType = "purchase cancled";
-            var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
-            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
-            if (wallet != null)
+            if (walletTransaction != null)
             {
-                if (post != null)
+                walletTransaction.TransactionType = "purchase cancled";
+                var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
+                var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
+                if (wallet != null)
                 {
-                    if (post.ConditionTypeId ==1)
+                    if (post != null)
                     {
-                        if (orderStatus == _accept || orderStatus == _confirm || orderStatus == _delivered)
+                        if (post.ConditionTypeId == 1)
                         {
-                            wallet.UserBalance += post.ProductPrice;
-                            _unitOfWork.WalletRepository.Update(wallet);
+                            if (orderStatus == _accept || orderStatus == _confirm || orderStatus == _delivered)
+                            {
+                                wallet.UserBalance += post.ProductPrice;
+                                _unitOfWork.WalletRepository.Update(wallet);
+                            }
                         }
                     }
                 }
@@ -286,6 +289,12 @@ namespace Application.Service
                 return listOrder;
             }
             throw new Exception("chatRoom not exist");
+        }
+
+        public async Task<List<OrderViewModelForWeb>> GetAllOrderForWebAsync()
+        {
+            var listOrder = await _unitOfWork.OrderRepository.GetAllOrderForWeb();
+            return listOrder;
         }
     }
 }

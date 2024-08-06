@@ -21,5 +21,6 @@ namespace Application.InterfaceRepository
         Task<List<ReceiveOrderViewModel>> GetAllOrderByUserId(Guid userId);
         Task<List<ReceiveOrderViewModel>> GetAllReceiveOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId);
         Task<List<SentOrderViewModel>> GetAllSendOrderBy2UserId(Guid orderCreatedBy, Guid postOwnerId);
+        Task<List<OrderViewModelForWeb>> GetAllOrderForWeb();
     }
 }
