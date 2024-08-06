@@ -35,6 +35,7 @@ namespace MobileAPI.Controllers
         /// Sort post by  createtion day
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPostSortByCreationDay()
         {

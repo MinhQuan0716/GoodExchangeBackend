@@ -102,7 +102,7 @@ namespace Application.Service
         public async Task<bool> PrioritySubscriptionAsync(Guid subscriptionId)
         {
             var subscriptionDetail = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
-            subscriptionDetail.Description = "priority";
+            subscriptionDetail.Description = "Priority";
             _unitOfWork.SubcriptionRepository.Update(subscriptionDetail);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -110,7 +110,7 @@ namespace Application.Service
         public async Task<bool> UnPrioritySubscriptionAsync(Guid subscriptionId)
         {
             var subscriptionDetail = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
-            subscriptionDetail.Description = "standard";
+            subscriptionDetail.Description = "Standard";
             _unitOfWork.SubcriptionRepository.Update(subscriptionDetail);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }

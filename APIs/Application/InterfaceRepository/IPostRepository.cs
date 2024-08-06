@@ -12,7 +12,7 @@ namespace Application.InterfaceRepository
     public interface IPostRepository:IGenericRepository<Post>
     {
         Task<List<Post>> GetAllPostsWithDetailsAsync();
-        Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync();
+        Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync(Guid currentUserId);
         Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id);
         Task<List<Post>> SortPostByProductCategoryAsync(int categoryId);
         Task<PostDetailViewModel> GetPostDetail(Guid postId);

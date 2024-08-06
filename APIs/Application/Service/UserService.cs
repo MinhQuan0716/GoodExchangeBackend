@@ -229,7 +229,7 @@ namespace Application.Service
                         LastName = lastName,
                         PasswordHash = " ",
                         PhoneNumber = " ",
-                        ProfileImage = "https://firebasestorage.googleapis.com/v0/b/firestorage-4ee45.appspot.com/o/Product%2Favatar-trang-4.jpg?alt=media&token=b5970145-10b1-4adf-b04a-2b73b9aa6088",
+                        ProfileImage = pictureUrl,
                         IsBuisnessAccount = false,
                         WalletId = new Guid(),
                     };
