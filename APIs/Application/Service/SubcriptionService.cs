@@ -26,6 +26,7 @@ namespace Application.Service
         public async Task<bool> CreateSubcription(CreateSubcriptionModel createSubcriptionModel)
         {
             var subcription = _mapper.Map<Subscription>(createSubcriptionModel);
+            subcription.Description = "Standard";
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -87,7 +88,9 @@ namespace Application.Service
             {
                 return false;
             }
+            var desc = foundSubscription.Description;
             _mapper.Map(updateSubcriptionModel,foundSubscription,typeof(UpdateSubscriptionModel),typeof(Subscription));
+            foundSubscription.Description = desc;
             _unitOfWork.SubcriptionRepository.Update(foundSubscription);
             return await _unitOfWork.SaveChangeAsync()>0;
         }
