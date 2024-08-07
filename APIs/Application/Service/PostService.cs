@@ -327,11 +327,18 @@ namespace Application.Service
             return listFavoritePost;
         }
 
-        public async Task<List<PostViewModel>> SortPostByCategory(int categoryId)
+        public async Task<List<PostViewModel>> SortPostByCategory(int categoryId, List<PostViewModel>? dataPost)
         {
-            var sortPost = await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
-            var sortPostViewModel= _mapper.Map<List<PostViewModel>>(sortPost);
-            return sortPostViewModel;
+            if (dataPost != null)
+            {
+                var sortPostList=dataPost.Where(x=>x.Product.CategoryId== categoryId).ToList();
+                return sortPostList;
+            } else
+            {
+                var sortPost = await _unitOfWork.PostRepository.SortPostByProductCategoryAsync(categoryId);
+                var sortPostViewModel = _mapper.Map<List<PostViewModel>>(sortPost);
+                return sortPostViewModel;
+            }
         }
 
         public async Task<bool> UnbanPost(Guid postId)

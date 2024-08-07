@@ -39,7 +39,11 @@ namespace Backend.Domain.Test
             var retrievedProductIds = findPost.Select(fp => fp.Product.Id).ToList();
             Assert.True(retrievedProductIds.All(id => originalProductIds.Contains(id)));
         }
+<<<<<<< HEAD
        /* [Fact]
+=======
+        /*[Fact]
+>>>>>>> ddf851a07004b922ca06ccfcbaea4fdee230f27d
         public async Task GetPostDetail_ShouldReturnPostDetailViewModel()
         {
             // Create and add posts to the database
