@@ -13,5 +13,6 @@ namespace Application.ViewModel
         public string Email { get; set; }
         public string Action { get; set; }
         public float Amount { get; set; }
+        public DateTime? CreationDate { get; set; }
     }
 }

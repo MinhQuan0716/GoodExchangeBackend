@@ -41,7 +41,7 @@ namespace Infrastructure.Repository
                                                 OrderId = x.Id,
                                                 OrderMessage = x.OrderMessage,
                                                 OrderStatus = x.Status.StatusName,
-                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                CreationDate = x.CreationDate,
                                                 Post = new PostViewModelForOrder
                                                 {
                                                     PostId = x.PostId,
@@ -75,7 +75,7 @@ namespace Infrastructure.Repository
                                                 OrderId = x.Id,
                                                 OrderMessage = x.OrderMessage,
                                                 OrderStatus=x.Status.StatusName,
-                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                CreationDate = x.CreationDate,
                                                 Post = new PostViewModelForOrder
                                                 {
                                                     PostId = x.PostId,
@@ -145,7 +145,7 @@ namespace Infrastructure.Repository
                                                  OrderId = x.Id,
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus=x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 CreationDate = x.CreationDate,
                                                  Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
@@ -191,7 +191,7 @@ namespace Infrastructure.Repository
                                                   OrderId=orderId,
                                                   OrderMessage=x.OrderMessage,
                                                   OrderStatus=x.Status.StatusName,
-                                                  CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                                  CreationDate=x.CreationDate,
                                                   Post=new PostViewModelForOrder
                                                   {
                                                       PostId=x.PostId,
@@ -250,7 +250,7 @@ namespace Infrastructure.Repository
                                                  OrderId = x.Id,
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 CreationDate = x.CreationDate,
                                                  Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
@@ -299,7 +299,7 @@ namespace Infrastructure.Repository
                                                  OrderId = x.Id,
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 CreationDate = x.CreationDate,
                                                  Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
@@ -348,7 +348,7 @@ namespace Infrastructure.Repository
                                                  OrderId = x.Id,
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 CreationDate = x.CreationDate,
                                                  Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
@@ -397,7 +397,7 @@ namespace Infrastructure.Repository
                                                  OrderId = x.Id,
                                                  OrderMessage = x.OrderMessage,
                                                  OrderStatus = x.Status.StatusName,
-                                                 CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                 CreationDate = x.CreationDate,
                                                  Post = new PostViewModelForOrder
                                                  {
                                                      PostId = x.PostId,
@@ -444,7 +444,7 @@ namespace Infrastructure.Repository
                                                 Id = x.Id,
                                                 OrderMessage = x.OrderMessage,
                                                 OrderStatus = x.Status.StatusName,
-                                                CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                CreationDate = x.CreationDate,
                                                 Post = new PostViewModelForOrder
                                                 {
                                                     PostId = x.PostId,

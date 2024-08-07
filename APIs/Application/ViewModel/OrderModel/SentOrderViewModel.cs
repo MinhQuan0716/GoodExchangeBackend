@@ -13,7 +13,7 @@ namespace Application.ViewModel.OrderModel
         public Guid OrderId { get; set; }
         public string OrderMessage { get; set; }
         public string OrderStatus { get; set; }
-        public DateOnly CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
         public PostViewModelForOrder Post { get; set; }
         public UserViewModelForOrder User { get; set; }
     }

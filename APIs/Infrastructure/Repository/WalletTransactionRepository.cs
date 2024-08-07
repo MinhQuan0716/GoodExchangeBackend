@@ -30,7 +30,8 @@ namespace Infrastructure.Repository
                                                                            Username=x.Wallet.Owner.UserName,
                                                                            Email=x.Wallet.Owner.Email,
                                                                            Action=x.TransactionType,
-                                                                           Amount=x.Amount
+                                                                           Amount=x.Amount, 
+                                                                           CreationDate=x.CreationDate,
                                                                        }).ToListAsync();
             return listTransaction;
         }
@@ -45,7 +46,8 @@ namespace Infrastructure.Repository
                                                                            Username = x.Wallet.Owner.UserName,
                                                                            Email = x.Wallet.Owner.Email,
                                                                            Action = x.TransactionType,
-                                                                           Amount = x.Amount
+                                                                           Amount = x.Amount,
+                                                                           CreationDate = x.CreationDate
                                                                        }).ToListAsync();
             return listTransaction;
         }
