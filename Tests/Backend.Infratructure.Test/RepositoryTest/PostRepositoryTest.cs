@@ -39,31 +39,6 @@ namespace Backend.Domain.Test
             var retrievedProductIds = findPost.Select(fp => fp.Product.Id).ToList();
             Assert.True(retrievedProductIds.All(id => originalProductIds.Contains(id)));
         }
-<<<<<<< HEAD
-       /* [Fact]
-=======
-        /*[Fact]
->>>>>>> ddf851a07004b922ca06ccfcbaea4fdee230f27d
-        public async Task GetPostDetail_ShouldReturnPostDetailViewModel()
-        {
-            // Create and add posts to the database
-            var posts = _fixture.Build<Post>()
-                                .With(p => p.CreationDate, DateTime.UtcNow)
-                                .CreateMany(5)
-                                .ToList();
-
-            await _dbContext.Posts.AddRangeAsync(posts);
-            await _dbContext.SaveChangesAsync();
-
-            // Retrieve sorted posts
-            var sortedPosts = await _postRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
-
-            // Log the CreationDate values before and after sorting for debugging
-            var expectedSortedDates = posts.OrderBy(x => x.CreationDate).Select(x => x.CreationDate).ToList();
-            var actualSortedDates = sortedPosts.Select(x => x.CreationDate).ToList();
-            // Compare the CreationDate of the posts to ensure sorting is correct
-            Assert.Equal(expectedSortedDates.Last(), actualSortedDates.Last());
-        }*/
         [Fact]
         public async Task SearchPostByProductName_ShouldReturnListOfPostViewModels()
         {
@@ -87,6 +62,27 @@ namespace Backend.Domain.Test
             Assert.NotNull(result);
             Assert.Equal(postTitle, result.First().PostTitle);
         }
+        /* [Fact]
+        public async Task GetPostDetail_ShouldReturnPostDetailViewModel()
+        {
+            // Create and add posts to the database
+            var posts = _fixture.Build<Post>()
+                                .With(p => p.CreationDate, DateTime.UtcNow)
+                                .CreateMany(5)
+                                .ToList();
+
+            await _dbContext.Posts.AddRangeAsync(posts);
+            await _dbContext.SaveChangesAsync();
+
+            // Retrieve sorted posts
+            var sortedPosts = await _postRepository.GetAllPostsWithDetailsSortByCreationDayAsync();
+
+            // Log the CreationDate values before and after sorting for debugging
+            var expectedSortedDates = posts.OrderBy(x => x.CreationDate).Select(x => x.CreationDate).ToList();
+            var actualSortedDates = sortedPosts.Select(x => x.CreationDate).ToList();
+            // Compare the CreationDate of the posts to ensure sorting is correct
+            Assert.Equal(expectedSortedDates.Last(), actualSortedDates.Last());
+        }*/
     }
 }
 
