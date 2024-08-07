@@ -92,10 +92,13 @@ namespace Application.Service
                 throw new Exception("This post has already been sold");
             }
 
-            var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user1, postId);
+            var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user2, postId);
             if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId))
             {
-                return chatRoom;
+                if (duplicateOrder.Count() > 2)
+                {
+                    throw new Exception("You have cancle this post too many time");
+                }
             }
 
             var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
