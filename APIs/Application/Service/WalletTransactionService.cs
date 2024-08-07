@@ -13,9 +13,10 @@ namespace Application.Service
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClaimService _claimService;
-        public WalletTransactionService(IUnitOfWork unitOfWork)
+        public WalletTransactionService(IUnitOfWork unitOfWork, IClaimService claimService)
         {
             _unitOfWork = unitOfWork;
+            _claimService = claimService;
         }
         public async Task<List<TransactionViewModel>> GetAllTransactionAsync()
         {

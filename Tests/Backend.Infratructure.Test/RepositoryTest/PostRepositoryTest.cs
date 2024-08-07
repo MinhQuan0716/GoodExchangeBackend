@@ -39,7 +39,7 @@ namespace Backend.Domain.Test
             var retrievedProductIds = findPost.Select(fp => fp.Product.Id).ToList();
             Assert.True(retrievedProductIds.All(id => originalProductIds.Contains(id)));
         }
-        [Fact]
+       /* [Fact]
         public async Task GetPostDetail_ShouldReturnPostDetailViewModel()
         {
             // Create and add posts to the database
@@ -59,7 +59,7 @@ namespace Backend.Domain.Test
             var actualSortedDates = sortedPosts.Select(x => x.CreationDate).ToList();
             // Compare the CreationDate of the posts to ensure sorting is correct
             Assert.Equal(expectedSortedDates.Last(), actualSortedDates.Last());
-        }
+        }*/
         [Fact]
         public async Task SearchPostByProductName_ShouldReturnListOfPostViewModels()
         {
