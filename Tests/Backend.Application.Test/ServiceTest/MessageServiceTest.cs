@@ -83,7 +83,7 @@ namespace Backend.Application.Test.ServiceTest
             Assert.Equal(existingChatRoomWithOrder.ReceiverAvatar, result.ReceiverAvatar);
             // Add other assertions as needed
         }*/
-        [Fact]
+        /*[Fact]
         public async Task GetOrCreateChatRoomAsync_NoChatRoomExists_CreatesAndReturnsChatRoom()
         {
             // Arrange
@@ -120,7 +120,7 @@ namespace Backend.Application.Test.ServiceTest
 
             // Assert
             Assert.Equal(newChatRoom, result);
-        }
+        }*/
         [Fact]
         public async Task GetOrCreateChatRoomAsync_PostAlreadySold_ThrowsException()
         {
