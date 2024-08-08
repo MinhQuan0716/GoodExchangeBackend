@@ -1,4 +1,4 @@
-﻿using Application.ViewModel;
+﻿using Application.ViewModel.TransactionModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;

@@ -10,11 +10,13 @@ using Fare;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,15 +30,15 @@ namespace Backend.Application.Test.ServiceTest
         {
             _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object,_uploadFileMock.Object) ;
         }
-       /* [Fact]
+        [Fact]
         public async Task Register_ShouldReturnTrue()
         {
             //Arrange
             var listUser = new List<User>();
             var registerModel = _fixture.Build<RegisterModel>().With(x => x.Phonenumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x => x.Birthday, "2002-09-12").Create();
             var newUser = new User { Id = Guid.NewGuid(), Email = registerModel.Email };
-            var newVerifyUser = new VerifyUser { Id = Guid.NewGuid(), UserId = newUser.Id };
-            var newWallet = new Wallet {Id = Guid.NewGuid(), OwnerId = newUser.Id };
+            var newVerifyUser = new VerifyUser { Id = Guid.NewGuid(), UserId = newUser.Id ,VerifyStatusId=1};
+            var newWallet = new Wallet { Id = Guid.NewGuid(), OwnerId = newUser.Id };
             //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
             var newAccount = _mapper.Map<User>(registerModel);
@@ -44,9 +46,9 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(um => um.UserRepository.AddAsync(newAccount)).Verifiable();
             _unitOfWorkMock.Setup(um => um.SaveChangeAsync()).ReturnsAsync(1);
             _unitOfWorkMock.Setup(um => um.VerifyUsersRepository.AddAsync(It.IsAny<VerifyUser>())).Verifiable();
-            _unitOfWorkMock.Setup(um => um.VerifyUsersRepository.FindVerifyUserIdByUserId(newUser.Id))
+            _unitOfWorkMock.Setup(um => um.VerifyUsersRepository.FindVerifyUserIdByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(newVerifyUser);
-            _unitOfWorkMock.Setup(um => um.WalletRepository.FindWalletByUserId(newUser.Id))
+            _unitOfWorkMock.Setup(um => um.WalletRepository.FindWalletByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(newWallet);
             bool isCreated = await _userService.CreateAccount(registerModel);
             //Assert
@@ -56,15 +58,16 @@ namespace Backend.Application.Test.ServiceTest
         public async Task Regiser_ShouldReturnException()
         {
             //Arrange
-            var listUser=_fixture.Build<User>().CreateMany(1).ToList();
+            var listUser = _fixture.Build<User>().CreateMany(1).ToList();
             var registerModel = _fixture.Build<RegisterModel>().With(x => x.Phonenumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate)
                 .With(x => x.Birthday, "2002-09-12").Create();
+
             //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
-            Func<Task> act = async () =>  await _userService.CreateAccount(registerModel);
+            Func<Task> act = async () => await _userService.CreateAccount(registerModel);
             //Assert
             act.Should().ThrowAsync<Exception>();
-        }*/
+        }
         [Fact]
         public async Task LoginWithMobileAPI_ShouldReturnCorrectData()
         {
@@ -175,20 +178,21 @@ namespace Backend.Application.Test.ServiceTest
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _userService.ResetPassword(code,resetPasswordModel));
         }
-       /* [Fact]
+        [Fact]
         public async Task BanUser_ShouldReturnCorrect()
         {
             //Arrange
-            var user= _fixture.Build<User>().Create();
+            var role =_fixture.Build<Role>().Create();
+            var user = _fixture.Build<User>().With(x=>x.Role,role).Create();
             //Act
             _unitOfWorkMock.Setup(unit => unit.UserRepository.AddAsync(user)).Verifiable();
-            _unitOfWorkMock.Setup(unit=>unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Expression<Func<User, object>>>())).ReturnsAsync(user);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.SoftRemove(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
             bool isBan = await _userService.BanUser(user.Id);
             //Assert
             Assert.True(isBan);
-        }*/
+        }
         [Fact]
         public async Task BanUser_ShouldReturnException()
         {
@@ -229,18 +233,37 @@ namespace Backend.Application.Test.ServiceTest
             //Assert
             Assert.ThrowsAsync<Exception>(async()=> await _userService.UpdatePasswordAsync(updatePasswordDTO)) ;
         }
-       /* [Fact]
+        [Fact]
         public async Task UpdateUser_ShouldReturnTrue()
         {
             //Arrage
-            var updateUserDTO=_fixture.Build<UpdateUserProfileModel>().With(x=>x.Birthday,DateOnly.FromDateTime(DateTime.UtcNow)).Create();
+            IFormFile profileImage = null;
+            string exePath = Environment.CurrentDirectory.ToString();
+            string filePath = exePath + "/ImageFolder/unnamed.jpg";
+            var fileInfo = new FileInfo(filePath);
+            var memoryStream = new MemoryStream();
+
+            using (var stream = fileInfo.OpenRead())
+            {
+                stream.CopyTo(memoryStream);
+            }
+            memoryStream.Position = 0;
+            profileImage = new FormFile(memoryStream, 0, memoryStream.Length, fileInfo.Name, fileInfo.Name)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/png",// Adjust the content type as needed
+
+            };
+            var updateUserDTO = _fixture.Build<UpdateUserProfileModel>()
+                                       .With(x => x.Birthday, DateOnly.FromDateTime(DateTime.UtcNow))
+                                       .With(x=>x.UploadImage,profileImage).Create();
             var user = _fixture.Build<User>().Create();
             _mapper.Map(updateUserDTO, user, typeof(UpdateUserProfileModel), typeof(User));
-           *//* user.BirthDay = updateUserDTO.Birthday.ToDateTime(TimeOnly.MaxValue);*//*
+            user.BirthDay = updateUserDTO.Birthday.ToDateTime(TimeOnly.MaxValue);
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(user.Id);
             //Act
             _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(unit=>unit.UserRepository.Update(user)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
             bool isUpdated = await _userService.UpdateUserProfileAsync(updateUserDTO);
             //Assert
@@ -250,18 +273,37 @@ namespace Backend.Application.Test.ServiceTest
         public async Task UpdateUser_ShouldReturnException()
         {
             //Arrage
-            var updateUserDTO = _fixture.Build<UpdateUserProfileModel>().With(x => x.Birthday, DateOnly.FromDateTime(DateTime.UtcNow)).Create();
+            IFormFile profileImage = null;
+            string exePath = Environment.CurrentDirectory.ToString();
+            string filePath = exePath + "/ImageFolder/unnamed.jpg";
+            var fileInfo = new FileInfo(filePath);
+            var memoryStream = new MemoryStream();
+
+            using (var stream = fileInfo.OpenRead())
+            {
+                stream.CopyTo(memoryStream);
+            }
+            memoryStream.Position = 0;
+            profileImage = new FormFile(memoryStream, 0, memoryStream.Length, fileInfo.Name, fileInfo.Name)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/png",// Adjust the content type as needed
+
+            };
+            var updateUserDTO = _fixture.Build<UpdateUserProfileModel>()
+                                        .With(x => x.Birthday, DateOnly.FromDateTime(DateTime.UtcNow))
+                                        .With(x=>x.UploadImage,profileImage).Create();
             var user = _fixture.Build<User>().Create();
             _mapper.Map(updateUserDTO, user, typeof(UpdateUserProfileModel), typeof(User));
-            *//* user.BirthDay = updateUserDTO.Birthday.ToDateTime(TimeOnly.MaxValue);*//*
+            user.BirthDay = updateUserDTO.Birthday.ToDateTime(TimeOnly.MaxValue);
             _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(user.Id);
             //Act
-          *//*  _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);*//*
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(user);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
             //Assert
-            Assert.ThrowsAsync<Exception>(async()=>await _userService.UpdateUserProfileAsync(updateUserDTO));
-        }*/
+            Assert.ThrowsAsync<Exception>(async () => await _userService.UpdateUserProfileAsync(updateUserDTO));
+        }
         [Fact]
         public async Task GetCurrentLoginUser_ShouldReturnNull()
         {

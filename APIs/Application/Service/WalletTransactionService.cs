@@ -1,6 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
-using Application.ViewModel;
+using Application.ViewModel.TransactionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

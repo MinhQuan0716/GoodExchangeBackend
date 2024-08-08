@@ -1,6 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
-using Application.ViewModel;
+using Application.ViewModel.TransactionModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,7 +21,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<TransactionViewModel>> GetAllTransaction()
         {
-            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
+            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false).AsSplitQuery()
                                                                        .Include(x => x.Wallet)
                                                                        .ThenInclude(wallet => wallet.Owner).AsSplitQuery()
                                                                        .Select(x => new TransactionViewModel
@@ -31,7 +31,8 @@ namespace Infrastructure.Repository
                                                                            Email=x.Wallet.Owner.Email,
                                                                            Action=x.TransactionType,
                                                                            Amount=x.Amount, 
-                                                                           CreationDate=x.CreationDate,
+                                                                           CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
+                                                                           CreationTime=TimeOnly.FromDateTime(x.CreationDate.Value)
                                                                        }).ToListAsync();
             return listTransaction;
         }
@@ -47,7 +48,8 @@ namespace Infrastructure.Repository
                                                                            Email = x.Wallet.Owner.Email,
                                                                            Action = x.TransactionType,
                                                                            Amount = x.Amount,
-                                                                           CreationDate = x.CreationDate
+                                                                           CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                                           CreationTime=TimeOnly.FromDateTime(x.CreationDate.Value)
                                                                        }).ToListAsync();
             return listTransaction;
         }

@@ -203,33 +203,6 @@ namespace Application.Service
 
         public async Task<List<PostViewModel>> SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(string postTitle,string productStatus,string exchangeCondition)
         {
-            /* if (producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty()&&!postTitle.IsNullOrEmpty())
-             {
-                 var allPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                 var searchPost=allPostModel.Where(x=>ContainInOrder.ContainsInOrder(x.PostTitle.ToLower(),postTitle.ToLower())).ToList();
-                 return searchPost;
-             }
-            else if (postTitle.IsNullOrEmpty())
-             {
-                 var listPostModel = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                 ICriteria productStatusCriteria = new CriteriaProductStatus(producttStatus);
-                 ICriteria productPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
-                 ICriteria andCriteria = new AndCriteria(productStatusCriteria, productPriceCriteria);
-                 var filterPostList = andCriteria.MeetCriteria(listPostModel);
-                 return filterPostList;
-             }
-            else if(producttStatus.IsNullOrEmpty() && exchangeCondition.IsNullOrEmpty() && postTitle.IsNullOrEmpty())
-             {
-                 var listAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-                 return listAllPost;
-             }
-              var listGetAllPost= await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
-             var searchListPost = listGetAllPost.Where(x => ContainInOrder.ContainsInOrder(x.PostTitle, postTitle)).ToList();
-             ICriteria matchProductStatusCriteria = new CriteriaProductStatus(producttStatus);
-             ICriteria matchProductPriceCriteria = new CriteriaExchangeCondition(exchangeCondition);
-             ICriteria matchBothCriteria = new AndCriteria(matchProductStatusCriteria, matchProductPriceCriteria);
-             var matchListPost = matchBothCriteria.MeetCriteria(searchListPost);
-             return matchListPost;*/
             var allPosts = await _unitOfWork.PostRepository.GetAllPost(_claimService.GetCurrentUserId);
 
             if (string.IsNullOrEmpty(postTitle) && string.IsNullOrEmpty(productStatus) && string.IsNullOrEmpty(exchangeCondition))

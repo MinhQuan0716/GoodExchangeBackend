@@ -1,9 +1,9 @@
 ﻿using Application.Common;
 using Application.InterfaceService;
 using Application.Service;
-using Application.ViewModel;
 using Application.ViewModel.ChatRoomModel;
 using Application.ViewModel.PostModel;
+using Application.ViewModel.TransactionModel;
 using Backend.Domain.Test;
 using Domain.Entities;
 using Moq;

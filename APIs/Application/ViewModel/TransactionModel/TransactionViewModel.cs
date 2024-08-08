@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.ViewModel
+namespace Application.ViewModel.TransactionModel
 {
     public class TransactionViewModel
     {
@@ -13,6 +13,7 @@ namespace Application.ViewModel
         public string Email { get; set; }
         public string Action { get; set; }
         public float Amount { get; set; }
-        public DateTime? CreationDate { get; set; }
+        public DateOnly CreationDate { get; set; }
+        public TimeOnly CreationTime { get; set; }
     }
 }

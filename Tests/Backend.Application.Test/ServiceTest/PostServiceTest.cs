@@ -154,7 +154,7 @@ namespace Backend.Application.Test.ServiceTest
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
         }
-       /* [Fact]
+        [Fact]
         public async Task CreatePost_WithSubscriptionOption_ShouldBeSucceeded()
         {
             //Arrange 
@@ -180,7 +180,7 @@ namespace Backend.Application.Test.ServiceTest
             var product = _mapper.Map<Product>(productModel);
             var subscriptionHistory = _fixture.Build<SubscriptionHistoryDetailViewModel>()
                 .With(x => x.StartDate, DateOnly.FromDateTime(DateTime.UtcNow))
-                .With(x => x.Status, "True")
+                .With(x => x.Status, "Available")
                 .With(x => x.SubscriptionId, new Guid())
                 .With(x => x.EndDate, DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))).CreateMany(2).ToList();
             var subscription = _fixture.Build<Subscription>().With(x => x.Description, "priority").Create();
@@ -196,7 +196,7 @@ namespace Backend.Application.Test.ServiceTest
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
-        }*/
+        }
         [Fact]
         public async Task CreatePost_WithWalletOption_ShouldThrowException()
         {
@@ -428,6 +428,182 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.WishListRepository.FindWishListByUserId(It.IsAny<Guid>())).ReturnsAsync(listWishList);
             var isExisted = await _postService.CheckIfPostInWishList(post.Id);
             Assert.False(isExisted);
+        }
+        [Fact]
+        public async Task SearchAndFilterPost_ShouldReturnCorrectData_WhenSearchByPostTitle()
+        {
+            var posts = _fixture.Build<Post>().CreateMany(2).ToList();
+            var product = _fixture.Build<Product>().Create();
+            var newPost = _fixture.Build<Post>().With(x => x.CreatedBy, Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).Create();
+            posts.Add(newPost);
+            List<PostViewModel> list = new List<PostViewModel>();
+            var filterPost = posts.Where(x => x.CreatedBy != Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).ToList();
+            foreach (var post in filterPost)
+            {
+                PostViewModel postViewModel = new PostViewModel()
+                {
+                    PostId = post.Id,
+                    CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
+                    PostContent = post.PostContent,
+                    PostTitle = "Test post",
+                    Product = new ProductModel()
+                    {
+                        CategoryId = product.CategoryId,
+                        CategoryName = "",
+                        ConditionId = product.ConditionId,
+                        ConditionName = "",
+                        ProductId = product.Id,
+                        ProductImageUrl = product.ProductImageUrl,
+                        ProductPrice = product.ProductPrice,
+                        ProductStatus = product.ProductStatus,
+                        RequestedProduct = ""
+                    }
+                };
+                list.Add(postViewModel);
+            }
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.AddRangeAsync(posts.ToList())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost(It.IsAny<Guid>())).ReturnsAsync(list);
+            var listSearchPost = await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice("Test",null,null);
+            Assert.Equal(listSearchPost.Count(), 2);
+        }
+        [Fact]
+        public async Task SearchAndFilterPost_ShouldReturnCorrectData_WhenSearchByPostTitleFilterByProductStatus()
+        {
+            var posts = _fixture.Build<Post>().CreateMany(2).ToList();
+            var product = _fixture.Build<Product>().With(x=>x.ProductStatus,"New").Create();
+            var newPost = _fixture.Build<Post>().With(x => x.CreatedBy, Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).Create();
+            posts.Add(newPost);
+            List<PostViewModel> list = new List<PostViewModel>();
+            var filterPost = posts.Where(x => x.CreatedBy != Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).ToList();
+            foreach (var post in filterPost)
+            {
+                PostViewModel postViewModel = new PostViewModel()
+                {
+                    PostId = post.Id,
+                    CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
+                    PostContent = post.PostContent,
+                    PostTitle = "Test post",
+                    Product = new ProductModel()
+                    {
+                        CategoryId = product.CategoryId,
+                        CategoryName = "",
+                        ConditionId = product.ConditionId,
+                        ConditionName = "",
+                        ProductId = product.Id,
+                        ProductImageUrl = product.ProductImageUrl,
+                        ProductPrice = product.ProductPrice,
+                        ProductStatus =product.ProductStatus,
+                        RequestedProduct = ""
+                    }
+                };
+                list.Add(postViewModel);
+            }
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.AddRangeAsync(posts.ToList())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost(It.IsAny<Guid>())).ReturnsAsync(list);
+            var listSearchPost = await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice("Test", product.ProductStatus, null);
+            Assert.Equal(listSearchPost.Count(), 2);
+        }
+        [Fact]
+        public async Task SearchAndFilterPost_ShouldReturnCorrectData_WhenSearchByPostTileFilterByExchangeCondition()
+        {
+            var posts = _fixture.Build<Post>().CreateMany(2).ToList();
+            var exchangeCondition = _fixture.Build<ExchangeCondition>()
+                                         .With(x => x.ConditionId, 1)
+                                         .With(x => x.ConditionId, 2)
+                                         .With(x => x.ConditionId, 3)
+                                         .With(x => x.ConditionType, "Sell")
+                                         .With(x => x.ConditionType, "Exchange")
+                                         .With(x => x.ConditionType, "Donation")
+                                         .CreateMany(3).ToList();
+            var product = _fixture.Build<Product>().With(x=>x.ConditionType,exchangeCondition.Where(x=>x.ConditionId==3).First()).Create();
+           
+            var newPost = _fixture.Build<Post>().With(x => x.CreatedBy, Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).Create();
+            posts.Add(newPost);
+            List<PostViewModel> list = new List<PostViewModel>();
+            var filterPost = posts.Where(x => x.CreatedBy != Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).ToList();
+            foreach (var post in filterPost)
+            {
+                PostViewModel postViewModel = new PostViewModel()
+                {
+                    PostId = post.Id,
+                    CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
+                    PostContent = post.PostContent,
+                    PostTitle = "Test post",
+                    Product = new ProductModel()
+                    {
+                        CategoryId = product.CategoryId,
+                        CategoryName = "",
+                        ConditionId = product.ConditionId,
+                        ConditionName = product.ConditionType.ConditionType,
+                        ProductId = product.Id,
+                        ProductImageUrl = product.ProductImageUrl,
+                        ProductPrice = product.ProductPrice,
+                        ProductStatus = product.ProductStatus,
+                        RequestedProduct = ""
+                    }
+                };
+                list.Add(postViewModel);
+            }
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.AddRangeAsync(posts.ToList())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost(It.IsAny<Guid>())).ReturnsAsync(list);
+            var listSearchPost = await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice("Test", null, exchangeCondition.Where(x => x.ConditionId == 3).First().ConditionType);
+            Assert.Equal(listSearchPost.Count(), 2);
+        }
+        [Fact]
+        public async Task SearchAndFilterPost_ShouldReturnCorrectData_WhenSearchByPostTileFilterByExchangeConditionAndProductStatus()
+        {
+            var posts = _fixture.Build<Post>().CreateMany(2).ToList();
+            var exchangeCondition = _fixture.Build<ExchangeCondition>()
+                                         .With(x => x.ConditionId, 1)
+                                         .With(x => x.ConditionId, 2)
+                                         .With(x => x.ConditionId, 3)
+                                         .With(x => x.ConditionType, "Sell")
+                                         .With(x => x.ConditionType, "Exchange")
+                                         .With(x => x.ConditionType, "Donation")
+                                         .CreateMany(3).ToList();
+            var product = _fixture.Build<Product>()
+                                  .With(x => x.ConditionType, exchangeCondition.Where(x => x.ConditionId == 3).First())
+                                  .With(x=>x.ProductStatus,"New").Create();
+
+            var newPost = _fixture.Build<Post>().With(x => x.CreatedBy, Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).Create();
+            posts.Add(newPost);
+            List<PostViewModel> list = new List<PostViewModel>();
+            var filterPost = posts.Where(x => x.CreatedBy != Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d")).ToList();
+            foreach (var post in filterPost)
+            {
+                PostViewModel postViewModel = new PostViewModel()
+                {
+                    PostId = post.Id,
+                    CreationDate = DateOnly.FromDateTime(post.CreationDate.Value),
+                    PostContent = post.PostContent,
+                    PostTitle = "Test post",
+                    Product = new ProductModel()
+                    {
+                        CategoryId = product.CategoryId,
+                        CategoryName = "",
+                        ConditionId = product.ConditionId,
+                        ConditionName = product.ConditionType.ConditionType,
+                        ProductId = product.Id,
+                        ProductImageUrl = product.ProductImageUrl,
+                        ProductPrice = product.ProductPrice,
+                        ProductStatus = product.ProductStatus,
+                        RequestedProduct = ""
+                    }
+                };
+                list.Add(postViewModel);
+            }
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(Guid.Parse("981b9606-4f84-41b4-8a46-7b578bc1823d"));
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.AddRangeAsync(posts.ToList())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetAllPost(It.IsAny<Guid>())).ReturnsAsync(list);
+            var listSearchPost = await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice("Test", product.ProductStatus, exchangeCondition.Where(x => x.ConditionId == 3).First().ConditionType);
+            Assert.Equal(listSearchPost.Count(), 2);
         }
     }
 }
