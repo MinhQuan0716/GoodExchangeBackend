@@ -40,11 +40,11 @@ namespace Infrastructure.Repository
 
         public async Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId)
         {
-            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
+            var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false&&x.Wallet.Owner.Id==userId)
                                                                        .Include(x => x.Wallet).ThenInclude(wallet => wallet.Owner).AsSplitQuery()
-                                                                       .Where(x => x.Wallet.OwnerId == userId)
                                                                        .Select(x => new TransactionViewModel
                                                                        {
+                                                                           Id = x.Id,
                                                                            Username = x.Wallet.Owner.UserName,
                                                                            Email = x.Wallet.Owner.Email,
                                                                            Action = x.TransactionType,
