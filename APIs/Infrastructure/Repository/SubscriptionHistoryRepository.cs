@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.SubcriptionModel;
 using Application.ViewModel.SubscriptionHistoryModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,17 @@ namespace Infrastructure.Repository
                                                                                {
                                                                                    Email=x.User.Email,
                                                                                    UsertName=x.User.UserName,
-                                                                                   StartDate=DateOnly.FromDateTime(x.StartDate),
-                                                                                   EndDate=DateOnly.FromDateTime(x.EndDate),
+                                                                                   StartDate=x.StartDate,
+                                                                                   EndDate=x.EndDate,
                                                                                    Status=x.Status? "Available":"Expried",
+                                                                                   subcriptionModel = new SubscriptionDetailViewModel
+                                                                                   {
+                                                                                       Id = x.SubcriptionId,
+                                                                                       Description =x.Subcription.Description,
+                                                                                       ExpiryMonth=x.Subcription.ExpiryMonth,
+                                                                                       Price = x.Subcription.Price,
+                                                                                       SubcriptionType = x.Subcription.SubcriptionType
+                                                                                   }
                                                                                }).AsQueryable().AsNoTracking().ToListAsync();
             return subscriptionHistoryList;
         }
@@ -41,12 +50,20 @@ namespace Infrastructure.Repository
                                                                                .Include(x=>x.Subcription).AsSplitQuery()
                                                                               .Select(x => new SubscriptionHistoryDetailViewModel
                                                                               {
-                                                                               StartDate = DateOnly.FromDateTime(x.StartDate),
-                                                                               EndDate = DateOnly.FromDateTime(x.EndDate),
+                                                                               StartDate = x.StartDate,
+                                                                               EndDate = x.EndDate,
                                                                                Status = x.Status ? "Available":"Expired",
                                                                                SubscriptionId=x.Subcription.Id,
-                                                                               Id=x.Id
-                                                                               }).ToListAsync();
+                                                                               Id=x.Id,
+                                                                               subcriptionModel = new SubscriptionDetailViewModel
+                                                                               {
+                                                                                   Id = x.SubcriptionId,
+                                                                                   Description = x.Subcription.Description,
+                                                                                   ExpiryMonth = x.Subcription.ExpiryMonth,
+                                                                                   Price = x.Subcription.Price,
+                                                                                   SubcriptionType = x.Subcription.SubcriptionType
+                                                                               }
+                                                                              }).ToListAsync();
             return listUserSubscription;
         }
 
@@ -71,10 +88,18 @@ namespace Infrastructure.Repository
                                                                             .Select(x=>new SubscriptionHistoryDetailViewModel
                                                                             {
                                                                                 Id = x.Id,
-                                                                                StartDate=DateOnly.FromDateTime(x.StartDate),
-                                                                                EndDate=DateOnly.FromDateTime(x.EndDate),
+                                                                                StartDate=x.StartDate,
+                                                                                EndDate=x.EndDate,
                                                                                 Status=x.Status?"Available":"Expried",
                                                                                 SubscriptionId=x.Subcription.Id,
+                                                                                subcriptionModel = new SubscriptionDetailViewModel
+                                                                                {
+                                                                                    Id = x.SubcriptionId,
+                                                                                    Description = x.Subcription.Description,
+                                                                                    ExpiryMonth = x.Subcription.ExpiryMonth,
+                                                                                    Price = x.Subcription.Price,
+                                                                                    SubcriptionType = x.Subcription.SubcriptionType
+                                                                                }
                                                                             }).ToListAsync();
             return listUserSubscription;
         }
