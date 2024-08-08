@@ -33,6 +33,7 @@ services:
       dockerfile: APIs/MobileAPI/Dockerfile
     ports:
         - 7777:80  
+        - 8087:443
     volumes:
        - "./APIs/MobileAPI/EmailTemplate:/app/EmailTemplate"
     networks:
@@ -44,6 +45,7 @@ services:
       dockerfile: APIs/WebAPI/Dockerfile
     ports:
         - 9999:80
+        - 9097:443  
     volumes:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
