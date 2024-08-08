@@ -26,15 +26,16 @@ namespace Infrastructure.Repository
                                                                        .ThenInclude(wallet => wallet.Owner).AsSplitQuery()
                                                                        .Select(x => new TransactionViewModel
                                                                        {
-                                                                           Id=x.Id,
-                                                                           Username=x.Wallet.Owner.UserName,
-                                                                           Email=x.Wallet.Owner.Email,
-                                                                           Action=x.TransactionType,
-                                                                           Amount=x.Amount, 
-                                                                           CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
-                                                                           CreationTime=TimeOnly.FromDateTime(x.CreationDate.Value)
+                                                                           Id = x.Id,
+                                                                           Username = x.Wallet.Owner.UserName,
+                                                                           Email = x.Wallet.Owner.Email,
+                                                                           Action = x.TransactionType,
+                                                                           Amount = x.Amount,
+                                                                           CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                                                           CreationTime = TimeOnly.FromDateTime(x.CreationDate.Value)
                                                                        }).ToListAsync();
             return listTransaction;
+
         }
 
         public async Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId)
@@ -49,7 +50,7 @@ namespace Infrastructure.Repository
                                                                            Action = x.TransactionType,
                                                                            Amount = x.Amount,
                                                                            CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                                           CreationTime=TimeOnly.FromDateTime(x.CreationDate.Value)
+                                                                           CreationTime = TimeOnly.FromDateTime(x.CreationDate.Value)
                                                                        }).ToListAsync();
             return listTransaction;
         }
@@ -65,7 +66,7 @@ namespace Infrastructure.Repository
 
         public async Task<Guid> GetLastSaveWalletTransactionId()
         {
-            var lasSaveWalletTransaction =  await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
+            var lasSaveWalletTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false)
                                                          .OrderBy(x => x.CreationDate)
                                                          .LastAsync();
             return lasSaveWalletTransaction.Id;

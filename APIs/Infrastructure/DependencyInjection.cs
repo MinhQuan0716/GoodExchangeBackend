@@ -20,7 +20,7 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services,string databaseConnectionString)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(databaseConnectionString).EnableSensitiveDataLogging());
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(databaseConnectionString).EnableSensitiveDataLogging().LogTo(Console.WriteLine));
             services.AddTransient<IDbConnection>((sp) => new SqlConnection(databaseConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
