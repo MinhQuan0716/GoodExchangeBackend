@@ -13,7 +13,7 @@ COPY ["APIs/Application/Application.csproj", "APIs/Application/"]
 COPY ["APIs/Domain/Domain.csproj", "APIs/Domain/"]
 COPY ["APIs/Infrastructure/Infrastructure.csproj", "APIs/Infrastructure/"]
 RUN dotnet restore "./APIs/WebAPI/./WebAPI.csproj"
-RUN dotnet dev-certs https
+RUN dotnet dev-certs https --trust
 COPY . .
 WORKDIR "/src/APIs/WebAPI"
 RUN dotnet build "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
