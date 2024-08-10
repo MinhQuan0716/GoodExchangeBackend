@@ -87,7 +87,7 @@ namespace Application.Service
             }
 
             var checkOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(postId);
-            if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 2 || item.OrderStatusId == 4 || item.OrderStatusId == 5) && checkOrders.Any(item => item.UserId != user2))
+            if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 2 || item.OrderStatusId == 6 || item.OrderStatusId == 5) && checkOrders.Any(item => item.UserId != user2))
             {
                 throw new Exception("This post has already been sold");
             }
