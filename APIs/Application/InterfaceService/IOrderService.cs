@@ -25,5 +25,6 @@ namespace Application.InterfaceService
         Task<List<SentOrderViewModel>> GetSendOrderByChatRoomId(Guid chatRoomId);
         Task<List<ReceiveOrderViewModel>> GetReceiveOrderByChatRoomId(Guid chatRoomId);
         Task<List<OrderViewModelForWeb>> GetAllOrderForWebAsync();
+        Task<bool> ChangeOrderStatus();
     }
 }

@@ -241,7 +241,28 @@ namespace Application.Service
             }
             throw new Exception("chatRoom not exist");
         }
-
+        public async Task<bool> ChangeOrderStatus()
+        {
+            bool isRemove=false;
+            var listOrder = await _unitOfWork.OrderRepository.GetAllAsync();
+            if(listOrder != null)
+            {
+                foreach(var order in listOrder)
+                {
+                    if (order.CreationDate < DateTime.UtcNow)
+                    {
+                        if (order.OrderStatusId == _accept || order.OrderStatusId == _delivered)
+                        {
+                            order.OrderStatusId = _cancel;
+                            _unitOfWork.OrderRepository.Update(order);
+                          
+                        }
+                    }
+                }
+                isRemove= await _unitOfWork.SaveChangeAsync() > 0;
+            }
+            return isRemove;
+        }
         public async Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUser()
         {
             return await _unitOfWork.OrderRepository.GetAllOrderByUserId(_claimService.GetCurrentUserId) ?? new List<ReceiveOrderViewModel>();
