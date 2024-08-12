@@ -51,7 +51,6 @@ namespace Application.CacheService
             TimeSpan? expiryTime = expirationTime.HasValue
                           ? expirationTime.Value.DateTime.Subtract(DateTime.Now)
                           : (TimeSpan?)null;
-
             var isSet = _database.StringSet(key, JsonConvert.SerializeObject(value), expiryTime);
             return isSet;
         }

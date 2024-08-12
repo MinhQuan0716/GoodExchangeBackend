@@ -1,3 +1,4 @@
+using Application.CacheEntity;
 using Application.Common;
 using Application.InterfaceService;
 using Application.SchemaFilter;
@@ -11,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using MobileAPI;
 using MobileAPI.Hubs;
 using MobileAPI.Middleware;
+using MobileAPI.MobileBackgroundService;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
@@ -26,6 +28,7 @@ builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionStrin
 builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.CacheConnectionString);
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
+builder.Services.AddSingleton<Setting>();
 builder.Services.Configure<VnPayConfig>(builder.Configuration.GetSection(VnPayConfig.ConfigName));
 builder.Services.AddHangfire(configuration => configuration
                      .UseSimpleAssemblyNameTypeSerializer()
@@ -62,6 +65,7 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
 builder.Services.AddHangfireServer();
+builder.Services.AddHostedService<SettingBackground>();
 builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
@@ -74,6 +78,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

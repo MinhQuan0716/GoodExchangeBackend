@@ -21,15 +21,16 @@ namespace Application.Service
 {
     public class PostService : IPostService
     {
+        private readonly string _cacheKey = "POST_PRICE";
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AppConfiguration _appConfiguration;
         private readonly ICurrentTime _currentTime;
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
-
+        private readonly ICacheService _cacheService;
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , IClaimService claimService, IUploadFile uploadFile)
+            , IClaimService claimService, IUploadFile uploadFile,ICacheService cacheService)
         {
             _uploadFile = uploadFile;
             _unitOfWork = unitOfWork;
@@ -37,6 +38,7 @@ namespace Application.Service
             _appConfiguration = appConfiguration;
             _currentTime = currentTime;
             _claimService = claimService;
+            _cacheService = cacheService;
         }
 
         public async Task<bool> AddPostToWishList(Guid postId)
@@ -85,6 +87,7 @@ namespace Application.Service
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
             var isSave = false;
+            float amount = _cacheService.GetData<float>(_cacheKey);
             var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
             if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
             {
@@ -144,11 +147,11 @@ namespace Application.Service
                 if (postModel.PaymentType == "Wallet")
                 {
                     var userWallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
-                    if (userWallet.UserBalance < 15000)
+                    if (userWallet.UserBalance < amount)
                     {
                         throw new Exception("Your user balance is not enough to purchase this post");
                     }
-                    userWallet.UserBalance -= 15000;
+                    userWallet.UserBalance -= amount;
                     var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage, "Product");
                     var newProduct = _mapper.Map<Product>(postModel.productModel);
                     newProduct.ProductImageUrl = imageUrl;
