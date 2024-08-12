@@ -8,6 +8,7 @@ using Application.ViewModel.PostModel;
 using Application.ViewModel.WishListModel;
 using AutoMapper;
 using Domain.Entities;
+using Hangfire;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Application.Service
         private readonly ICurrentTime _currentTime;
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
+
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
             , IClaimService claimService, IUploadFile uploadFile)
         {
@@ -82,6 +84,7 @@ namespace Application.Service
 
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
+            var isSave = false;
             var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
             if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
             {
@@ -165,6 +168,9 @@ namespace Application.Service
                     };
                     await _unitOfWork.PostRepository.AddAsync(createPost);
                     _unitOfWork.WalletRepository.Update(userWallet);
+                    await _unitOfWork.SaveChangeAsync();
+                    isSave = true;
+                    BackgroundJob.Schedule(() => DeletePost(createPost.Id), TimeSpan.FromSeconds(10));
                 }
             }
             else if (postModel.productModel.ConditionId == 3)
@@ -188,7 +194,15 @@ namespace Application.Service
                 };
                 await _unitOfWork.PostRepository.AddAsync(createPost);
             }
-            return await _unitOfWork.SaveChangeAsync() > 0;
+            if (isSave)
+            {
+                return isSave;
+            }
+            else
+            {
+                return await _unitOfWork.SaveChangeAsync() > 0;
+            }
+
         }
 
         public async Task<bool> DeletePost(Guid PostId)

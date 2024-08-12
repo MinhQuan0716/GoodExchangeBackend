@@ -2,9 +2,11 @@
 using Application.ViewModel.OrderModel;
 using AutoMapper;
 using Domain.Entities;
+using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,25 +49,6 @@ namespace Application.Service
             // Update the Order status
             order.OrderStatusId = _accept;
             _unitOfWork.OrderRepository.Update(order);
-
-            var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
-            if (rejectOrders != null && rejectOrders.Any())
-            {
-                foreach (var item in rejectOrders)
-                {
-                    if (item.Id != order.Id)
-                    {
-                        item.OrderStatusId = _reject;
-                        _unitOfWork.OrderRepository.Update(item);
-                        var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
-                        if (walletTransaction != null)
-                        {
-                            walletTransaction.TransactionType = "Purchase denied";
-                            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
-                        }
-                    }
-                }
-            }
             var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
             if (post != null)
             {
@@ -80,6 +63,7 @@ namespace Application.Service
                         _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
                     }
                     _unitOfWork.WalletRepository.Update(wallet);
+                    BackgroundJob.Schedule(() => (ChangeOrderStatus(OrderId, _accept)), TimeSpan.FromHours(12));
                 }
             }
             return await _unitOfWork.SaveChangeAsync()>0;
@@ -100,6 +84,7 @@ namespace Application.Service
             // Update the Order status
             Order.OrderStatusId = _delivered;
             _unitOfWork.OrderRepository.Update(Order);
+            BackgroundJob.Schedule(() => (ChangeOrderStatus(orderId, _delivered)), TimeSpan.FromHours(12));
             // Save all changes
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -189,6 +174,24 @@ namespace Application.Service
                     _unitOfWork.WalletRepository.Update(wallet);
                 }
             }
+            var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
+            if (rejectOrders != null && rejectOrders.Any())
+            {
+                foreach (var item in rejectOrders)
+                {
+                    if (item.Id != order.Id)
+                    {
+                        item.OrderStatusId = _reject;
+                        _unitOfWork.OrderRepository.Update(item);
+                        var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
+                        if (walletTransaction != null)
+                        {
+                            walletTransaction.TransactionType = "Purchase denied";
+                            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                        }
+                    }
+                }
+            }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -241,27 +244,18 @@ namespace Application.Service
             }
             throw new Exception("chatRoom not exist");
         }
-        public async Task<bool> ChangeOrderStatus()
+        public async Task<bool> ChangeOrderStatus(Guid orderId, int oldOrderStatusId)
         {
-            bool isRemove=false;
-            var listOrder = await _unitOfWork.OrderRepository.GetAllAsync();
-            if(listOrder != null)
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
+            if(order != null)
             {
-                foreach(var order in listOrder)
+                if (order.OrderStatusId == oldOrderStatusId)
                 {
-                    if (order.CreationDate < DateTime.UtcNow)
-                    {
-                        if (order.OrderStatusId == _accept || order.OrderStatusId == _delivered)
-                        {
-                            order.OrderStatusId = _cancel;
-                            _unitOfWork.OrderRepository.Update(order);
-                          
-                        }
-                    }
+                    order.OrderStatusId = _cancel;
+                    _unitOfWork.OrderRepository.Update(order);
                 }
-                isRemove= await _unitOfWork.SaveChangeAsync() > 0;
             }
-            return isRemove;
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
         public async Task<List<ReceiveOrderViewModel>> GetAllOrderByCurrentUser()
         {
