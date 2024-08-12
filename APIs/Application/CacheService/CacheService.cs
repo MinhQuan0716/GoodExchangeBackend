@@ -46,9 +46,12 @@ namespace Application.CacheService
             return false;
         }
 
-        public bool SetData<T>(string key, T value, DateTimeOffset expirationTime)
+        public bool SetData<T>(string key, T value, DateTimeOffset? expirationTime=null)
         {
-            TimeSpan expiryTime = expirationTime.DateTime.Subtract(DateTime.Now);
+            TimeSpan? expiryTime = expirationTime.HasValue
+                          ? expirationTime.Value.DateTime.Subtract(DateTime.Now)
+                          : (TimeSpan?)null;
+
             var isSet = _database.StringSet(key, JsonConvert.SerializeObject(value), expiryTime);
             return isSet;
         }
