@@ -27,6 +27,7 @@ namespace Application.Service
         private readonly ICurrentTime _currentTime;
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
+
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
             , IClaimService claimService, IUploadFile uploadFile)
         {
