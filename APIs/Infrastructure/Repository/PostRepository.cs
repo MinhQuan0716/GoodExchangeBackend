@@ -29,35 +29,74 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> GetAllPost(Guid userId)
         {
-            return await _appDbContext.Posts.Where(x => x.IsDelete == false&&x.CreatedBy!=userId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate)
-                                           .Include(x => x.Product)
-                                           .ThenInclude(p => p.Category)
-                                           .AsSplitQuery()
-                                           .Include(x => x.Product)
-                                           .ThenInclude(p => p.ConditionType)
-                                           .AsSplitQuery()
-                                           .Select( x => new PostViewModel
-                                           {
-                                               PostId = x.Id,
-                                               PostContent = x.PostContent,
-                                               PostTitle = x.PostTitle,
-                                               CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                               Location= _appDbContext.Users.Where(u=>u.Id==x.CreatedBy).Select(u=>u.HomeAddress).AsSplitQuery().Single(),
-                                               AuthorId=x.CreatedBy.Value,
-                                               Product = new ProductModel
-                                               {
-                                                   ProductId = x.ProductId,
-                                                   CategoryId = x.Product.CategoryId,
-                                                   CategoryName = x.Product.Category.CategoryName,
-                                                   ConditionId = x.Product.ConditionId,
-                                                   ConditionName = x.Product.ConditionType.ConditionType,
-                                                   ProductImageUrl = x.Product.ProductImageUrl,
-                                                   ProductPrice = x.Product.ProductPrice,
-                                                   ProductStatus = x.Product.ProductStatus,
-                                                   RequestedProduct = x.Product.RequestedProduct
-                                               }
-                                           }).AsQueryable().AsNoTracking().ToListAsync();
+            // Get the prioritized posts and randomize them
+            var prioritizedPosts = await _appDbContext.Posts
+                .Where(x => x.IsDelete == false && x.CreatedBy != userId && x.IsPriority == true)
+                .OrderBy(x => Guid.NewGuid()) // Randomize
+                .Include(x => x.Product)
+                    .ThenInclude(p => p.Category)
+                .Include(x => x.Product)
+                    .ThenInclude(p => p.ConditionType)
+                .Select(x => new PostViewModel
+                {
+                    PostId = x.Id,
+                    PostContent = x.PostContent,
+                    PostTitle = x.PostTitle,
+                    CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                    Location = _appDbContext.Users.Where(u => u.Id == x.CreatedBy).Select(u => u.HomeAddress).Single(),
+                    AuthorId = x.CreatedBy.Value,
+                    Product = new ProductModel
+                    {
+                        ProductId = x.ProductId,
+                        CategoryId = x.Product.CategoryId,
+                        CategoryName = x.Product.Category.CategoryName,
+                        ConditionId = x.Product.ConditionId,
+                        ConditionName = x.Product.ConditionType.ConditionType,
+                        ProductImageUrl = x.Product.ProductImageUrl,
+                        ProductPrice = x.Product.ProductPrice,
+                        ProductStatus = x.Product.ProductStatus,
+                        RequestedProduct = x.Product.RequestedProduct
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Get the non-prioritized posts and sort them by CreationDate
+            var nonPrioritizedPosts = await _appDbContext.Posts
+                .Where(x => x.IsDelete == false && x.CreatedBy != userId && x.IsPriority == false)
+                .OrderByDescending(p => p.CreationDate)
+                .Include(x => x.Product)
+                    .ThenInclude(p => p.Category)
+                .Include(x => x.Product)
+                    .ThenInclude(p => p.ConditionType)
+                .Select(x => new PostViewModel
+                {
+                    PostId = x.Id,
+                    PostContent = x.PostContent,
+                    PostTitle = x.PostTitle,
+                    CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                    Location = _appDbContext.Users.Where(u => u.Id == x.CreatedBy).Select(u => u.HomeAddress).Single(),
+                    AuthorId = x.CreatedBy.Value,
+                    Product = new ProductModel
+                    {
+                        ProductId = x.ProductId,
+                        CategoryId = x.Product.CategoryId,
+                        CategoryName = x.Product.Category.CategoryName,
+                        ConditionId = x.Product.ConditionId,
+                        ConditionName = x.Product.ConditionType.ConditionType,
+                        ProductImageUrl = x.Product.ProductImageUrl,
+                        ProductPrice = x.Product.ProductPrice,
+                        ProductStatus = x.Product.ProductStatus,
+                        RequestedProduct = x.Product.RequestedProduct
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Combine the lists, putting the randomized prioritized posts first
+            return prioritizedPosts.Concat(nonPrioritizedPosts).ToList();
         }
+
 
         public async Task<List<Post>> GetAllPostsByCreatedByIdAsync(Guid id)
         {
@@ -78,7 +117,18 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            return posts.OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
+            // Randomize the prioritized posts (IsPriority == true)
+            var prioritizedPosts = posts
+                .Where(p => p.IsPriority == true)
+                .OrderBy(p => Guid.NewGuid());
+
+            // Sort the non-prioritized posts (IsPriority is false or null) by CreationDate
+            var nonPrioritizedPosts = posts
+                .Where(p => p.IsPriority == false || p.IsPriority == null)
+                .OrderByDescending(p => p.CreationDate);
+
+            // Combine the lists with prioritized (randomized) posts first
+            return prioritizedPosts.Concat(nonPrioritizedPosts).ToList();
         }
 
         public async Task<List<Post>> GetAllPostsWithDetailsSortByCreationDayAsync(Guid currentUserId)
@@ -88,8 +138,18 @@ namespace Infrastructure.Repository
                 p => p.Product.Category,
                 p => p.Product.ConditionType
             );
-            var sortedPosts = posts.Where(p => p.CreatedBy != currentUserId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
-            return sortedPosts;
+            // Randomize the prioritized posts (IsPriority == true)
+            var prioritizedPosts = posts
+                .Where(p => p.IsPriority == true && p.CreatedBy != currentUserId)
+                .OrderBy(p => Guid.NewGuid());
+
+            // Sort the non-prioritized posts (IsPriority is false or null) by CreationDate
+            var nonPrioritizedPosts = posts
+                .Where(p => p.IsPriority == false && p.CreatedBy != currentUserId)
+                .OrderByDescending(p => p.CreationDate);
+
+            // Combine the lists with prioritized (randomized) posts first
+            return prioritizedPosts.Concat(nonPrioritizedPosts).ToList();
 
         }
 
@@ -137,30 +197,68 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModel>> SearchPostByProductName(string productName)
         {
-            return await _appDbContext.Posts.Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false).AsSplitQuery()
-                .OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate)
-                                            .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
-                                            .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
-                                            .Select(x => new PostViewModel
-                                            {
-                                                PostId=x.Id,
-                                                PostTitle= x.PostTitle,
-                                                PostContent= x.PostContent,
-                                                CreationDate=DateOnly.FromDateTime(x.CreationDate.Value),
-                                                Product=new ProductModel
-                                                {
-                                                    ProductId=x.ProductId,
-                                                    CategoryId=x.Product.CategoryId,
-                                                    ConditionId=x.Product.ConditionId,
-                                                   CategoryName=x.Product.Category.CategoryName,
-                                                   ConditionName=x.Product.ConditionType.ConditionType,
-                                                   ProductImageUrl=x.Product.ProductImageUrl,
-                                                   ProductPrice=x.Product.ProductPrice,
-                                                   ProductStatus=x.Product.ProductStatus,
-                                                   RequestedProduct=x.Product.RequestedProduct
-                                                }
-                                            }).AsQueryable().AsNoTracking().ToListAsync();
+            // Get the prioritized posts and randomize them
+            var prioritizedPosts = await _appDbContext.Posts
+                .Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false && x.IsPriority == true)
+                .AsSplitQuery()
+                .OrderBy(x => Guid.NewGuid()) // Randomize
+                .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
+                .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
+                .Select(x => new PostViewModel
+                {
+                    PostId = x.Id,
+                    PostTitle = x.PostTitle,
+                    PostContent = x.PostContent,
+                    CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                    Product = new ProductModel
+                    {
+                        ProductId = x.ProductId,
+                        CategoryId = x.Product.CategoryId,
+                        ConditionId = x.Product.ConditionId,
+                        CategoryName = x.Product.Category.CategoryName,
+                        ConditionName = x.Product.ConditionType.ConditionType,
+                        ProductImageUrl = x.Product.ProductImageUrl,
+                        ProductPrice = x.Product.ProductPrice,
+                        ProductStatus = x.Product.ProductStatus,
+                        RequestedProduct = x.Product.RequestedProduct
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Get the non-prioritized posts and sort them by CreationDate
+            var nonPrioritizedPosts = await _appDbContext.Posts
+                .Where(x => x.PostTitle.Contains(productName) && x.IsDelete == false && (x.IsPriority == false || x.IsPriority == null))
+                .AsSplitQuery()
+                .OrderByDescending(p => p.CreationDate)
+                .Include(x => x.Product).ThenInclude(p => p.Category).AsSplitQuery()
+                .Include(x => x.Product).ThenInclude(p => p.ConditionType).AsSplitQuery()
+                .Select(x => new PostViewModel
+                {
+                    PostId = x.Id,
+                    PostTitle = x.PostTitle,
+                    PostContent = x.PostContent,
+                    CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                    Product = new ProductModel
+                    {
+                        ProductId = x.ProductId,
+                        CategoryId = x.Product.CategoryId,
+                        ConditionId = x.Product.ConditionId,
+                        CategoryName = x.Product.Category.CategoryName,
+                        ConditionName = x.Product.ConditionType.ConditionType,
+                        ProductImageUrl = x.Product.ProductImageUrl,
+                        ProductPrice = x.Product.ProductPrice,
+                        ProductStatus = x.Product.ProductStatus,
+                        RequestedProduct = x.Product.RequestedProduct
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Combine the lists with prioritized (randomized) posts first
+            return prioritizedPosts.Concat(nonPrioritizedPosts).ToList();
         }
+
 
         public async Task<List<Post>> SortPostByProductCategoryAsync(int categoryId)
         {
@@ -168,10 +266,29 @@ namespace Infrastructure.Repository
                 p => p.Product,
                 p => p.Product.Category,
                 p => p.Product.ConditionType);
-            var sortedListPost = listPost.Where(p => p.Product.Category.CategoryId == categoryId).OrderByDescending(p => p.IsPriority).ThenByDescending(p => p.CreationDate).ToList();
+
+            // Filter the posts by the given category ID
+            var filteredPosts = listPost.Where(p => p.Product.Category.CategoryId == categoryId);
+
+            // Randomize the prioritized posts (IsPriority == true)
+            var prioritizedPosts = filteredPosts
+                .Where(p => p.IsPriority == true)
+                .OrderBy(p => Guid.NewGuid())
+                .ToList();
+
+            // Sort the non-prioritized posts (IsPriority is false or null) by CreationDate
+            var nonPrioritizedPosts = filteredPosts
+                .Where(p => p.IsPriority == false || p.IsPriority == null)
+                .OrderByDescending(p => p.CreationDate)
+                .ToList();
+
+            // Combine the lists, with prioritized (randomized) posts first
+            var sortedListPost = prioritizedPosts.Concat(nonPrioritizedPosts).ToList();
+
             return sortedListPost;
         }
-       
+
+
 
         public async Task<Guid> GetProductIdFromPostId(Guid postId)
         {

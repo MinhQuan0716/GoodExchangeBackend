@@ -87,13 +87,13 @@ namespace Application.Service
             }
 
             var checkOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(postId);
-            if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 2 || item.OrderStatusId == 6 || item.OrderStatusId == 5) && checkOrders.Any(item => item.UserId != user2))
+            if (checkOrders != null && checkOrders.Any(item => item.OrderStatusId == 5) && checkOrders.Any(item => item.UserId != user2))
             {
                 throw new Exception("This post has already been sold");
             }
 
             var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user2, postId);
-            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId))
+            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId && x.OrderStatusId == 1))
             {
                 if (duplicateOrder.Count() > 2)
                 {
