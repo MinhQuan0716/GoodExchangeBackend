@@ -5,6 +5,7 @@ using Application.InterfaceService;
 using Application.Util;
 using AutoFixture;
 using AutoMapper;
+using Hangfire;
 using Infrastructure;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace Backend.Domain.Test
         protected readonly Mock<IPostRepository> _postRepositoryMock;
         protected readonly Mock<IUploadFile> _uploadFileMock;
         protected readonly Mock<IDbConnection> _connectionMock;
+        protected readonly Mock<IBackgroundJobClient> _backgroundJobClientMock;
         public SetupTest()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -58,6 +60,7 @@ namespace Backend.Domain.Test
             _postRepositoryMock = new Mock<IPostRepository>();
             _uploadFileMock=new Mock<IUploadFile>();
             _connectionMock=new Mock<IDbConnection>();
+            _backgroundJobClientMock = new Mock<IBackgroundJobClient>();
         }
         public void Dispose()
         {

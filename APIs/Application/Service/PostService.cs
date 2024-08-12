@@ -29,9 +29,13 @@ namespace Application.Service
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
         private readonly ICacheService _cacheService;
+        
+        private readonly IBackgroundJobClient _backgroundJobClient;
+
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , IClaimService claimService, IUploadFile uploadFile,ICacheService cacheService)
+            , IClaimService claimService, IUploadFile uploadFile, IBackgroundJobClient backgroundJobClient,ICacheService cacheService)
         {
+            _backgroundJobClient = backgroundJobClient;
             _uploadFile = uploadFile;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -173,7 +177,7 @@ namespace Application.Service
                     _unitOfWork.WalletRepository.Update(userWallet);
                     await _unitOfWork.SaveChangeAsync();
                     isSave = true;
-                    BackgroundJob.Schedule(() => DeletePost(createPost.Id), TimeSpan.FromSeconds(10));
+                    _backgroundJobClient.Schedule(() => DeletePost(createPost.Id), TimeSpan.FromHours(24));
                 }
             }
             else if (postModel.productModel.ConditionId == 3)

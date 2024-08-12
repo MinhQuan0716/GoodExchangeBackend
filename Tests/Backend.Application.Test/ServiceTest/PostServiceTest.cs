@@ -10,11 +10,13 @@ using AutoFixture;
 using Backend.Domain.Test;
 using Domain.Entities;
 using FluentAssertions;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +27,7 @@ namespace Backend.Application.Test.ServiceTest
         private IPostService _postService;
         public PostServiceTest()
         {
-            _postService = new PostService(_unitOfWorkMock.Object, _mapper, _appConfiguration.Object, _currentTimeMock.Object, _claimServiceMock.Object, _uploadFileMock.Object);
+            _postService = new PostService(_unitOfWorkMock.Object, _mapper, _appConfiguration.Object, _currentTimeMock.Object, _claimServiceMock.Object, _uploadFileMock.Object, _backgroundJobClientMock.Object);
         }
         [Fact]
         public async Task BanPost_ShouldReturnCorrect()
@@ -116,9 +118,10 @@ namespace Backend.Application.Test.ServiceTest
             var pagintaedPost = await _postService.GetAllPost();
             Assert.Equal(pagintaedPost.Count(), 2);
         }
-        /*[Fact]
+        [Fact]
         public async Task CreatePost_WithWalletOption_ShouldBeSucceeded()
         {
+            
             //Arrange 
             IFormFile productFile = null;
             string exePath = Environment.CurrentDirectory.ToString();
@@ -153,7 +156,7 @@ namespace Backend.Application.Test.ServiceTest
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
-        }*/
+        }
         [Fact]
         public async Task CreatePost_WithSubscriptionOption_ShouldBeSucceeded()
         {
