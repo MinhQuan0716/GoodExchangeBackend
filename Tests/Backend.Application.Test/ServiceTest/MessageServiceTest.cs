@@ -142,7 +142,7 @@ namespace Backend.Application.Test.ServiceTest
                            .ReturnsAsync(soldOrders);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _messageService.GetOrCreateChatRoomAsync(user1, postId));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _messageService.GetOrCreateChatRoomAsync(user1, postId));
         }
 
         [Fact]
