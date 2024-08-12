@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using WebAPI.Middleware;
 using Application.CacheEntity;
+using Hangfire;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +21,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(configuration);
 builder.Services.AddSingleton<Setting>();
+builder.Services.AddHangfire(configuration => configuration
+                     .UseSimpleAssemblyNameTypeSerializer()
+                     .UseRecommendedSerializerSettings()
+                     .UseInMemoryStorage());
+builder.Services.AddHangfireServer();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
