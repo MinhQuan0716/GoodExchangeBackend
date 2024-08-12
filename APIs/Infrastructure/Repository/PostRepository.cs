@@ -21,12 +21,10 @@ namespace Infrastructure.Repository
     public class PostRepository : GenericRepository<Post>, IPostRepository
     {
         private readonly AppDbContext _appDbContext;
-        private readonly IDbConnection _dbConnection;
         public PostRepository(AppDbContext appDbContext
-            , IClaimService claimService, ICurrentTime currentTime, IDbConnection dbConnection) : base(appDbContext, claimService, currentTime)
+            , IClaimService claimService, ICurrentTime currentTime) : base(appDbContext, claimService, currentTime)
         {
             _appDbContext = appDbContext;
-            this._dbConnection = dbConnection;
         }
 
         public async Task<List<PostViewModel>> GetAllPost(Guid userId)
