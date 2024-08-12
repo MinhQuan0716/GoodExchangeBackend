@@ -19,12 +19,14 @@ namespace WebAPI.Controllers
             var post=await _policyService.GetPostPrice();
             return Ok(post);
         }
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<IActionResult> GetCancelledAmount()
         {
             var policy = await _policyService.GetOrderCancelledTime();
             return Ok(policy);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdatePostPrice(Guid id,float price)
         {
@@ -35,6 +37,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateOrderCancelledAmount(Guid id,int amount)
         {
