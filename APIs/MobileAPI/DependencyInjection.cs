@@ -10,7 +10,6 @@ using Application.ApplicationCache;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using Application.CacheEntity;
 namespace MobileAPI
 {
     public static class DependencyInjection

@@ -1,4 +1,4 @@
-﻿using Application.CacheEntity;
+﻿
 using Application.ApplicationCache;
 using Application.InterfaceService;
 using Application.Service;
