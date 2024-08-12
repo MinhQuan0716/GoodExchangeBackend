@@ -32,13 +32,14 @@ namespace Infrastructure
         private readonly IWalletTransactionRepository _walletTransactionRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IReportRepository _reportRepository;
+        private readonly IPolicyRepository _policyRepository;
         public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
             IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository, 
             IVerifyUsersRepository verifyUsersRepository, IExchangeConditionRepository exchangeConditionRepository,
             ICategoryRepository categoryRepository,IWishListRepository wishListRepository,ISubcriptionRepository subcriptionRepository,
             IRatingRepository ratingRepository, IMessageRepository messageRepository, IOrderRepository requestRepository, 
             IChatRoomRepository chatRoomRepository,ISubscriptionHistoryRepository subscriptionHistoryRepository,IWalletTransactionRepository walletTransactionRepository,
-            IOrderRepository orderRepository,IReportRepository reportRepository)
+            IOrderRepository orderRepository,IReportRepository reportRepository,IPolicyRepository policyRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
@@ -57,6 +58,7 @@ namespace Infrastructure
             _walletTransactionRepository = walletTransactionRepository;
             _orderRepository= orderRepository;  
             _reportRepository=reportRepository;
+            _policyRepository=policyRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -91,6 +93,8 @@ namespace Infrastructure
         public IOrderRepository OrderRepository => _orderRepository;
 
         public IReportRepository ReportRepository => _reportRepository;
+
+        public IPolicyRepository PolicyRepository => _policyRepository;
 
         public Task<int> SaveChangeAsync()
         {

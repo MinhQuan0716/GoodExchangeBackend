@@ -1,5 +1,6 @@
 ﻿using Application.ViewModel.CategoryModel;
 using Application.ViewModel.MessageModel;
+using Application.ViewModel.PolicyModel;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Application.ViewModel.RatingModel;
@@ -34,6 +35,7 @@ namespace Infrastructure.Mappers
             MessageMap();
             OrderMap();
             CategoryMap();
+            PolicyMap();
         }
         internal void CreateUserMap()
         {
@@ -72,6 +74,7 @@ namespace Infrastructure.Mappers
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product))
                 .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(x => new DateOnly(x.CreationDate.GetValueOrDefault().Year, x.CreationDate.GetValueOrDefault().Month, x.CreationDate.GetValueOrDefault().Day)))
                 .ForMember(dest=>dest.AuthorId,opt=>opt.MapFrom(x=>x.CreatedBy))
+                .ForMember(dest=>dest.Location,opt=>opt.MapFrom(x=>x.Author.HomeAddress))
             ;
         }
 
@@ -122,6 +125,17 @@ namespace Infrastructure.Mappers
         {
             CreateMap<CreateCategoryModel,Category>().ReverseMap();
             CreateMap<UpdateCategoryModel, Category>().ReverseMap();
+        }
+        internal void PolicyMap()
+        {
+            CreateMap<OrderCancelledTimeViewModel,Policy>()
+                .ForMember(x=>x.Id,opt=>opt.MapFrom(src=>src.Id))
+                .ForMember(x=>x.OrderCancelledAmount,opt=>opt.MapFrom(src=>src.OrderCancelledAmount))
+                .ReverseMap();
+            CreateMap<PostPriceViewModel,Policy>()
+                .ForMember(x=>x.Id,opt=>opt.MapFrom(src=>src.Id))
+                .ForMember(x=>x.PostPrice,opt=>opt.MapFrom(src=>src.PostPrice))
+                .ReverseMap();
         }
     }
 }

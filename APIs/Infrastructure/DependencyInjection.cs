@@ -39,6 +39,7 @@ namespace Infrastructure
             services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
             services.AddScoped<IWalletTransactionRepository, WalletTransactionRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<IPolicyRepository, PolicyRepository>();
             return services;    
         }
     }

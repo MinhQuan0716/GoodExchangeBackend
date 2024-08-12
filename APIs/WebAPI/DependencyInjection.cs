@@ -33,7 +33,7 @@ namespace WebAPI
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IWalletTransactionService, WalletTransactionService>();
             services.AddScoped<IOrderService, OrderService>();
-/*            services.AddScoped<ISettingService, SettingService>();*/
+            services.AddScoped<IPolicyService, PolicyService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
