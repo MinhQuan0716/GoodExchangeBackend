@@ -3,7 +3,6 @@ using Application.InterfaceService;
 using Backend.Domain.Test;
 using FluentAssertions;
 using Infrastructure;
-using Application.CacheService;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

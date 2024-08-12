@@ -28,12 +28,10 @@ namespace Application.Service
         private readonly ICurrentTime _currentTime;
         private readonly IClaimService _claimService;
         private readonly IUploadFile _uploadFile;
-        private readonly ICacheService _cacheService;
-        
+        private readonly ICacheService _setting;
         private readonly IBackgroundJobClient _backgroundJobClient;
-
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , IClaimService claimService, IUploadFile uploadFile, IBackgroundJobClient backgroundJobClient,ICacheService cacheService)
+            , IClaimService claimService, IUploadFile uploadFile, IBackgroundJobClient backgroundJobClient,ICacheService setting)
         {
             _backgroundJobClient = backgroundJobClient;
             _uploadFile = uploadFile;
@@ -42,7 +40,7 @@ namespace Application.Service
             _appConfiguration = appConfiguration;
             _currentTime = currentTime;
             _claimService = claimService;
-            _cacheService = cacheService;
+            _setting=setting;
         }
 
         public async Task<bool> AddPostToWishList(Guid postId)
@@ -91,7 +89,7 @@ namespace Application.Service
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
             var isSave = false;
-            float amount = _cacheService.GetData<float>(_cacheKey);
+            float amount = _setting.GetData<float>(_cacheKey);
             var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
             if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
             {
