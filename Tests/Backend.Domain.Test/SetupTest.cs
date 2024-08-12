@@ -32,7 +32,6 @@ namespace Backend.Domain.Test
         protected readonly Mock<AppConfiguration> _appConfiguration;
         protected readonly Mock<IPostRepository> _postRepositoryMock;
         protected readonly Mock<IUploadFile> _uploadFileMock;
-        protected readonly Mock<IDbConnection> _connectionMock;
         protected readonly Mock<IBackgroundJobClient> _backgroundJobClientMock;
         public SetupTest()
         {
@@ -59,7 +58,6 @@ namespace Backend.Domain.Test
             _sendMailHelperMock=new Mock<ISendMailHelper>();
             _postRepositoryMock = new Mock<IPostRepository>();
             _uploadFileMock=new Mock<IUploadFile>();
-            _connectionMock=new Mock<IDbConnection>();
             _backgroundJobClientMock = new Mock<IBackgroundJobClient>();
         }
         public void Dispose()

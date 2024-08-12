@@ -6,11 +6,10 @@ using MobileAPI.MobileService;
 using Application.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Util;
-using Application.CacheService;
+using Application.ApplicationCache;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using Application.CacheService;
 namespace MobileAPI
 {
     public static class DependencyInjection
@@ -39,6 +38,7 @@ namespace MobileAPI
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ISubscriptionHistoryService, SubscriptionHistoryService>();
             services.AddScoped<IWalletTransactionService,WalletTransactionService>();
+/*            services.AddScoped<ISettingService, SettingService>();*/
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -48,7 +48,7 @@ namespace MobileAPI
             });
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
             options.Password = "MinhQuan@123";
-            services.AddScoped<IDatabase>(cfg =>
+            services.AddSingleton<IDatabase>(cfg =>
             {
                 IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(options);
                 return multiplexer.GetDatabase();

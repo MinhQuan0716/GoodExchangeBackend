@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CacheService
+namespace Application.ApplicationCache
 {
-    public class CacheService : ICacheService
+    public class CacheService:ICacheService
     {
         private readonly IDatabase _database;
         public CacheService(IDatabase database)
@@ -41,9 +41,9 @@ namespace Application.CacheService
             bool _isKeyExist = _database.KeyExists(key);
             if (_isKeyExist == true)
             {
-                SetData<object>(key, value, DateTime.Now.AddMinutes(20));
-            }
-            return false;
+              return SetData<object>(key, value,DateTime.Now.AddHours(200));
+            } 
+            return _isKeyExist;
         }
 
         public bool SetData<T>(string key, T value, DateTimeOffset expirationTime)

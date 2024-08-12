@@ -33,6 +33,7 @@ namespace Infrastructure
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<WishList> WishLists { get; set; }
+        public DbSet<Policy> Policies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

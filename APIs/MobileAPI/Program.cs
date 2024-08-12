@@ -74,6 +74,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

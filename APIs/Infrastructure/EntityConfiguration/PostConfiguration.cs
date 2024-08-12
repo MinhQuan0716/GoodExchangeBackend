@@ -15,6 +15,7 @@ namespace Infrastructure.EntityConfiguration
         {
             builder.HasOne(x => x.Author).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(deleteBehavior:DeleteBehavior.NoAction);
             builder.Property(x => x.IsPriority).IsRequired(false);
+            builder.Property(x=>x.PaymentType).IsRequired(false);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.CacheService;
+﻿
+using Application.ApplicationCache;
 using Application.InterfaceService;
 using Application.Service;
 using Application.Util;
@@ -22,7 +23,7 @@ namespace WebAPI
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<ISendMailHelper,SendMailHelper>();
             services.AddScoped<IPostService, PostService>();
-            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<ICacheService,CacheService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<ISubcriptionService, SubcriptionService>();
@@ -32,11 +33,12 @@ namespace WebAPI
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IWalletTransactionService, WalletTransactionService>();
             services.AddScoped<IOrderService, OrderService>();
+/*            services.AddScoped<ISettingService, SettingService>();*/
             services.AddDistributedMemoryCache();
             services.AddSession();
             var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
             options.Password = "MinhQuan@123";
-            services.AddScoped<IDatabase>(cfg =>
+            services.AddSingleton<IDatabase>(cfg =>
             {
                 IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(options);
                 return multiplexer.GetDatabase();

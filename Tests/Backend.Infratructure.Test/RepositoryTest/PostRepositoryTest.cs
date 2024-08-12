@@ -23,7 +23,7 @@ namespace Backend.Domain.Test
         public PostRepositoryTests(ITestOutputHelper output)
         {
             _output = output;
-            _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object, _connectionMock.Object);
+            _postRepository = new PostRepository(_dbContext, _claimServiceMock.Object, _currentTimeMock.Object);
         }
         [Fact]
         public async Task GetAllPostWithDetail_ShouldReturnTrue()

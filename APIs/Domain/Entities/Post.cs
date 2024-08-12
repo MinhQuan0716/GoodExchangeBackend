@@ -15,6 +15,7 @@ namespace Domain.Entities
         public Guid UserId { get; set; }
         public User Author { get; set; }
         public bool? IsPriority { get; set; }
+        public string? PaymentType { get; set; }
         public ICollection<WishList> WishLists { get; set; }
         public ICollection<Order> Requests { get; set; }
     }
