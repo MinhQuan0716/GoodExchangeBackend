@@ -11,7 +11,7 @@ namespace MobileAPI.Controllers
         {
             _policyService = policyService;
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPostPrice()
         {
