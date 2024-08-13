@@ -12,5 +12,6 @@ namespace Application.InterfaceService
         Task<List<SubscriptionHistoryViewModel>> GetAllSubscriptionHistoriesAsync();
         Task<List<SubscriptionHistoryDetailViewModel>> GetAllUsersSubscriptionHistoryDetailAsync();
         Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUsersAvailableSubscription();
+        Task<bool> UnsubscribeSubscription(Guid subscriptionId);
     }
 }

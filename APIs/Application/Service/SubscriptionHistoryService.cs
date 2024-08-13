@@ -32,5 +32,18 @@ namespace Application.Service
         {
            return await _unitOfWork.SubscriptionHistoryRepository.GetCurrentUserAvailableSubscripion(_claimService.GetCurrentUserId);
         }
+
+        public async Task<bool> UnsubscribeSubscription(Guid subscriptionId)
+        {
+            var listSubscriptionHistories = await _unitOfWork.SubscriptionHistoryRepository.GetAllAsync();
+            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId).Single();
+            if(subscriptionHistoryToDeactive == null)
+            {
+                throw new Exception("You already unsubscribe this subscription");
+            }
+            subscriptionHistoryToDeactive.Status = false;
+            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactive);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
     }
 }
