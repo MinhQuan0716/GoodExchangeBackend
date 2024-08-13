@@ -19,12 +19,12 @@ namespace Infrastructure.Repository
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<TransactionViewModel>> GetAllTransaction()
+        public async Task<List<TransactionViewModelForWeb>> GetAllTransaction()
         {
             var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false).AsSplitQuery()
                                                                        .Include(x => x.Wallet)
                                                                        .ThenInclude(wallet => wallet.Owner).AsSplitQuery()
-                                                                       .Select(x => new TransactionViewModel
+                                                                       .Select(x => new TransactionViewModelForWeb
                                                                        {
                                                                            Id = x.Id,
                                                                            Username = x.Wallet.Owner.UserName,
@@ -40,6 +40,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId)
         {
+            int postAmount = _appDbContext.Posts.Where(x => x.UserId == userId && x.IsDelete == false).ToList().Count();
             var listTransaction = await _appDbContext.WalletTransactions.Where(x => x.IsDelete == false&&x.Wallet.Owner.Id==userId)
                                                                        .Include(x => x.Wallet).ThenInclude(wallet => wallet.Owner).AsSplitQuery()
                                                                        .Select(x => new TransactionViewModel
@@ -50,7 +51,8 @@ namespace Infrastructure.Repository
                                                                            Action = x.TransactionType,
                                                                            Amount = x.Amount,
                                                                            CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                                                                           CreationTime = TimeOnly.FromDateTime(x.CreationDate.Value)
+                                                                           CreationTime = TimeOnly.FromDateTime(x.CreationDate.Value),
+                                                                           PostAmount=postAmount
                                                                        }).ToListAsync();
             return listTransaction;
         }

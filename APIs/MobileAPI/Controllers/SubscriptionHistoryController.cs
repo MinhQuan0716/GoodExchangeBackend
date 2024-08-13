@@ -28,10 +28,10 @@ namespace MobileAPI.Controllers
             return Ok(subscriptionHistories);
         }
         [Authorize]
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> UnsubscribeSubscription(Guid Id)
+        [HttpDelete("{subscriptionId}")]
+        public async Task<IActionResult> UnsubscribeSubscription(Guid subscriptionId)
         {
-            bool isUnsubscribe=await _subscriptionHistoryService.UnsubscribeSubscription(Id);
+            bool isUnsubscribe=await _subscriptionHistoryService.UnsubscribeSubscription(subscriptionId);
             if (isUnsubscribe)
             {
                 return Ok();

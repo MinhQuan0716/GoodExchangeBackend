@@ -37,9 +37,20 @@ namespace Application.Service
         {
             var listSubscriptionHistories = await _unitOfWork.SubscriptionHistoryRepository.GetAllAsync();
             var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId).Single();
+            var wallet =await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
+            var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
+            var listPost=await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
             if(subscriptionHistoryToDeactive == null)
             {
                 throw new Exception("You already unsubscribe this subscription");
+            }
+            if (listPost.Count()==0)
+            {
+                subscriptionHistoryToDeactive.Status = false;
+                 wallet.UserBalance += subscription.Price;
+                _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactive);
+                _unitOfWork.WalletRepository.Update(wallet);
+                return await _unitOfWork.SaveChangeAsync() > 0;
             }
             subscriptionHistoryToDeactive.Status = false;
             _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactive);

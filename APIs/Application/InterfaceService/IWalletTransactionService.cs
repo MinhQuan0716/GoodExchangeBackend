@@ -9,7 +9,7 @@ namespace Application.InterfaceService
 {
     public interface IWalletTransactionService
     {
-        Task<List<TransactionViewModel>> GetAllTransactionAsync();
+        Task<List<TransactionViewModelForWeb>> GetAllTransactionAsync();
         Task<List<TransactionViewModel>> GetAllTransactionByCurrentUserIdAsync();
     }
 }
