@@ -27,5 +27,16 @@ namespace MobileAPI.Controllers
             var subscriptionHistories = await _subscriptionHistoryService.GetCurrentUsersAvailableSubscription();
             return Ok(subscriptionHistories);
         }
+        [Authorize]
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> UnsubscribeSubscription(Guid Id)
+        {
+            bool isUnsubscribe=await _subscriptionHistoryService.UnsubscribeSubscription(Id);
+            if (isUnsubscribe)
+            {
+                return Ok();
+            }
+            return BadRequest();    
+        }
     }
 }

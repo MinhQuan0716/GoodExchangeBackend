@@ -37,14 +37,15 @@ namespace Infrastructure.Repository
                     .ThenInclude(p => p.Category)
                 .Include(x => x.Product)
                     .ThenInclude(p => p.ConditionType)
+                .Include(x=>x.Author)
                 .Select(x => new PostViewModel
                 {
                     PostId = x.Id,
                     PostContent = x.PostContent,
                     PostTitle = x.PostTitle,
                     CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
-                    Location = _appDbContext.Users.Where(u => u.Id == x.CreatedBy).Select(u => u.HomeAddress).Single(),
                     AuthorId = x.CreatedBy.Value,
+                    Location=x.Author.HomeAddress,
                     Product = new ProductModel
                     {
                         ProductId = x.ProductId,
