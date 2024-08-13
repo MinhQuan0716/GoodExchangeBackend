@@ -99,9 +99,9 @@ namespace Application.Service
             {
                 amount = policy.FirstOrDefault().OrderCancelledAmount;
             }
-            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId && x.OrderStatusId == 4))
+            if (duplicateOrder != null)
             {
-                if (duplicateOrder.Count() == amount)
+                if (duplicateOrder.Where(x=>x.OrderStatusId == 4).Count() == amount)
                 {
                     throw new Exception("You have cancle this post too many time");
                 }
