@@ -89,7 +89,12 @@ namespace Application.Service
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
             var isSave = false;
-            float amount = _setting.GetData<float>(_cacheKey);
+            float amount = 0.0f;
+            var listPolicies = await _unitOfWork.PolicyRepository.GetAllAsync();
+            foreach(var policy in listPolicies)
+            {
+                amount = policy.PostPrice;
+            }
             var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
             if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
             {
