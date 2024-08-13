@@ -38,7 +38,8 @@ namespace MobileAPI
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ISubscriptionHistoryService, SubscriptionHistoryService>();
             services.AddScoped<IWalletTransactionService,WalletTransactionService>();
-/*            services.AddScoped<ISettingService, SettingService>();*/
+            /*            services.AddScoped<ISettingService, SettingService>();*/
+            services.AddScoped<IPolicyService, PolicyService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
