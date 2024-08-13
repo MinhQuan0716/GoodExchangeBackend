@@ -89,12 +89,6 @@ namespace Application.Service
         public async Task<bool> CreatePost(CreatePostModel postModel)
         {
             var isSave = false;
-            float amount = 0.0f;
-            var listPolicies = await _unitOfWork.PolicyRepository.GetAllAsync();
-            foreach(var policy in listPolicies)
-            {
-                amount = policy.PostPrice;
-            }
             var verifyStatus = await _unitOfWork.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(_claimService.GetCurrentUserId);
             if(verifyStatus.VerifyStatus=="Pending" || verifyStatus.VerifyStatus == "Denied")
             {
@@ -154,6 +148,12 @@ namespace Application.Service
                 if (postModel.PaymentType == "Wallet")
                 {
                     var userWallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
+                    var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
+                    float amount = 0;
+                    if (policy.FirstOrDefault() != null)
+                    {
+                        amount = policy.FirstOrDefault().PostPrice;
+                    }
                     if (userWallet.UserBalance < amount)
                     {
                         throw new Exception("Your user balance is not enough to purchase this post");

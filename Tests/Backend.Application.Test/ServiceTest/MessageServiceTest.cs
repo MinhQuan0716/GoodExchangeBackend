@@ -174,7 +174,15 @@ namespace Backend.Application.Test.ServiceTest
                            .ReturnsAsync(walletTransactions);
             _unitOfWorkMock.Setup(repo => repo.PostRepository.GetPostDetail(postId))
                            .ReturnsAsync(postForProductPrice);
-
+            _unitOfWorkMock.Setup(repo => repo.PolicyRepository.GetAllAsync())
+                .ReturnsAsync(new List<Policy>
+                {
+                    new Policy
+                    {
+                        PostPrice = 15000,
+                        OrderCancelledAmount = 3
+                    }
+                });
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _messageService.GetOrCreateChatRoomAsync(user1, postId));
         }
@@ -223,7 +231,15 @@ namespace Backend.Application.Test.ServiceTest
                    new TransactionViewModel { Action = "Purchase pending", Amount = 60 }
                });
             _unitOfWorkMock.Setup(repo => repo.MessageRepository.AddAsync(It.IsAny<Message>())).Verifiable();
-
+            _unitOfWorkMock.Setup(repo => repo.PolicyRepository.GetAllAsync())
+                .ReturnsAsync(new List<Policy>
+                {
+                    new Policy
+                    {
+                        PostPrice = 15000,
+                        OrderCancelledAmount = 3
+                    }
+                });
             // For PostRepository
             _unitOfWorkMock.Setup(repo => repo.PostRepository.GetPostDetail(postId))
                            .ReturnsAsync(new PostDetailViewModel { ProductPrice = 100 });

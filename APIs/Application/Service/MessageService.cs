@@ -93,9 +93,15 @@ namespace Application.Service
             }
 
             var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user2, postId);
-            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId && x.OrderStatusId == 1))
+            var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
+            int amount = 0;
+            if (policy.FirstOrDefault() != null)
             {
-                if (duplicateOrder.Count() > 2)
+                amount = policy.FirstOrDefault().OrderCancelledAmount;
+            }
+            if (duplicateOrder != null && duplicateOrder.Any(x => x.CreatedBy == _claimService.GetCurrentUserId && x.OrderStatusId == 4))
+            {
+                if (duplicateOrder.Count() == amount)
                 {
                     throw new Exception("You have cancle this post too many time");
                 }
