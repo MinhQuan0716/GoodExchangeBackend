@@ -154,6 +154,15 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.WalletRepository.GetUserWalletByUserId(It.IsAny<Guid>())).ReturnsAsync(wallet);
             _unitOfWorkMock.Setup(unit => unit.VerifyUsersRepository.GetVerifyUserDetailByUserIdAsync(It.IsAny<Guid>())).ReturnsAsync(verifyModel);
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Testlink");
+            _unitOfWorkMock.Setup(repo => repo.PolicyRepository.GetAllAsync())
+                .ReturnsAsync(new List<Policy>
+                {
+                    new Policy
+                    {
+                        PostPrice = 15000,
+                        OrderCancelledAmount = 3
+                    }
+                });
             var isCreated = await _postService.CreatePost(postModel);
             Assert.True(isCreated);
         }
