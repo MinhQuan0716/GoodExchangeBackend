@@ -35,8 +35,9 @@ namespace Application.Service
 
         public async Task<bool> UnsubscribeSubscription(Guid subscriptionId)
         {
+            bool isRemove = false;
             var listSubscriptionHistories = await _unitOfWork.SubscriptionHistoryRepository.GetAllAsync();
-            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId).Single();
+            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId).ToList();
             var wallet =await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
             var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
             var listPost=await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
@@ -46,15 +47,25 @@ namespace Application.Service
             }
             if (listPost.Count()==0)
             {
-                subscriptionHistoryToDeactive.Status = false;
-                 wallet.UserBalance += subscription.Price;
-                _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactive);
-                _unitOfWork.WalletRepository.Update(wallet);
-                return await _unitOfWork.SaveChangeAsync() > 0;
+                foreach(var subscriptionHistory in subscriptionHistoryToDeactive)
+                {
+                    subscriptionHistory.Status = false;
+                    wallet.UserBalance += subscription.Price;
+                    _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                    _unitOfWork.WalletRepository.Update(wallet);
+                    isRemove= await _unitOfWork.SaveChangeAsync() > 0;
+                }
+                
             }
-            subscriptionHistoryToDeactive.Status = false;
-            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactive);
-            return await _unitOfWork.SaveChangeAsync() > 0;
+            foreach (var subscriptionHistory in subscriptionHistoryToDeactive)
+            {
+                subscriptionHistory.Status = false;
+                wallet.UserBalance += subscription.Price;
+                _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                _unitOfWork.WalletRepository.Update(wallet);
+                isRemove= await _unitOfWork.SaveChangeAsync() > 0;
+            }
+            return isRemove;
         }
     }
 }

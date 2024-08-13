@@ -62,6 +62,7 @@ namespace Infrastructure.Mappers
         internal void CreatePostMap()
         {
             CreateMap<CreatePostModel, Post>()
+                .ForMember(src=>src.PaymentType,opt=>opt.MapFrom(x=>x.PaymentType))
                 .ReverseMap();
            
         }
