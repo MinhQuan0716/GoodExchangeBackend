@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModel\NewFolder\" />
+  </ItemGroup>
+
 </Project>

@@ -38,6 +38,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        //remove id
         [Authorize(Roles = "Admin")]
         [HttpPatch]
         public async Task<IActionResult> UpdateOrderCancelledAmount(OrderCancelledTimeViewModel orderCancelledTimeViewModel)
