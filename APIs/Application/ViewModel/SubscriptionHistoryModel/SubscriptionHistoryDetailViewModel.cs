@@ -15,5 +15,6 @@ namespace Application.ViewModel.SubscriptionHistoryModel
         public string Status { get; set; }
         public Guid SubscriptionId { get; set; }
         public SubscriptionDetailViewModel subcriptionModel { get; set; }
+        public int PostAmount { get; set; }
     }
 }
