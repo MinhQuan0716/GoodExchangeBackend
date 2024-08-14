@@ -34,7 +34,7 @@ namespace Infrastructure.Repository
                                                                                    Status=x.Status? "Available":"Expried",
                                                                                    subcriptionModel = new SubscriptionDetailViewModel
                                                                                    {
-                                                                                       Id = x.SubcriptionId,
+                                                                                       SubscriptionId = x.SubcriptionId,
                                                                                        Description =x.Subcription.Description,
                                                                                        ExpiryMonth=x.Subcription.ExpiryMonth,
                                                                                        Price = x.Subcription.Price,
@@ -57,7 +57,7 @@ namespace Infrastructure.Repository
                                                                                Id=x.Id,
                                                                                subcriptionModel = new SubscriptionDetailViewModel
                                                                                {
-                                                                                   Id = x.SubcriptionId,
+                                                                                   SubscriptionId = x.SubcriptionId,
                                                                                    Description = x.Subcription.Description,
                                                                                    ExpiryMonth = x.Subcription.ExpiryMonth,
                                                                                    Price = x.Subcription.Price,
@@ -94,7 +94,7 @@ namespace Infrastructure.Repository
                                                                                 SubscriptionId=x.Subcription.Id,
                                                                                 subcriptionModel = new SubscriptionDetailViewModel
                                                                                 {
-                                                                                    Id = x.SubcriptionId,
+                                                                                    SubscriptionId = x.SubcriptionId,
                                                                                     Description = x.Subcription.Description,
                                                                                     ExpiryMonth = x.Subcription.ExpiryMonth,
                                                                                     Price = x.Subcription.Price,

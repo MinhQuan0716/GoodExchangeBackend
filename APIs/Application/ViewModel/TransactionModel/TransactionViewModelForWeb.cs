@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.TransactionModel
 {
-    public class TransactionViewModel
+    public class TransactionViewModelForWeb
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
@@ -15,6 +15,5 @@ namespace Application.ViewModel.TransactionModel
         public float Amount { get; set; }
         public DateOnly CreationDate { get; set; }
         public TimeOnly CreationTime { get; set; }
-        public int PostAmount { get; set; }
     }
 }

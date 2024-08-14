@@ -50,3 +50,13 @@ services:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
       - capstone-api-network
+ tunnel:
+    container_name: cloudflared-tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=eyJhIjoiZTYwYTBlYzgzMTQxNTlhZjUwNjdjOTc5MGU5ODBiNTEiLCJ0IjoiNTJiZGQxNzAtZjFmNy00ZGE5LThmZGYtODBhNzgzMzA3MGNkIiwicyI6Ik5HSTRaVFk0T0RrdFlqa3hNaTAwWTJWa0xUaGhaall0WW1JMlpUTTVZbUU1TVdZMCJ9
+    networks:
+      - capstone-api-network
+     

@@ -11,7 +11,7 @@ namespace Application.InterfaceRepository
     public interface IWalletTransactionRepository:IGenericRepository<WalletTransaction>
     {
         Task<Guid> GetLastSaveWalletTransactionId();
-        Task<List<TransactionViewModel>> GetAllTransaction();
+        Task<List<TransactionViewModelForWeb>> GetAllTransaction();
         Task<List<TransactionViewModel>> GetAllTransactionByUserId(Guid userId);
         Task<WalletTransaction> GetByOrderIdAsync(Guid orderId);
     }

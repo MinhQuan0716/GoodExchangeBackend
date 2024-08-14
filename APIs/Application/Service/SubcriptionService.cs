@@ -27,6 +27,7 @@ namespace Application.Service
         {
             var subcription = _mapper.Map<Subscription>(createSubcriptionModel);
             subcription.Description = "Standard";
+            subcription.ExpiryMonth = createSubcriptionModel.ExpiryDay;
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -43,10 +44,36 @@ namespace Application.Service
                 {
                     var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionHistoryViewModel.SubscriptionId);
                     var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
-                    if (subscriptionHistory.EndDate > DateTime.UtcNow)
+                    if (subscriptionHistory.EndDate < DateTime.UtcNow.AddDays(7))
                     {
-                        subscriptionHistory.Status = false;
-                        _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                       /* subscriptionHistory.Status = false;
+                        _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);*/
+                    }
+                    else
+                    {
+                        if (wallet.UserBalance < subscription.Price)
+                        {
+                            WalletTransaction walletTransaction = new WalletTransaction()
+                            {
+                                TransactionType="Extend subscription failed,user balance not enough",
+                                WalletId=wallet.Id
+                            };
+                             subscriptionHistory.Status = false;
+                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                            _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);
+                        } else
+                        {
+                            wallet.UserBalance-=subscription.Price;
+                            WalletTransaction walletTransaction = new WalletTransaction()
+                            {
+                                TransactionType = "Extend subscription succees",
+                                WalletId=wallet.Id
+                            };
+                            subscriptionHistory.Status = true;
+                            _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                            _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);
+                            _unitOfWork.WalletRepository.Update(wallet);
+                        }
                     }
                 }
             }

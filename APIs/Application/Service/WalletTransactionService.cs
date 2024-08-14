@@ -18,7 +18,7 @@ namespace Application.Service
             _unitOfWork = unitOfWork;
             _claimService = claimService;
         }
-        public async Task<List<TransactionViewModel>> GetAllTransactionAsync()
+        public async Task<List<TransactionViewModelForWeb>> GetAllTransactionAsync()
         {
             return await _unitOfWork.WalletTransactionRepository.GetAllTransaction();
         }
