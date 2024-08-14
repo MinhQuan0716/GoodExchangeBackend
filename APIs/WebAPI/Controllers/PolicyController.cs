@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
             return Ok(policy);
         }
         [Authorize(Roles = "Admin")]
-        [HttpPatch("{id}")]
+        [HttpPatch]
         public async Task<IActionResult> UpdatePostPrice(PostPriceViewModel postPriceViewModel)
         {
             var isUpdated=await _policyService.UpdatePostPrice(postPriceViewModel);
@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
         [Authorize(Roles = "Admin")]
-        [HttpPatch("{id}")]
+        [HttpPatch]
         public async Task<IActionResult> UpdateOrderCancelledAmount(OrderCancelledTimeViewModel orderCancelledTimeViewModel)
         {
             var isUpdated = await _policyService.UpdateOrderCancelledTime(orderCancelledTimeViewModel);

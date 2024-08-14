@@ -415,5 +415,11 @@ namespace Application.Service
             }
             return isDeleted;
         }
+
+        public async Task<List<PostViewModelForFeaturedImage>> GetFeaturedImage()
+        {
+            var post = await _unitOfWork.PostRepository.GetFeaturedImagePost();
+            return post;
+        }
     }
 }

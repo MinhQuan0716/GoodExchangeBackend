@@ -217,15 +217,27 @@ namespace MobileAPI.Controllers
             }
             return Ok(isExisted);
         }
-      /*  [HttpDelete]
-        public async Task<IActionResult> RemovePostExpiredSubscription()
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetFeaturedImage()
         {
-            var isDelete = await _postService.RemovePostWhenSubscriptionExpire();
-            if(!isDelete)
+            var listPost = await _postService.GetFeaturedImage();
+            if (listPost.Count() == 0)
             {
-                return NoContent();
+                return NotFound();
             }
-            return BadRequest();
-        }*/
+            return Ok(listPost);
+        }
+
+        /*  [HttpDelete]
+          public async Task<IActionResult> RemovePostExpiredSubscription()
+          {
+              var isDelete = await _postService.RemovePostWhenSubscriptionExpire();
+              if(!isDelete)
+              {
+                  return NoContent();
+              }
+              return BadRequest();
+          }*/
     }
 }
