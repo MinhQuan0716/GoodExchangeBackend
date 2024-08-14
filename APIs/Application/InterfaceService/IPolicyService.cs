@@ -9,9 +9,9 @@ namespace Application.InterfaceService
 {
     public interface IPolicyService
     {
-        Task<List<PostPriceViewModel>> GetPostPrice();
-        Task<List<OrderCancelledTimeViewModel>> GetOrderCancelledTime();
-        Task<bool> UpdatePostPrice(Guid id, float postPrice);
-        Task<bool> UpdateOrderCancelledTime(Guid id, int orderAmount);
+        Task<PostPriceViewModel> GetPostPrice();
+        Task<OrderCancelledTimeViewModel> GetOrderCancelledTime();
+        Task<bool> UpdatePostPrice(PostPriceViewModel postPriceViewModel);
+        Task<bool> UpdateOrderCancelledTime(OrderCancelledTimeViewModel orderCancelledTimeViewModel);
     }
 }

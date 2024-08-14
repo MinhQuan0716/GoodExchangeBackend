@@ -18,37 +18,37 @@ namespace Application.Service
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<List<OrderCancelledTimeViewModel>> GetOrderCancelledTime()
+        public async Task<OrderCancelledTimeViewModel> GetOrderCancelledTime()
         {
             var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
             var policyViewModel=_mapper.Map<List<OrderCancelledTimeViewModel>>(policy);
-            return policyViewModel;
+            return policyViewModel.First();
         }
 
-        public async Task<List<PostPriceViewModel>> GetPostPrice()
+        public async Task<PostPriceViewModel> GetPostPrice()
         {
             var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
             var policyViewModel = _mapper.Map<List<PostPriceViewModel>>(policy);
-            return policyViewModel;
+            return policyViewModel.First();
         }
 
-        public async Task<bool> UpdateOrderCancelledTime(Guid id, int orderAmount)
+        public async Task<bool> UpdateOrderCancelledTime(OrderCancelledTimeViewModel orderCancelledTimeViewModel)
         {
-            var foundPolicy=await _unitOfWork.PolicyRepository.GetByIdAsync(id);
+            var foundPolicy=await _unitOfWork.PolicyRepository.GetByIdAsync(orderCancelledTimeViewModel.Id);
             if (foundPolicy!=null)
             {
-                foundPolicy.OrderCancelledAmount= orderAmount;  
+                foundPolicy.OrderCancelledAmount= orderCancelledTimeViewModel.OrderCancelledAmount;  
                 _unitOfWork.PolicyRepository.Update(foundPolicy);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<bool> UpdatePostPrice(Guid id, float postPrice)
+        public async Task<bool> UpdatePostPrice(PostPriceViewModel postPriceViewModel)
         {
-            var foundPolicy = await _unitOfWork.PolicyRepository.GetByIdAsync(id);
+            var foundPolicy = await _unitOfWork.PolicyRepository.GetByIdAsync(postPriceViewModel.Id);
             if (foundPolicy != null)
             {
-                foundPolicy.PostPrice = postPrice;
+                foundPolicy.PostPrice = postPriceViewModel.PostPrice;
                 _unitOfWork.PolicyRepository.Update(foundPolicy);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;

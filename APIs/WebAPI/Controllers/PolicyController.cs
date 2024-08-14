@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.PolicyModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,9 @@ namespace WebAPI.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdatePostPrice(Guid id,float price)
+        public async Task<IActionResult> UpdatePostPrice(PostPriceViewModel postPriceViewModel)
         {
-            var isUpdated=await _policyService.UpdatePostPrice(id,price);
+            var isUpdated=await _policyService.UpdatePostPrice(postPriceViewModel);
             if (isUpdated)
             {
                 return Ok();
@@ -39,9 +40,9 @@ namespace WebAPI.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateOrderCancelledAmount(Guid id,int amount)
+        public async Task<IActionResult> UpdateOrderCancelledAmount(OrderCancelledTimeViewModel orderCancelledTimeViewModel)
         {
-            var isUpdated = await _policyService.UpdateOrderCancelledTime(id, amount);
+            var isUpdated = await _policyService.UpdateOrderCancelledTime(orderCancelledTimeViewModel);
             if (isUpdated)
             {
                 return Ok();
