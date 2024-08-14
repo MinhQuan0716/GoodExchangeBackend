@@ -37,7 +37,7 @@ namespace Application.Service
         {
             bool isRemove = false;
             var listSubscriptionHistories = await _unitOfWork.SubscriptionHistoryRepository.GetAllAsync();
-            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId).ToList();
+            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId&x.Status==true).ToList();
             var wallet =await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
             var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
             var listPost=await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
