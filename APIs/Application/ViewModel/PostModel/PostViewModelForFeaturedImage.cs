@@ -8,7 +8,7 @@ namespace Application.ViewModel.PostModel
 {
     public class PostViewModelForFeaturedImage
     {
-        public Guid Id { get; set; }
+        public Guid PostId { get; set; }
         public string ImageUrl { get; set; }
         public DateOnly CreationDate { get; set; }
     }

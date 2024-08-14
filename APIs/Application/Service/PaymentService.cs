@@ -45,7 +45,9 @@ namespace Application.Service
             {
                 throw new Exception("Cannot find wallet");
             }
-            if (userWallet.UserBalance < subscription.Price)
+            var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(_claimsService.GetCurrentUserId);
+            float pendingTransaction = wallletTransaction?.Where(item => item.Action == "Purchase pending").Sum(item => item.Amount) ?? 0;
+            if (userWallet.UserBalance - pendingTransaction < subscription.Price)
             {
                 throw new Exception("User balance not enough to purchase");
             }
