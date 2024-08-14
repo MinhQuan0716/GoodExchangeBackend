@@ -324,13 +324,13 @@ namespace Infrastructure.Repository
 
         public async Task<List<PostViewModelForFeaturedImage>> GetFeaturedImagePost()
         {
-            var postsQuery = _appDbContext.Posts.Where(x => x.IsPriority == true)
+            var postsQuery = _appDbContext.Posts.Where(x => x.IsPriority == true).Where(x => x.IsDelete == false)
                                         .Include(x => x.Product)
                                         .AsSplitQuery();
 
             if (!await postsQuery.AnyAsync())
             {
-                return await _appDbContext.Posts
+                return await _appDbContext.Posts.Where(x => x.IsDelete == false)
                                    .Include(x => x.Product)
                                    .AsSplitQuery()
                                    .OrderBy(x => Guid.NewGuid()) // Random order

@@ -94,21 +94,26 @@ namespace Application.Service
 
             var duplicateOrder = await _unitOfWork.OrderRepository.GetOrderByUserIdAndPostId(user2, postId);
             var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
-            int amount = 0;
+            int amount = 3;
             if (policy.FirstOrDefault() != null)
             {
                 amount = policy.FirstOrDefault().OrderCancelledAmount;
             }
             if (duplicateOrder != null)
             {
-                if (duplicateOrder.OrderByDescending(x => x.CreationDate).First().OrderStatusId == 4)
+                var recentOrder = duplicateOrder.OrderByDescending(x => x.CreationDate).FirstOrDefault();
+                if (recentOrder != null)
                 {
-                    if (duplicateOrder.Where(x => x.OrderStatusId == 4).Count() >= amount)
+                    if (recentOrder.OrderStatusId == 4)
                     {
-                        throw new Exception("You have cancle this post too many time");
+                        if (duplicateOrder.Count(x => x.OrderStatusId == 4) >= amount)
+                        {
+                            throw new Exception("You have cancelled this post too many times");
+                        }
                     }
                 }
             }
+            
 
             var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
             var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
