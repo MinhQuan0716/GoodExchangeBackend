@@ -336,7 +336,7 @@ namespace Infrastructure.Repository
                                    .OrderBy(x => Guid.NewGuid()) // Random order
                                    .Select(x => new PostViewModelForFeaturedImage
                                    {
-                                       Id = x.Id,
+                                       PostId = x.Id,
                                        CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                        ImageUrl = x.Product.ProductImageUrl
                                    }).AsNoTracking()
@@ -347,7 +347,7 @@ namespace Infrastructure.Repository
             return await postsQuery.OrderBy(x => Guid.NewGuid()) // Random order
                                    .Select(x => new PostViewModelForFeaturedImage
                                    {
-                                       Id = x.Id,
+                                       PostId = x.Id,
                                        CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
                                        ImageUrl = x.Product.ProductImageUrl
                                    }).AsNoTracking()
