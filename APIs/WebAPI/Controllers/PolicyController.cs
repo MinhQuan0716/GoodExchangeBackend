@@ -27,22 +27,24 @@ namespace WebAPI.Controllers
             var policy = await _policyService.GetOrderCancelledTime();
             return Ok(policy);
         }
-        /*[Authorize(Roles = "Admin")]*/
+  
+        [Authorize(Roles = "Admin")]
         [HttpPatch]
-        public async Task<IActionResult> UpdatePostPrice(UpdatePostPriceModel updatePostPriceModel)
+        public async Task<IActionResult> UpdatePostPrice(PostPriceViewModel postPriceViewModel)
         {
-            var isUpdated=await _policyService.UpdatePostPrice(updatePostPriceModel);
+            var isUpdated=await _policyService.UpdatePostPrice(postPriceViewModel);
             if (isUpdated)
             {
                 return Ok();
             }
             return BadRequest();
         }
-        /*[Authorize(Roles = "Admin")]*/
+        //remove id
+        [Authorize(Roles = "Admin")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateOrderCancelledAmount(UpdateOrderCancelledTimeModel updateOrderCancelledTimeModel)
+        public async Task<IActionResult> UpdateOrderCancelledAmount(OrderCancelledTimeViewModel orderCancelledTimeViewModel)
         {
-            var isUpdated = await _policyService.UpdateOrderCancelledTime(updateOrderCancelledTimeModel);
+            var isUpdated = await _policyService.UpdateOrderCancelledTime(orderCancelledTimeViewModel);
             if (isUpdated)
             {
                 return Ok();

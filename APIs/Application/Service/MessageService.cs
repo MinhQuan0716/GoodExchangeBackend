@@ -101,9 +101,12 @@ namespace Application.Service
             }
             if (duplicateOrder != null)
             {
-                if (duplicateOrder.Where(x=>x.OrderStatusId == 4).Count() >= amount)
+                if (duplicateOrder.OrderByDescending(x => x.CreationDate).First().OrderStatusId == 4)
                 {
-                    throw new Exception("You have cancle this post too many time");
+                    if (duplicateOrder.Where(x => x.OrderStatusId == 4).Count() >= amount)
+                    {
+                        throw new Exception("You have cancle this post too many time");
+                    }
                 }
             }
 

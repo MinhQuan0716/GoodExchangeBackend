@@ -321,6 +321,39 @@ namespace Infrastructure.Repository
         {
             return await _appDbContext.Posts.Where(x => x.IsDelete == true && x.Id == postId).SingleAsync();
         }
+
+        public async Task<List<PostViewModelForFeaturedImage>> GetFeaturedImagePost()
+        {
+            var postsQuery = _appDbContext.Posts.Where(x => x.IsPriority == true)
+                                        .Include(x => x.Product)
+                                        .AsSplitQuery();
+
+            if (!await postsQuery.AnyAsync())
+            {
+                return await _appDbContext.Posts
+                                   .Include(x => x.Product)
+                                   .AsSplitQuery()
+                                   .OrderBy(x => Guid.NewGuid()) // Random order
+                                   .Select(x => new PostViewModelForFeaturedImage
+                                   {
+                                       Id = x.Id,
+                                       CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                       ImageUrl = x.Product.ProductImageUrl
+                                   }).AsNoTracking()
+                                   .Take(3) // Take 3 random posts
+                                   .ToListAsync();
+            }
+
+            return await postsQuery.OrderBy(x => Guid.NewGuid()) // Random order
+                                   .Select(x => new PostViewModelForFeaturedImage
+                                   {
+                                       Id = x.Id,
+                                       CreationDate = DateOnly.FromDateTime(x.CreationDate.Value),
+                                       ImageUrl = x.Product.ProductImageUrl
+                                   }).AsNoTracking()
+                                   .Take(3) // Take 3 random posts
+                                   .ToListAsync();
+        }
     }
 }
 
