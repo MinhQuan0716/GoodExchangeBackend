@@ -83,24 +83,26 @@ namespace Infrastructure.Repository
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPurchaseSubscription(Guid userId)
         {
-           var listUserSubscription=await _appDbContext.SubscriptionHistories.Where(x=>x.UserId== userId&&x.IsDelete==false)
-                                                                            .Include(x=>x.Subcription).AsSplitQuery()
-                                                                            .Select(x=>new SubscriptionHistoryDetailViewModel
-                                                                            {
-                                                                                Id = x.Id,
-                                                                                StartDate=x.StartDate,
-                                                                                EndDate=x.EndDate,
-                                                                                Status=x.Status?"Available":"Expried",
-                                                                                SubscriptionId=x.Subcription.Id,
-                                                                                subcriptionModel = new SubscriptionDetailViewModel
-                                                                                {
-                                                                                    SubscriptionId = x.SubcriptionId,
-                                                                                    Description = x.Subcription.Description,
-                                                                                    ExpiryMonth = x.Subcription.ExpiryMonth,
-                                                                                    Price = x.Subcription.Price,
-                                                                                    SubcriptionType = x.Subcription.SubcriptionType
-                                                                                }
-                                                                            }).ToListAsync();
+            int postAmount=_appDbContext.Posts.Where(x=>x.UserId== userId).ToList().Count();
+            var listUserSubscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false)
+                                                                             .Include(x => x.Subcription).AsSplitQuery()
+                                                                             .Select(x => new SubscriptionHistoryDetailViewModel
+                                                                             {
+                                                                                 Id = x.Id,
+                                                                                 StartDate = x.StartDate,
+                                                                                 EndDate = x.EndDate,
+                                                                                 Status = x.Status ? "Available" : "Expried",
+                                                                                 SubscriptionId = x.Subcription.Id,
+                                                                                 subcriptionModel = new SubscriptionDetailViewModel
+                                                                                 {
+                                                                                     SubscriptionId = x.SubcriptionId,
+                                                                                     Description = x.Subcription.Description,
+                                                                                     ExpiryMonth = x.Subcription.ExpiryMonth,
+                                                                                     Price = x.Subcription.Price,
+                                                                                     SubcriptionType = x.Subcription.SubcriptionType
+                                                                                 },
+                                                                                 PostAmount = postAmount
+                                                                             }).ToListAsync();
             return listUserSubscription;
         }
     }

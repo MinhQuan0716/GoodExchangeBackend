@@ -27,6 +27,7 @@ namespace WebAPI.Controllers
             var policy = await _policyService.GetOrderCancelledTime();
             return Ok(policy);
         }
+  
         [Authorize(Roles = "Admin")]
         [HttpPatch]
         public async Task<IActionResult> UpdatePostPrice(PostPriceViewModel postPriceViewModel)
