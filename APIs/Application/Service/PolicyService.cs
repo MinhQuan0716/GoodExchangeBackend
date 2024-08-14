@@ -19,18 +19,18 @@ namespace Application.Service
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<OrderCancelledTimeViewModel> GetOrderCancelledTime()
+        public async Task<List<OrderCancelledTimeViewModel>> GetOrderCancelledTime()
         {
             var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
             var policyViewModel=_mapper.Map<List<OrderCancelledTimeViewModel>>(policy);
-            return policyViewModel.First();
+            return policyViewModel;
         }
 
-        public async Task<PostPriceViewModel> GetPostPrice()
+        public async Task<List<PostPriceViewModel>> GetPostPrice()
         {
             var policy = await _unitOfWork.PolicyRepository.GetAllAsync();
             var policyViewModel = _mapper.Map<List<PostPriceViewModel>>(policy);
-            return policyViewModel.First();
+            return policyViewModel;
         }
 
         public async Task<bool>  UpdateOrderCancelledTime(UpdateOrderCancelledTimeModel updateOrderCancelledTimeModel)
