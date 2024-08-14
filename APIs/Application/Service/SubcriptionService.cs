@@ -63,7 +63,7 @@ namespace Application.Service
                             _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);
                         } else
                         {
-                            wallet.UserBalance-=subscription.Price;
+                            wallet.UserBalance=wallet.UserBalance-subscription.Price;
                             WalletTransaction walletTransaction = new WalletTransaction()
                             {
                                 TransactionType = "Extend subscription succees",

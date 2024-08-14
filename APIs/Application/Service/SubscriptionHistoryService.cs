@@ -50,21 +50,22 @@ namespace Application.Service
                 foreach(var subscriptionHistory in subscriptionHistoryToDeactive)
                 {
                     subscriptionHistory.Status = false;
-                    wallet.UserBalance += subscription.Price;
+                    wallet.UserBalance =wallet.UserBalance+ subscription.Price;
                     _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
                     _unitOfWork.WalletRepository.Update(wallet);
                     isRemove= await _unitOfWork.SaveChangeAsync() > 0;
                 }
                 
-            }
-            foreach (var subscriptionHistory in subscriptionHistoryToDeactive)
+            } else
             {
-                subscriptionHistory.Status = false;
-                wallet.UserBalance += subscription.Price;
-                _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                _unitOfWork.WalletRepository.Update(wallet);
-                isRemove= await _unitOfWork.SaveChangeAsync() > 0;
+                foreach (var subscriptionHistory in subscriptionHistoryToDeactive)
+                {
+                    subscriptionHistory.Status = false;
+                    _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
+                    isRemove = await _unitOfWork.SaveChangeAsync() > 0;
+                }
             }
+           
             return isRemove;
         }
     }
