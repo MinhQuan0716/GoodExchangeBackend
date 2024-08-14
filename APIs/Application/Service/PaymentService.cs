@@ -63,8 +63,8 @@ namespace Application.Service
             {
                 SubcriptionId=subscriptionId,
                 UserId=_claimsService.GetCurrentUserId,
-                StartDate=DateTime.UtcNow.AddDays(7),
-                EndDate=DateTime.UtcNow.AddDays((int)subscription.ExpiryMonth+7),
+                StartDate=DateTime.UtcNow,
+                EndDate=DateTime.UtcNow.AddDays((int)subscription.ExpiryMonth),
                 Status=true
             };
             _unitOfWork.WalletRepository.Update(wallet);

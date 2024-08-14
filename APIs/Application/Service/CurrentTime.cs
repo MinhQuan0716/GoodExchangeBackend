@@ -9,7 +9,7 @@ namespace Application.Service
 {
     public class CurrentTime : ICurrentTime
     {
-        public DateTime GetCurrentTime() => DateTime.UtcNow.AddDays(7);
+        public DateTime GetCurrentTime() => DateTime.UtcNow;
        
     }
 }
