@@ -77,6 +77,9 @@ namespace Infrastructure.Mappers
                 .ForMember(dest=>dest.AuthorId,opt=>opt.MapFrom(x=>x.CreatedBy))
                 .ForMember(dest=>dest.Location,opt=>opt.MapFrom(x=>x.Author.HomeAddress))
             ;
+            CreateMap<PostViewModelForFeaturedImage, Post>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
+                .ReverseMap();
         }
 
         internal void ProductMap()
