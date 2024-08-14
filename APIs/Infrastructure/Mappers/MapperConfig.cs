@@ -137,6 +137,8 @@ namespace Infrastructure.Mappers
                 .ForMember(x=>x.Id,opt=>opt.MapFrom(src=>src.Id))
                 .ForMember(x=>x.PostPrice,opt=>opt.MapFrom(src=>src.PostPrice))
                 .ReverseMap();
+            CreateMap<UpdatePostModel, Policy>().ReverseMap();
+            CreateMap<UpdateOrderCancelledTimeModel, Policy>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.PolicyModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,22 +27,22 @@ namespace WebAPI.Controllers
             var policy = await _policyService.GetOrderCancelledTime();
             return Ok(policy);
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdatePostPrice(Guid id,float price)
+        /*[Authorize(Roles = "Admin")]*/
+        [HttpPatch]
+        public async Task<IActionResult> UpdatePostPrice(UpdatePostPriceModel updatePostPriceModel)
         {
-            var isUpdated=await _policyService.UpdatePostPrice(id,price);
+            var isUpdated=await _policyService.UpdatePostPrice(updatePostPriceModel);
             if (isUpdated)
             {
                 return Ok();
             }
             return BadRequest();
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateOrderCancelledAmount(Guid id,int amount)
+        /*[Authorize(Roles = "Admin")]*/
+        [HttpPatch]
+        public async Task<IActionResult> UpdateOrderCancelledAmount(UpdateOrderCancelledTimeModel updateOrderCancelledTimeModel)
         {
-            var isUpdated = await _policyService.UpdateOrderCancelledTime(id, amount);
+            var isUpdated = await _policyService.UpdateOrderCancelledTime(updateOrderCancelledTimeModel);
             if (isUpdated)
             {
                 return Ok();

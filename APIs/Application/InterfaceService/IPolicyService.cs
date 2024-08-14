@@ -11,7 +11,7 @@ namespace Application.InterfaceService
     {
         Task<List<PostPriceViewModel>> GetPostPrice();
         Task<List<OrderCancelledTimeViewModel>> GetOrderCancelledTime();
-        Task<bool> UpdatePostPrice(Guid id, float postPrice);
-        Task<bool> UpdateOrderCancelledTime(Guid id, int orderAmount);
+        Task<bool> UpdatePostPrice(UpdatePostPriceModel updatePostPriceModel);
+        Task<bool> UpdateOrderCancelledTime(UpdateOrderCancelledTimeModel updateOrderCancelledTimeModel);
     }
 }
