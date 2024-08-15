@@ -44,10 +44,11 @@ namespace Application.Service
                 {
                     var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionHistoryViewModel.SubscriptionId);
                     var subscriptionHistory = await _unitOfWork.SubscriptionHistoryRepository.GetByIdAsync(subscriptionHistoryViewModel.Id);
-                    if (subscriptionHistory.EndDate < DateTime.UtcNow.AddDays(7))
+                    if (subscriptionHistory.IsExtend == false)
                     {
-                       /* subscriptionHistory.Status = false;
-                        _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);*/
+                    }
+                    if (subscriptionHistory.EndDate < DateTime.UtcNow)
+                    {
                     }
                     else
                     {

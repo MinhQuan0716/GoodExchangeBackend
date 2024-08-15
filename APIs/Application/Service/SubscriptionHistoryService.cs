@@ -40,7 +40,7 @@ namespace Application.Service
             var subscriptionHistoryToDeactiveExtend = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId&x.Status==true).FirstOrDefault();
             if (subscriptionHistoryToDeactiveExtend != null)
             {
-                //subscriptionHistoryToDeactive.IsExtend = false;
+                 subscriptionHistoryToDeactiveExtend.IsExtend = false;
                 _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactiveExtend);
                 var check = await _unitOfWork.SaveChangeAsync();
                 if (check > 0)
