@@ -54,15 +54,6 @@ namespace Application.Service
             {
                 if (post.ConditionTypeId == 1)
                 {
-                    var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
-                    var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(order.Id);
-                    wallet.UserBalance -= post.ProductPrice;
-                    if (walletTransaction != null)
-                    {
-                        walletTransaction.TransactionType = "Purchase complete";
-                        _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
-                    }
-                    _unitOfWork.WalletRepository.Update(wallet);
                     BackgroundJob.Schedule(() => (ChangeOrderStatus(OrderId, _accept)), TimeSpan.FromHours(12));
                 }
             }
@@ -143,8 +134,14 @@ namespace Application.Service
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
             if (walletTransaction != null)
             {
-                walletTransaction.TransactionType = "purchase cancled";
-                _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                WalletTransaction newWalletTransaction = new WalletTransaction
+                {
+                    Amount = walletTransaction.Amount,
+                    OrderId = orderId,
+                    WalletId = walletTransaction.WalletId,
+                    TransactionType = "Cancelled Pending"
+                };
+                await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -169,15 +166,28 @@ namespace Application.Service
                 var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
                 if (walletTransaction != null)
                 {
-                    var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
-                    wallet.UserBalance += post.ProductPrice;
+                    var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
+                    wallet.UserBalance -= post.ProductPrice;
+                    var walletTransactionBuyer = new WalletTransaction
+                    {
+                        Amount = post.ProductPrice,
+                        TransactionType = "Purchase complete",
+                        WalletId = wallet.Id
+                    };
+                    await _unitOfWork.WalletTransactionRepository.AddAsync(walletTransactionBuyer);
+                    _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                    _unitOfWork.WalletRepository.Update(wallet);
+
+                    var walletPost = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
+                    walletPost.UserBalance += post.ProductPrice;
                     _unitOfWork.WalletRepository.Update(wallet);
                     var walletTransactionPostOwner = new WalletTransaction
                     {
                         Amount = post.ProductPrice,
                         TransactionType = "Product Sale",
-                        WalletId = wallet.Id
+                        WalletId = walletPost.Id
                     };
+                    await _unitOfWork.WalletTransactionRepository.AddAsync(walletTransactionPostOwner);
                 }
             }
             var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
@@ -192,8 +202,14 @@ namespace Application.Service
                         var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(item.Id);
                         if (walletTransaction != null)
                         {
-                            walletTransaction.TransactionType = "Purchase denied";
-                            _unitOfWork.WalletTransactionRepository.Update(walletTransaction);
+                            WalletTransaction newWalletTransaction = new WalletTransaction
+                            {
+                                Amount = walletTransaction.Amount,
+                                OrderId = orderId,
+                                WalletId = walletTransaction.WalletId,
+                                TransactionType = "Purchase denied"
+                            };
+                            await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
                         }
                     }
                 }
@@ -214,7 +230,6 @@ namespace Application.Service
             var walletTransaction = await _unitOfWork.WalletTransactionRepository.GetByOrderIdAsync(orderId);
             if (walletTransaction != null)
             {
-                walletTransaction.TransactionType = "purchase cancled";
                 var post = await _unitOfWork.PostRepository.GetPostDetail(order.PostId);
                 var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(order.UserId);
                 if (wallet != null)
@@ -223,7 +238,15 @@ namespace Application.Service
                     {
                         if (post.ConditionTypeId == 1)
                         {
-                            if (orderStatus == _accept || orderStatus == _confirm || orderStatus == _delivered)
+                            WalletTransaction newWalletTransaction = new WalletTransaction
+                            {
+                                Amount = walletTransaction.Amount,
+                                OrderId = orderId,
+                                WalletId = walletTransaction.WalletId,
+                                TransactionType = "Purchase cancle"
+                            };
+                            await _unitOfWork.WalletTransactionRepository.AddAsync(newWalletTransaction);
+                            if (orderStatus == _confirm )
                             {
                                 wallet.UserBalance += post.ProductPrice;
                                 _unitOfWork.WalletRepository.Update(wallet);
