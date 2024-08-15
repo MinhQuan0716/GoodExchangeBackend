@@ -118,10 +118,10 @@ namespace Application.Service
             var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(user2);
             var wallletTransaction = await _unitOfWork.WalletTransactionRepository.GetAllTransactionByUserId(user2);
             var postForProductPrice = await _unitOfWork.PostRepository.GetPostDetail(postId);
-
             float pendingTransaction = wallletTransaction?.Where(item => item.Action == "Purchase pending").Sum(item => item.Amount) ?? 0;
-
-            if (wallet.UserBalance - pendingTransaction < postForProductPrice.ProductPrice)
+            float cancleTransaction = wallletTransaction?.Where(item => item.Action == "Cancelled Pending").Sum(item => item.Amount) ?? 0;
+            float deniedTransaction = wallletTransaction?.Where(item => item.Action == "Purchase denied").Sum(item => item.Amount) ?? 0;
+            if (wallet.UserBalance - pendingTransaction + cancleTransaction + deniedTransaction < postForProductPrice.ProductPrice)
             {
                 throw new Exception("You don't have enough money to order this transaction");
             }
