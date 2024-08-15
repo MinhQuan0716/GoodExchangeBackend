@@ -36,7 +36,7 @@ namespace Infrastructure.Repository
                                                                                    {
                                                                                        SubscriptionId = x.SubcriptionId,
                                                                                        Description =x.Subcription.Description,
-                                                                                       ExpiryMonth=x.Subcription.ExpiryMonth,
+                                                                                       ExpiryDay=x.Subcription.ExpiryDay,
                                                                                        Price = x.Subcription.Price,
                                                                                        SubcriptionType = x.Subcription.SubcriptionType
                                                                                    }
@@ -60,7 +60,7 @@ namespace Infrastructure.Repository
                                                                                   {
                                                                                       SubscriptionId = x.SubcriptionId,
                                                                                       Description = x.Subcription.Description,
-                                                                                      ExpiryMonth = x.Subcription.ExpiryMonth,
+                                                                                      ExpiryDay = x.Subcription.ExpiryDay,
                                                                                       Price = x.Subcription.Price,
                                                                                       SubcriptionType = x.Subcription.SubcriptionType
                                                                                   },
@@ -85,7 +85,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetUserPurchaseSubscription(Guid userId)
         {
-            int postAmount=_appDbContext.Posts.Where(x=>x.UserId== userId).ToList().Count();
+            int postAmount=_appDbContext.Posts.Where(x=>x.UserId== userId&&x.IsDelete==false).ToList().Count();
             var listUserSubscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false)
                                                                              .Include(x => x.Subcription).AsSplitQuery()
                                                                              .Select(x => new SubscriptionHistoryDetailViewModel
@@ -99,7 +99,7 @@ namespace Infrastructure.Repository
                                                                                  {
                                                                                      SubscriptionId = x.SubcriptionId,
                                                                                      Description = x.Subcription.Description,
-                                                                                     ExpiryMonth = x.Subcription.ExpiryMonth,
+                                                                                     ExpiryDay = x.Subcription.ExpiryDay,
                                                                                      Price = x.Subcription.Price,
                                                                                      SubcriptionType = x.Subcription.SubcriptionType
                                                                                  },

@@ -27,7 +27,7 @@ namespace Application.Service
         {
             var subcription = _mapper.Map<Subscription>(createSubcriptionModel);
             subcription.Description = "Standard";
-            subcription.ExpiryMonth = createSubcriptionModel.ExpiryDay;
+            subcription.ExpiryDay = createSubcriptionModel.ExpiryDay;
             await _unitOfWork.SubcriptionRepository.AddAsync(subcription);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -67,7 +67,8 @@ namespace Application.Service
                             WalletTransaction walletTransaction = new WalletTransaction()
                             {
                                 TransactionType = "Extend subscription succees",
-                                WalletId=wallet.Id
+                                WalletId=wallet.Id,
+                                Amount=subscription.Price
                             };
                             subscriptionHistory.Status = true;
                             _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);

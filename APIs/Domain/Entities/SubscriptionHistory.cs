@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class SubscriptionHistory:BaseEntity
     {
-        public long Rate { get; set; }
+        public bool? IsExtend { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool Status { get; set; }
