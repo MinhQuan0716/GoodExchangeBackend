@@ -37,32 +37,15 @@ namespace Application.Service
         {
             bool isRemove = false;
             var listSubscriptionHistories = await _unitOfWork.SubscriptionHistoryRepository.GetAllAsync();
-            var subscriptionHistoryToDeactive = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId&x.Status==true).ToList();
-            var wallet =await _unitOfWork.WalletRepository.GetUserWalletByUserId(_claimService.GetCurrentUserId);
-            var subscription = await _unitOfWork.SubcriptionRepository.GetByIdAsync(subscriptionId);
-            var listPost=await _unitOfWork.PostRepository.GetAllPostsByCreatedByIdAsync(_claimService.GetCurrentUserId);
-            if(subscriptionHistoryToDeactive == null)
+            var subscriptionHistoryToDeactiveExtend = listSubscriptionHistories.Where(x => x.UserId == _claimService.GetCurrentUserId && x.SubcriptionId == subscriptionId&x.Status==true).FirstOrDefault();
+            if (subscriptionHistoryToDeactiveExtend != null)
             {
-                throw new Exception("You already unsubscribe this subscription");
-            }
-            if (listPost.Count()==0)
-            {
-                foreach(var subscriptionHistory in subscriptionHistoryToDeactive)
+                //subscriptionHistoryToDeactive.IsExtend = false;
+                _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistoryToDeactiveExtend);
+                var check = await _unitOfWork.SaveChangeAsync();
+                if (check > 0)
                 {
-                    subscriptionHistory.Status = false;
-                    wallet.UserBalance =wallet.UserBalance+ subscription.Price;
-                    _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                    _unitOfWork.WalletRepository.Update(wallet);
-                    isRemove= await _unitOfWork.SaveChangeAsync() > 0;
-                }
-                
-            } else
-            {
-                foreach (var subscriptionHistory in subscriptionHistoryToDeactive)
-                {
-                    subscriptionHistory.Status = false;
-                    _unitOfWork.SubscriptionHistoryRepository.Update(subscriptionHistory);
-                    isRemove = await _unitOfWork.SaveChangeAsync() > 0;
+                    isRemove = true;
                 }
             }
             return isRemove;

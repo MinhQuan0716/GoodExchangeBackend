@@ -72,6 +72,8 @@ namespace Application.Service
                 throw new Exception("Post not found");
             }
             _unitOfWork.PostRepository.SoftRemove(post);
+            var listWish = await _unitOfWork.WishListRepository.FindWishListByPostId(postId);
+            _unitOfWork.WishListRepository.SoftRemoveRange(listWish);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -221,6 +223,8 @@ namespace Application.Service
             if (post != null)
             {
                 _unitOfWork.PostRepository.SoftRemove(post);
+                var listWish = await _unitOfWork.WishListRepository.FindWishListByPostId(PostId);
+                _unitOfWork.WishListRepository.SoftRemoveRange(listWish);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
