@@ -46,7 +46,7 @@ namespace Infrastructure.Repository
 
         public async Task<List<SubscriptionHistoryDetailViewModel>> GetCurrentUserAvailableSubscripion(Guid userId)
         {
-            int postAmount = _appDbContext.Posts.Where(x => x.UserId == userId).ToList().Count();
+            int postAmount = _appDbContext.Posts.Where(x => x.UserId == userId && x.IsDelete == false).ToList().Count();
             var listUserSubscription = await _appDbContext.SubscriptionHistories.Where(x => x.UserId == userId && x.IsDelete == false && x.Status == true)
                                                                                .Include(x => x.Subcription).AsSplitQuery()
                                                                               .Select(x => new SubscriptionHistoryDetailViewModel
