@@ -195,7 +195,7 @@ namespace MobileAPI.Controllers
             var filterListPost=await _postService.SearchPostByPostTitleAndFilterPostByProductStatusAndPrice(postTitle,productStatus,exchangeCondition);
             if(filterListPost.Count() == 0)
             {
-                return NotFound();
+                return Ok(filterListPost);
             }
             return Ok(filterListPost);
         }

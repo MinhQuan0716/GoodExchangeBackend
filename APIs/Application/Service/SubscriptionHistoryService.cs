@@ -65,7 +65,6 @@ namespace Application.Service
                     isRemove = await _unitOfWork.SaveChangeAsync() > 0;
                 }
             }
-           
             return isRemove;
         }
     }
