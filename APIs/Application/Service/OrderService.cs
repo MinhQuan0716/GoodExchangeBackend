@@ -172,6 +172,12 @@ namespace Application.Service
                     var wallet = await _unitOfWork.WalletRepository.GetUserWalletByUserId(post.PostAuthor.AuthorId);
                     wallet.UserBalance += post.ProductPrice;
                     _unitOfWork.WalletRepository.Update(wallet);
+                    var walletTransactionPostOwner = new WalletTransaction
+                    {
+                        Amount = post.ProductPrice,
+                        TransactionType = "Product Sale",
+                        WalletId = wallet.Id
+                    };
                 }
             }
             var rejectOrders = await _unitOfWork.OrderRepository.GetOrderByPostId(order.PostId);
