@@ -50,5 +50,4 @@ services:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
       - capstone-api-network
-
      
