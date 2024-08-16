@@ -64,6 +64,7 @@ namespace Infrastructure.Repository
                                                                                       Price = x.Subcription.Price,
                                                                                       SubcriptionType = x.Subcription.SubcriptionType
                                                                                   },
+                                                                                  IsExtended=x.IsExtend.Value,
                                                                                   PostAmount = postAmount
                                                                               }).ToListAsync();
             return listUserSubscription;
@@ -103,6 +104,7 @@ namespace Infrastructure.Repository
                                                                                      Price = x.Subcription.Price,
                                                                                      SubcriptionType = x.Subcription.SubcriptionType
                                                                                  },
+                                                                                 IsExtended=x.IsExtend.Value,
                                                                                  PostAmount = postAmount
                                                                              }).ToListAsync();
             return listUserSubscription;
