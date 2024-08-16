@@ -43,9 +43,6 @@ services:
     build:
       context: .
       dockerfile: APIs/WebAPI/Dockerfile
-    ports:
-        - 9999:80
-        - 9097:443  
     volumes:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
@@ -53,3 +50,5 @@ services:
     environment:
       - LETSENCRYPT_HOST=goodexchangeapi.online
       - LETSENCRYPT_EMAIL=minhtran121202@gmail.com
+    expose:
+    - "80"
