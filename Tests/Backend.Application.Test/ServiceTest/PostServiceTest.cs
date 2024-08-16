@@ -282,17 +282,34 @@ namespace Backend.Application.Test.ServiceTest
             Func<Task> act = async () => await _postService.CreatePost(postModel);
             act.Should().ThrowAsync<Exception>();
         }
-        /*[Fact]
+        [Fact]
         public async Task DeletePost_ShouldBeSucceeded()
         {
             var post = _fixture.Build<Post>().With(x => x.Id, Guid.Parse("68c5b643-fd14-45be-8ef6-884c1372ffa3")).Create();
+            var wishList = _fixture.Build<WishList>().CreateMany(3).ToList();
             _unitOfWorkMock.Setup(unit => unit.PostRepository.AddAsync(post)).Verifiable();
-            _unitOfWorkMock.Setup(unit=>unit.SaveChangeAsync()).ReturnsAsync(1);  
-            _unitOfWorkMock.Setup(unit=>unit.PostRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(post);
-            _unitOfWorkMock.Setup(unit=>unit.PostRepository.SoftRemove(It.IsAny<Post>())).Verifiable();
-            bool isDelete = await _postService.DeletePost(Guid.Parse("68c5b643-fd14-45be-8ef6-884c1372ffa3"));
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(post);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.SoftRemove(It.IsAny<Post>())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.WishListRepository.FindWishListByPostId(It.IsAny<Guid>())).ReturnsAsync(wishList);
+            _unitOfWorkMock.Setup(unit => unit.WishListRepository.SoftRemoveRange(It.IsAny<List<WishList>>())).Verifiable();
+            bool isDelete = await _postService.DeletePost(post.Id);
             Assert.True(isDelete);
-        }*/
+        }
+        [Fact]
+        public async Task DeletePost_ShouldReturnNullRefreneceException()
+        {
+            var post = _fixture.Build<Post>().With(x => x.Id, Guid.Parse("68c5b643-fd14-45be-8ef6-884c1372ffa3")).Create();
+            var wishList = _fixture.Build<WishList>().CreateMany(3).ToList();
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.AddAsync(post)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Post)null);
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.SoftRemove(It.IsAny<Post>())).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.WishListRepository.FindWishListByPostId(It.IsAny<Guid>())).ReturnsAsync((List<WishList>)null);
+            _unitOfWorkMock.Setup(unit => unit.WishListRepository.SoftRemoveRange(It.IsAny<List<WishList>>())).Verifiable();
+            Func<Task> act = async () => await _postService.DeletePost(post.Id);
+            act.Should().ThrowAsync<NullReferenceException>();
+        }
         [Fact]
         public async Task UpdatePost_ShouldBeSucceeded()
         {
@@ -364,6 +381,43 @@ namespace Backend.Application.Test.ServiceTest
             _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Update test link");
             Func<Task> act = async () => await _postService.UpdatePost(postModel);
             act.Should().ThrowAsync<Exception>();
+        }
+        [Fact]
+        public async Task UpdatePost_ThrowExceptionWhenPostNotFound()
+        {
+          /*  //Arrange
+            var post = _fixture.Build<Post>().With(x => x.Id, Guid.Parse("68c5b643-fd14-45be-8ef6-884c1372ffa3")).Create();*/
+            var product = _fixture.Build<Product>().With(x => x.Id, Guid.Parse("ecae1bd3-ccae-48b3-ba80-5cdb48486e3d")).Create();
+            IFormFile productFile = null;
+            string exePath = Environment.CurrentDirectory.ToString();
+            string filePath = exePath + "/ImageFolder/Class Diagram-UpdatePost.drawio.png";
+            var fileInfo = new FileInfo(filePath);
+            var memoryStream = new MemoryStream();
+
+            using (var stream = fileInfo.OpenRead())
+            {
+                stream.CopyTo(memoryStream);
+            }
+            memoryStream.Position = 0;
+            productFile = new FormFile(memoryStream, 0, memoryStream.Length, fileInfo.Name, fileInfo.Name)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/png",// Adjust the content type as needed
+
+            };
+            var productModel = _fixture.Build<UpdateProductModel>()
+                                      .With(x => x.ProductImage, productFile)
+                                      .Create();
+            var postModel = _fixture.Build<UpdatePostModel>()
+                                   /* .With(x => x.PostId, Guid.Parse("68c5b643-fd14-45be-8ef6-884c1372ffa3"))*/
+                                    .With(x => x.productModel, productModel).Create();
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetProductIdFromPostId(It.IsAny<Guid>())).ReturnsAsync(Guid.Parse("ecae1bd3-ccae-48b3-ba80-5cdb48486e3d"));
+            _unitOfWorkMock.Setup(unit => unit.PostRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Post)null);
+            _unitOfWorkMock.Setup(unit => unit.ProductRepository.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(product);
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _uploadFileMock.Setup(upload => upload.UploadFileToFireBase(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync("Update test link");
+            Func<Task> act = async () => await _postService.UpdatePost(postModel);
+            act.Should().ThrowAsync<NullReferenceException>();
         }
         [Fact]
         public async Task AddPostToWishList_ShouldBeSucceeded()

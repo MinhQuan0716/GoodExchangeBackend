@@ -31,9 +31,6 @@ services:
     build:
       context: .
       dockerfile: APIs/MobileAPI/Dockerfile
-    ports:
-        - 7777:80  
-        - 8087:443
     volumes:
        - "./APIs/MobileAPI/EmailTemplate:/app/EmailTemplate"
     networks:

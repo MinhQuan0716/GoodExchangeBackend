@@ -22,14 +22,16 @@ namespace Application.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
         private readonly ICurrentUserIp _currentUserIp;
+        private readonly ICurrentTime _currentTime;
         public PaymentService(IOptions<VnPayConfig> vnpayConfig
-            , IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService,ICurrentUserIp currentUserIp)
+            , IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService,ICurrentUserIp currentUserIp,ICurrentTime currentTime)
         {
             this.vnPayConfig = vnpayConfig. Value;
             _claimsService = claimsService;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
             _currentUserIp = currentUserIp;
+            _currentTime = currentTime;
         }
 
         public async Task<bool> BuySubscription(Guid subscriptionId)
@@ -65,8 +67,8 @@ namespace Application.Service
             {
                 SubcriptionId=subscriptionId,
                 UserId=_claimsService.GetCurrentUserId,
-                StartDate=DateTime.UtcNow,
-                EndDate=DateTime.UtcNow.AddDays(subscription.ExpiryDay),
+                StartDate=_currentTime.GetCurrentTime(),
+                EndDate=_currentTime.GetCurrentTime().AddDays(subscription.ExpiryDay),
                 Status=true
             };
             _unitOfWork.WalletRepository.Update(wallet);
