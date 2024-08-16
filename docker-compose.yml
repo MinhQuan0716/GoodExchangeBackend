@@ -33,6 +33,9 @@ services:
       dockerfile: APIs/MobileAPI/Dockerfile
     volumes:
        - "./APIs/MobileAPI/EmailTemplate:/app/EmailTemplate"
+    ports:
+     - 7777:80
+     - 8087:443 
     networks:
       - capstone-api-network
  webapi:
