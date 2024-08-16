@@ -16,6 +16,6 @@ namespace Application.ViewModel.SubscriptionHistoryModel
         public Guid SubscriptionId { get; set; }
         public SubscriptionDetailViewModel subcriptionModel { get; set; }
         public int PostAmount { get; set; }
-        public bool IsExtended { get; set; }
+        public bool? IsExtended { get; set; }
     }
 }

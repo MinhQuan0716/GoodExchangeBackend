@@ -69,7 +69,8 @@ namespace Application.Service
                 UserId=_claimsService.GetCurrentUserId,
                 StartDate=_currentTime.GetCurrentTime(),
                 EndDate=_currentTime.GetCurrentTime().AddDays(subscription.ExpiryDay),
-                Status=true
+                Status=true,
+                IsExtend=true
             };
             _unitOfWork.WalletRepository.Update(wallet);
             await _unitOfWork.WalletTransactionRepository.AddAsync(walletTransaction);

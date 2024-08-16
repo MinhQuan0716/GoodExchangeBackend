@@ -104,7 +104,7 @@ namespace Infrastructure.Repository
                                                                                      Price = x.Subcription.Price,
                                                                                      SubcriptionType = x.Subcription.SubcriptionType
                                                                                  },
-                                                                                 IsExtended=x.IsExtend.Value,
+                                                                                 IsExtended = x.IsExtend.HasValue ? x.IsExtend.Value : null, // Handle null
                                                                                  PostAmount = postAmount
                                                                              }).ToListAsync();
             return listUserSubscription;
