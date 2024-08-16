@@ -50,3 +50,33 @@ services:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
       - capstone-api-network
+    environment:
+      - LETSENCRYPT_HOST=goodexchangeapi.online
+      - LETSENCRYPT_EMAIL=minhtran121202@gmail.com
+ nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-certs:/etc/nginx/certs:ro
+      - ./nginx-conf:/etc/nginx/conf.d
+      - ./nginx-logs:/var/log/nginx
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - ENABLE_IPV6=true
+ letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx-proxy-companion
+    restart: unless-stopped
+    volumes:
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - nginx-proxy
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
