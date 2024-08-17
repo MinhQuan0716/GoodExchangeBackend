@@ -48,7 +48,7 @@ services:
     networks:
       - capstone-api-network
     environment:
+      - VIRTUAL_HOST=goodexchangeapi.online
+      - VIRTUAL_PORT=80 
       - LETSENCRYPT_HOST=goodexchangeapi.online
       - LETSENCRYPT_EMAIL=minhtran121202@gmail.com
-    expose:
-    - "80"
